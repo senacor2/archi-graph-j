@@ -1,6 +1,5 @@
 package com.bmw.archigraph.model;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.Map;

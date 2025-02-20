@@ -8,7 +8,6 @@ import org.apache.commons.cli.ParseException;
 
 import com.bmw.archigraph.read.Reader;
 
-import java.io.File;
 import java.io.IOException;
 
 @Slf4j

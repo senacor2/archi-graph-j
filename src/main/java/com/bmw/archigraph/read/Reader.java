@@ -13,7 +13,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
 
 @Slf4j
 public class Reader {
@@ -31,39 +30,37 @@ public class Reader {
 
     public Model readModels() throws IOException {
         return new Model()
-                .components(readComponents(compFile))
-                .applications(readApplications(appsFile))
-                .informationFlows(readInformationFlows(flowsFile));
+                .components(readComponents())
+                .applications(readApplications())
+                .informationFlows(readInformationFlows());
     }
 
     private List<Component> mapComponents(JsonNode node, int level) {
         var result = new LinkedList<Component>();
         for (JsonNode n : node.get(COMPONENTS)) {
-            var comp = new Component(node.get("name").textValue(),
-                    node.get("x").intValue(),
-                    node.get("y").intValue(),
-                    node.get("w").intValue(),
-                    node.get("h").intValue(),
+            var comp = new Component(n.get("name").textValue(),
+                    n.get("x").intValue(),
+                    n.get("y").intValue(),
+                    n.get("w").intValue(),
+                    n.get("h").intValue(),
                     level);
-            if (node.has(COMPONENTS)) {
-                comp.setComponents(mapComponents(node.get(COMPONENTS), level + 1));
-            } else {
-                comp.setComponents(List.of());
+            if (n.has(COMPONENTS)) {
+                comp.setComponents(mapComponents(n.get(COMPONENTS), level + 1));
             }
             result.add(comp);
         }
         return result;
     }
 
-    private List<Component> readComponents(String compFileName) throws IOException {
+    List<Component> readComponents() throws IOException {
         var mapper = new ObjectMapper();
-        var componentModel = mapper.readTree(new File(compFileName));
+        var componentModel = mapper.readTree(new File(compFile));
         return mapComponents(componentModel, 1);
     }
 
-    private List<Application> readApplications(String appsFileName) throws IOException {
+    List<Application> readApplications() throws IOException {
         var result = new LinkedList<Application>();
-        try (java.io.Reader in = new FileReader(appsFileName)) {
+        try (java.io.Reader in = new FileReader(appsFile)) {
             Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
             for (CSVRecord record : records) {
                 var id = record.get(0);
@@ -78,9 +75,9 @@ public class Reader {
         return result;
     }
 
-    private List<InformationFlow> readInformationFlows(String flowsFileName) throws IOException {
+    List<InformationFlow> readInformationFlows() throws IOException {
         var result = new LinkedList<InformationFlow>();
-        try (java.io.Reader in = new FileReader(flowsFileName)) {
+        try (java.io.Reader in = new FileReader(flowsFile)) {
             Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
             for (CSVRecord record : records) {
                 var sourceName = record.get(0);
