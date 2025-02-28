@@ -16,7 +16,7 @@ public class ReaderTest {
     public static final String APPS_FILE = "data/apps1.csv";
     public static final String FLOWS_FILE = "data/flows1.csv";
 
-    private Reader reader = new Reader(COMP_FILE, APPS_FILE, FLOWS_FILE);
+    private final Reader reader = new Reader(COMP_FILE, APPS_FILE, FLOWS_FILE);
 
     @Test
     void testReadApplications() throws IOException {
