@@ -5,6 +5,7 @@ import com.bmw.archigraph.model.Component;
 import com.bmw.archigraph.model.InformationFlow;
 import com.github.dakusui.combinatoradix.Combinator;
 import com.github.dakusui.combinatoradix.Permutator;
+import lombok.Getter;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -109,8 +110,9 @@ public class ComponentLayout {
         Coordinate getCoord() { return coord; }
     }
 
-    private static class RatedLayout implements Comparable<RatedLayout> {
+    static class RatedLayout implements Comparable<RatedLayout> {
 
+        @Getter
         private final int quality;
         private final Map<Application, Coordinate> layout;
 
@@ -123,6 +125,7 @@ public class ComponentLayout {
         public int compareTo(RatedLayout o) {
             return Integer.compare(quality, o.quality);
         }
+
     }
 
 }
