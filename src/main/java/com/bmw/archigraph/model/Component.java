@@ -53,4 +53,17 @@ public class Component {
                 l1Component == null ? "null" : l1Component.getName());
     }
 
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (other == null) return false;
+        if (other.getClass() != getClass()) return false;
+        return name.equals(((Component)other).name);
+    }
+
 }

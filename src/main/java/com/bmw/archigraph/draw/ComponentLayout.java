@@ -27,6 +27,14 @@ public class ComponentLayout {
         component = comp;
     }
 
+    /**
+     * Returns a list of all possible placements of apps inside a component. Apps are placed in a fixed grid.
+     * @param rows Number of rows in the component.
+     * @param columns Number of columns in the component.
+     * @param appCount Number of apps to be placed inside a component.
+     * @return The inner list is one possible combination of app positions inside the grid. The outer list
+     * collects all possible permutations.
+     */
     List<List<Coordinate>> appPositionsInComponent(final int rows, final int columns, final int appCount) {
         if (appCount > rows * columns)
             throw new IllegalArgumentException("Number of apps (%d) exceeds grid size (%d x %d)"
@@ -55,12 +63,28 @@ public class ComponentLayout {
                 (b.getRow() - a.getRow()) * (c.getCol() - a.getCol());
     }
 
+    /**
+     * Check if the lines from the given apps would intersect.
+     * @param fromApp1 source of the first information flow.
+     * @param toApp1 destination of the first information flow.
+     * @param fromApp2 source of the second information flow.
+     * @param toApp2 destination of the second information flow.
+     * @return true, if the first and the second information flow cross each other. False if not. Also false, if
+     * information flows share a common endpoint.
+     */
     boolean linesIntersect(Coordinate fromApp1, Coordinate toApp1, Coordinate fromApp2, Coordinate toApp2) {
         return ccw(fromApp1, fromApp2, toApp2) != ccw(toApp1, fromApp2, toApp2) &&
                 ccw(fromApp1, toApp1, fromApp2) != ccw(fromApp1, toApp1, toApp2);
     }
 
+    /**
+     * Given a possible layout of applications and the information flows, determine the quality of the layout.
+     * @param appPositions A possible placement of apps in the component grid.
+     * @param flows information flows between the apps.
+     * @return The layout used with the computed layout quality.
+     */
     RatedLayout layoutQuality(Map<Application, Coordinate> appPositions, List<InformationFlow> flows) {
+        // TODO should also consider the length of the information flow lines, favoring shorter non-intersecting ones.
         var combinations = new Combinator<>(flows, 2);
         var quality = StreamSupport.stream(combinations.spliterator(), false)
                 .map(flowCombi -> List.of(
@@ -73,24 +97,50 @@ public class ComponentLayout {
         return new RatedLayout(quality, appPositions);
     }
 
+    /**
+     * Join (zip) the lists and components side by side into a map keyed by the apps with the coords as value.
+     * Both lists must have the same length.
+     * @param apps Apps will be used as keys.
+     * @param coords Coords will be used as values.
+     * @return A map where each app in <code>apps</code> is associated with the coord at the same position in
+     * <code>coords</code>.
+     */
     Map<Application, Coordinate> zipmapAppsAndCoordinates(List<Application> apps, List<Coordinate> coords) {
+        assert apps.size() == coords.size();
         return IntStream.range(0, coords.size())
                 .mapToObj(i -> new AppCoordinate(apps.get(i), coords.get(i)))
                 .collect(Collectors.toMap(AppCoordinate::getApp, AppCoordinate::getCoord));
     }
 
+    /**
+     * Create a default layout for the apps inside the component.
+     * @param apps List of apps.
+     * @return the default layout where the component is filled with apps from the top left, line by line.
+     */
+    Map<Application, Coordinate> defaultLayout(List<Application> apps) {
+        var coords = IntStream.range(0, apps.size())
+                .mapToObj(i -> Coordinate.fromIndex(component.getW(), i))
+                .toList();
+        return zipmapAppsAndCoordinates(apps, coords);
+    }
+
+    /**
+     * Create the application layout inside the component grid, taking information flows into account.
+     * After this operation, the layout quality and the application positions are initialized and can be retrieved.
+     * @param flows The information flows that restrict the layout.
+     */
     void layout(List<InformationFlow> flows) {
         if (component.getApplications().isEmpty()) {
             quality = 0;
             layout = new HashMap<>();
         } else if (flows.isEmpty()) {
             quality = 0;
-            layout = new HashMap<>();
+            layout = defaultLayout(component.getApplications());
         } else {
             var best = appPositionsInComponent(component.getH(), component.getW(), component.getApplications().size()).stream()
                     .map(l -> zipmapAppsAndCoordinates(component.getApplications(), l))
                     .map(layout -> layoutQuality(layout, flows))
-                    .max(RatedLayout::compareTo)
+                    .min(RatedLayout::compareTo)
                     .orElseThrow();
             quality = best.quality;
             layout = best.layout;
