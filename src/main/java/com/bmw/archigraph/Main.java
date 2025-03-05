@@ -1,5 +1,6 @@
 package com.bmw.archigraph;
 
+import ch.qos.logback.classic.Level;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
@@ -7,6 +8,7 @@ import org.apache.commons.cli.DefaultParser;
 import org.apache.commons.cli.ParseException;
 
 import com.bmw.archigraph.read.Reader;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 
@@ -49,8 +51,8 @@ public class Main {
             var appsFile = cmdLine.getOptionValue("a");
             var flowsFile = cmdLine.getOptionValue("f");
             if (cmdLine.hasOption("d")) {
-
-                // TODO set global debug level
+                ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger)LoggerFactory.getLogger("com.bmw.archigraph");
+                root.setLevel(Level.DEBUG);
             }
             var reader = new Reader(compFile, appsFile, flowsFile);
             var outputFile = buildOutputFileName(compFile);

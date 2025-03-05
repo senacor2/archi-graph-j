@@ -53,12 +53,16 @@ public class Reader {
     }
 
     List<Component> readComponents() throws IOException {
+        log.debug("Reading components from {}", compFile);
         var mapper = new ObjectMapper();
         var componentModel = mapper.readTree(new File(compFile));
-        return mapComponents(componentModel, 1);
+        var result = mapComponents(componentModel, 1);
+        log.debug("Reading components: {} components read", result.size());
+        return result;
     }
 
     List<Application> readApplications() throws IOException {
+        log.debug("Reading applications from {}", appsFile);
         var result = new LinkedList<Application>();
         try (java.io.Reader in = new FileReader(appsFile)) {
             Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
@@ -72,10 +76,12 @@ public class Reader {
                 result.add(new Application(id, name, compName, attr1, attr2, attr3));
             }
         }
+        log.debug("Reading applications: {} apps read", result.size());
         return result;
     }
 
     List<InformationFlow> readInformationFlows() throws IOException {
+        log.debug("Reading information flows from {}", flowsFile);
         var result = new LinkedList<InformationFlow>();
         try (java.io.Reader in = new FileReader(flowsFile)) {
             Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
@@ -88,6 +94,7 @@ public class Reader {
                 result.add(new InformationFlow(id, sourceName, destName, bo, dir));
             }
         }
+        log.debug("Reading information flows: {} information flows read", result.size());
         return result;
     }
 
