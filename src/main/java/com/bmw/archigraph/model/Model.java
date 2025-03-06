@@ -1,6 +1,5 @@
 package com.bmw.archigraph.model;
 
-import com.bmw.archigraph.render.RenderModel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

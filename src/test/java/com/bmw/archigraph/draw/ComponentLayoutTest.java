@@ -268,6 +268,7 @@ public class ComponentLayoutTest {
         ifBD.setSource(appB);
         ifBD.setDestination(appD);
         comp.setApplications(List.of(appA, appB, appC, appD));
+        comp.setInternalInformationFlows(List.of(ifAC, ifBD));
         // test
         var cl = new ComponentLayout(comp);
         cl.layout();
@@ -305,6 +306,7 @@ public class ComponentLayoutTest {
         ifEF.setSource(appE);
         ifEF.setDestination(appF);
         comp.setApplications(List.of(appA, appB, appC, appD, appE, appF));
+        comp.setInternalInformationFlows(List.of(ifAB, ifCD, ifEF));
         // test
         var cl = new ComponentLayout(comp);
         cl.layout();
@@ -376,6 +378,7 @@ public class ComponentLayoutTest {
         ifFB.setDestination(appB);
 
         comp.setApplications(List.of(appA, appB, appC, appD, appE, appF));
+        comp.setInternalInformationFlows(List.of(ifAB, ifAC, ifBD, ifBE, ifBF, ifCD, ifDA, ifEF, ifFB));
         // test
         var cl = new ComponentLayout(comp);
         cl.layout();
