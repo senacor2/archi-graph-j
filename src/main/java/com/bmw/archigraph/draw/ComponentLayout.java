@@ -6,6 +6,7 @@ import com.bmw.archigraph.model.InformationFlow;
 import com.github.dakusui.combinatoradix.Combinator;
 import com.github.dakusui.combinatoradix.Permutator;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -17,6 +18,7 @@ import java.util.stream.StreamSupport;
  * The algorithm takes information flows inside the component into account and minimizes
  * intersections of the information flow arcs.
  */
+@Slf4j
 public class ComponentLayout {
 
     private final Component component;
@@ -77,6 +79,12 @@ public class ComponentLayout {
                 ccw(fromApp1, toApp1, fromApp2) != ccw(fromApp1, toApp1, toApp2);
     }
 
+    private static String toString(Map<Application, Coordinate> appPositions) {
+        var result = appPositions.entrySet().stream()
+                .map(e -> String.format("{%s: [%d,%d]}", e.getKey().getId(), e.getValue().row(), e.getValue().col()))
+                .collect(Collectors.joining(", "));
+        return "AppPos {" + result + "}";
+    }
     /**
      * Given a possible layout of applications and the information flows, determine the quality of the layout.
      * @param appPositions A possible placement of apps in the component grid.
@@ -84,6 +92,7 @@ public class ComponentLayout {
      * @return The layout used with the computed layout quality.
      */
     RatedLayout layoutQuality(Map<Application, Coordinate> appPositions, List<InformationFlow> flows) {
+        log.debug("Calculating layout quality of {}", appPositions);
         // TODO should also consider the length of the information flow lines, favoring shorter non-intersecting ones.
         var combinations = new Combinator<>(flows, 2);
         var quality = StreamSupport.stream(combinations.spliterator(), false)
@@ -94,6 +103,7 @@ public class ComponentLayout {
                         appPositions.get(flowCombi.getLast().getDestination())))
                 .map(apps -> linesIntersect(apps.get(0), apps.get(1), apps.get(2), apps.get(3)) ? 1 : 0)
                 .reduce(0, Integer::sum);
+        log.debug("Layout quality is {}", quality);
         return new RatedLayout(quality, appPositions);
     }
 
@@ -127,9 +137,9 @@ public class ComponentLayout {
     /**
      * Create the application layout inside the component grid, taking information flows into account.
      * After this operation, the layout quality and the application positions are initialized and can be retrieved.
-     * @param flows The information flows that restrict the layout.
      */
-    void layout(List<InformationFlow> flows) {
+    public void layout() {
+        var flows = component.getInternalInformationFlows();
         if (component.getApplications().isEmpty()) {
             quality = 0;
             layout = new HashMap<>();
@@ -147,7 +157,7 @@ public class ComponentLayout {
         }
     }
 
-    Coordinate getAppCoordinate(Application app) {
+    public Coordinate getAppCoordinate(Application app) {
         return layout.get(app);
     }
 

@@ -1,10 +1,14 @@
 package com.bmw.archigraph.model;
 
 import lombok.Data;
+import lombok.extern.slf4j.Slf4j;
 
+import java.util.Collection;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Stream;
 
+@Slf4j
 @Data
 public class Component {
 
@@ -25,6 +29,10 @@ public class Component {
     private List<Application> applications = List.of();
 
     private List<Component> components = List.of();
+
+    private List<InformationFlow> internalInformationFlows = new LinkedList<>();
+
+    private List<InformationFlow> crossCompInformationFlows = new LinkedList<>();
 
     public Component(String name, int x, int y, int w, int h, int level) {
         this.name = name;
@@ -48,6 +56,20 @@ public class Component {
         }
     }
 
+    void selectInformationFlows(Collection<InformationFlow> allFlows) {
+        log.debug("Selecting information flows for {}", getName());
+        for (var i : allFlows) {
+            var srcIn = applications.contains(i.getSource());
+            var dstIn = applications.contains(i.getDestination());
+            log.debug("{} is {} {}", i.getId(), srcIn, dstIn);
+            if (srcIn && dstIn) {
+                internalInformationFlows.add(i);
+            } else if (srcIn || dstIn) {
+                crossCompInformationFlows.add(i);
+            }
+        }
+    }
+
     public String toString() {
         return String.format("Component %s %d,%d %d,%d level %d l1 %s", name, x, y, w, h, level,
                 l1Component == null ? "null" : l1Component.getName());
@@ -63,7 +85,7 @@ public class Component {
         if (this == other) return true;
         if (other == null) return false;
         if (other.getClass() != getClass()) return false;
-        return name.equals(((Component)other).name);
+        return name.equals(((Component) other).name);
     }
 
 }

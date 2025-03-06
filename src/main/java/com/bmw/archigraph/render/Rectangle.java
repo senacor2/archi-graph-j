@@ -2,9 +2,11 @@ package com.bmw.archigraph.render;
 
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.experimental.SuperBuilder;
 
 import java.awt.*;
 
+@SuperBuilder
 @Data
 @EqualsAndHashCode(callSuper = true)
 public class Rectangle extends RenderModelElement {
@@ -20,4 +22,6 @@ public class Rectangle extends RenderModelElement {
     private int fontSize;
 
     private String text;
+
+    private boolean rounded;
 }

@@ -1,6 +1,8 @@
 package com.bmw.archigraph;
 
 import ch.qos.logback.classic.Level;
+import com.bmw.archigraph.draw.DrawModel;
+import com.bmw.archigraph.render.RenderModel;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.HelpFormatter;
 import org.apache.commons.cli.Options;
@@ -56,10 +58,9 @@ public class Main {
             }
             var reader = new Reader(compFile, appsFile, flowsFile);
             var outputFile = buildOutputFileName(compFile);
-            reader.readModels()
-                    .render()
-                    .draw()
-                    .write(outputFile);
+            var model = reader.readModels();
+            var renderModel = new RenderModel().render(model);
+            var drawModel = new DrawModel().draw(renderModel).write(outputFile);
         } catch (ParseException pe) {
             System.err.println("Could not parse command line: " + pe.getMessage());
             usage(options);

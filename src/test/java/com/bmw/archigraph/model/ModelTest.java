@@ -4,6 +4,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ModelTest {
@@ -61,21 +62,30 @@ public class ModelTest {
 
     @Test
     void testSetInformationFlows() {
-        var components = List.of(
-                new Component("COMP-1", 0, 0, 5, 3, 1),
-                new Component("COMP-2", 7, 0, 4, 3, 1));
-        var applications = List.of(
-                new Application("APP-1", "Application 1", "COMP-1", "", "", ""),
-                new Application("APP-2", "Application 2", "COMP-2", "", "", ""));
-        var informationFlows = List.of(
-                new InformationFlow("IF-12", "APP-1", "APP-2", "BO", Direction.ONE_WAY));
+        var c1 = new Component("COMP-1", 0, 0, 5, 3, 1);
+        var c2 = new Component("COMP-2", 7, 0, 4, 3, 1);
+        var components = List.of(c1, c2);
+        var a11 = new Application("APP-11", "Application 11", "COMP-1", "", "", "");
+        var a12 = new Application("APP-12", "Application 12", "COMP-1", "", "", "");
+        var a21 = new Application("APP-21", "Application 21", "COMP-2", "", "", "");
+        var applications = List.of(a11, a12, a21);
+        var if1112 = new InformationFlow("IF-1112", "APP-11", "APP-12", "BO", Direction.ONE_WAY);
+        var if1121 = new InformationFlow("IF-1121", "APP-11", "APP-21", "BO", Direction.ONE_WAY);
+        var informationFlows = List.of(if1121, if1112);
+        c1.setApplications(List.of(a11, a12));
+        c2.setApplications(List.of(a21));
         var model = new Model();
         model.components(components);
         model.applications(applications);
         model.informationFlows(informationFlows);
-        assertEquals(1, model.getInformationFlowMap().size());
-        assertEquals(informationFlows.getFirst(), model.getInformationFlowMap().get("IF-12"));
-        assertEquals(applications.getFirst(), model.getInformationFlowMap().get("IF-12").getSource());
-        assertEquals(applications.getLast(), model.getInformationFlowMap().get("IF-12").getDestination());
+        assertEquals(2, model.getInformationFlowMap().size());
+        assertThat(model.getInformationFlowMap().values()).containsExactlyInAnyOrder(if1112, if1121);
+        assertEquals(a11, model.getInformationFlowMap().get("IF-1112").getSource());
+        assertEquals(a12, model.getInformationFlowMap().get("IF-1112").getDestination());
+        assertEquals(a21, model.getInformationFlowMap().get("IF-1121").getDestination());
+        assertThat(c1.getInternalInformationFlows()).containsExactly(if1112);
+        assertThat(c2.getInternalInformationFlows()).isEmpty();
+        assertThat(c1.getCrossCompInformationFlows()).containsExactly(if1121);
+        assertThat(c2.getCrossCompInformationFlows()).containsExactly(if1121);
     }
 }

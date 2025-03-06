@@ -221,7 +221,7 @@ public class ComponentLayoutTest {
     void testFindAppPositionsEmptyComponent() {
         var comp = new Component("COMP-1", 0, 0, 2, 2, 1);
         var cl = new ComponentLayout(comp);
-        cl.layout(List.of());
+        cl.layout();
         assertEquals(0, cl.getQuality());
     }
 
@@ -240,7 +240,7 @@ public class ComponentLayoutTest {
         comp.setApplications(List.of(appA, appB, appC, appD));
         // test
         var cl = new ComponentLayout(comp);
-        cl.layout(List.of());
+        cl.layout();
         // verify
         assertEquals(nc(0, 0), cl.getAppCoordinate(appA), "App-A");
         assertEquals(nc(0, 1), cl.getAppCoordinate(appB), "App-B");
@@ -270,7 +270,7 @@ public class ComponentLayoutTest {
         comp.setApplications(List.of(appA, appB, appC, appD));
         // test
         var cl = new ComponentLayout(comp);
-        cl.layout(List.of(ifAC, ifBD));
+        cl.layout();
         // verify
         assertEquals(nc(0, 0), cl.getAppCoordinate(appA), "App-A");
         assertEquals(nc(0, 1), cl.getAppCoordinate(appB), "App-B");
@@ -307,7 +307,7 @@ public class ComponentLayoutTest {
         comp.setApplications(List.of(appA, appB, appC, appD, appE, appF));
         // test
         var cl = new ComponentLayout(comp);
-        cl.layout(List.of(ifAB, ifCD, ifEF));
+        cl.layout();
         // verify
         assertEquals(nc(0, 0), cl.getAppCoordinate(appA), "App-A");
         assertEquals(nc(0, 1), cl.getAppCoordinate(appB), "App-B");
@@ -378,7 +378,7 @@ public class ComponentLayoutTest {
         comp.setApplications(List.of(appA, appB, appC, appD, appE, appF));
         // test
         var cl = new ComponentLayout(comp);
-        cl.layout(List.of(ifAB, ifAC, ifBD, ifBE, ifBF, ifCD, ifDA, ifEF, ifFB));
+        cl.layout();
         // verify
         assertEquals(nc(0, 0), cl.getAppCoordinate(appA), "App-A");
         assertEquals(nc(1, 0), cl.getAppCoordinate(appB), "App-B");
