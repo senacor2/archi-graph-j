@@ -29,9 +29,9 @@ public class RenderModelTest {
                 .build();
         var c1 = new Component("COMP-1", 0, 0, 3, 3, 1);
         var c2 = new Component("COMP-2", 4, 0, 2, 3, 1);
-        model.components(List.of(c1, c2));
-        model.applications(List.of());
-        model.informationFlows(List.of());
+        model.setL1Components(List.of(c1, c2));
+        model.setApplications(List.of());
+        model.setInformationFlows(List.of());
         var fixture = new RenderModel();
         var result = fixture.render(model);
         assertThat(result.getElements())
@@ -94,11 +94,11 @@ public class RenderModelTest {
                 .name("System 1")
                 .build();
         var c1 = new Component("COMP-1", 0, 0, 3, 3, 1);
-        model.components(List.of(c1));
+        model.setL1Components(List.of(c1));
         var a1 = new Application("App-1", "Application 1", "COMP-1", "", "", "");
         var a2 = new Application("App-2", "Application 2", "COMP-1", "", "", "");
-        model.applications(List.of(a1, a2));
-        model.informationFlows(List.of());
+        model.setApplications(List.of(a1, a2));
+        model.setInformationFlows(List.of());
         var fixture = new RenderModel();
         var result = fixture.render(model);
         assertThat(result.getElements())
@@ -159,4 +159,71 @@ public class RenderModelTest {
                                 .build()
                 );
     }
+
+    @Test
+    void testModelWithSubComponents() {
+        // fixture
+        var comp1 = new Component("COMP-1", 0, 0, 4, 3, 1);
+        var comp2 = new Component("COMP-11", 0, 0, 3, 2, 2);
+        comp1.setComponents(List.of(comp2));
+        var model = Model.builder().name("System 1").build();
+        model.setL1Components(List.of(comp1));
+        // test
+        var renderModel = new RenderModel();
+        var result = renderModel.render(model);
+        // verify
+        assertThat(result.getElements())
+                .containsExactlyInAnyOrder(
+                        Rectangle.builder()
+                                .id("ROOT")
+                                .text("System 1")
+                                .x(0)
+                                .y(0)
+                                .w(1280)
+                                .h(100)
+                                .foreground(Color.WHITE)
+                                .background(new Color(0, 0, 156))
+                                .fontSize(28)
+                                .build(),
+                        Rectangle.builder()
+                                .id("COMP-1_head")
+                                .text("COMP-1")
+                                .x(0)
+                                .y(200)
+                                .w(1280)
+                                .h(100)
+                                .foreground(Color.WHITE)
+                                .background(new Color(0, 0, 110))
+                                .fontSize(24)
+                                .build(),
+                        Rectangle.builder()
+                                .id("COMP-1_body")
+                                .x(0)
+                                .y(200)
+                                .w(1280)
+                                .h(700)
+                                .background(Color.WHITE)
+                                .build(),
+                        Rectangle.builder()
+                                .id("COMP-11_head")
+                                .text("COMP-11")
+                                .x(160)
+                                .y(300)
+                                .w(960)
+                                .h(100)
+                                .foreground(Color.WHITE)
+                                .background(new Color(0, 0, 110))
+                                .fontSize(20)
+                                .build(),
+                        Rectangle.builder()
+                                .id("COMP-11_body")
+                                .x(160)
+                                .y(300)
+                                .w(960)
+                                .h(500)
+                                .background(Color.WHITE)
+                                .build()
+                );
+    }
+
 }

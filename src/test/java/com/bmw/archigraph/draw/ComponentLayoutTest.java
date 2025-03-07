@@ -231,8 +231,8 @@ public class ComponentLayoutTest {
         var appC = new Application("APP-C", "A3", "COMP-1", "", "", "");
         var appD = new Application("APP-D", "A4", "COMP-1", "", "", "");
         var model = new Model();
-        model.components(List.of(comp));
-        model.applications(List.of(appA, appB, appC, appD));
+        model.setL1Components(List.of(comp));
+        model.setApplications(List.of(appA, appB, appC, appD));
         // test
         var cl = new ComponentLayout(comp);
         cl.layout();
@@ -255,9 +255,9 @@ public class ComponentLayoutTest {
         var appD = new Application("APP-D", "A4", "COMP-1", "", "", "");
         var ifAC = new InformationFlow("IF-AC", "APP-A", "APP-C", "BO", Direction.ONE_WAY);
         var ifBD = new InformationFlow("IF-BD", "APP-B", "APP-D", "BO", Direction.ONE_WAY);
-        model.components(List.of(comp));
-        model.applications(List.of(appA, appB, appC, appD));
-        model.informationFlows(List.of(ifAC, ifBD));
+        model.setL1Components(List.of(comp));
+        model.setApplications(List.of(appA, appB, appC, appD));
+        model.setInformationFlows(List.of(ifAC, ifBD));
         // test
         var cl = new ComponentLayout(comp);
         cl.layout();
@@ -283,9 +283,9 @@ public class ComponentLayoutTest {
         var ifCD = new InformationFlow("IF-CD", "APP-C", "APP-D", "BO", Direction.ONE_WAY);
         var ifEF = new InformationFlow("IF-EF", "APP-E", "APP-F", "BO", Direction.ONE_WAY);
         var model = new Model();
-        model.components(List.of(comp));
-        model.applications(List.of(appA, appB, appC, appD, appE, appF));
-        model.informationFlows(List.of(ifAB, ifCD, ifEF));
+        model.setL1Components(List.of(comp));
+        model.setApplications(List.of(appA, appB, appC, appD, appE, appF));
+        model.setInformationFlows(List.of(ifAB, ifCD, ifEF));
         // test
         var cl = new ComponentLayout(comp);
         cl.layout();
@@ -326,9 +326,9 @@ public class ComponentLayoutTest {
         var ifFB = new InformationFlow("IF-FB", "APP-F", "APP-B", "BO", Direction.ONE_WAY);
 
         var model = new Model();
-        model.components(List.of(comp));
-        model.applications(List.of(appA, appB, appC, appD, appE, appF));
-        model.informationFlows(List.of(ifAB, ifAC, ifBD, ifBE, ifBF, ifCD, ifDA, ifEF, ifFB));
+        model.setL1Components(List.of(comp));
+        model.setApplications(List.of(appA, appB, appC, appD, appE, appF));
+        model.setInformationFlows(List.of(ifAB, ifAC, ifBD, ifBE, ifBF, ifCD, ifDA, ifEF, ifFB));
 
         // test
         var cl = new ComponentLayout(comp);

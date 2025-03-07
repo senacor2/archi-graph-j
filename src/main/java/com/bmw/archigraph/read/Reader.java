@@ -30,9 +30,9 @@ public class Reader {
 
     public Model readModels() throws IOException {
         return new Model()
-                .components(readComponents())
-                .applications(readApplications())
-                .informationFlows(readInformationFlows());
+                .setL1Components(readComponents())
+                .setApplications(readApplications())
+                .setInformationFlows(readInformationFlows());
     }
 
     private List<Component> mapComponents(JsonNode node, int level) {

@@ -2,7 +2,7 @@ package com.bmw.archigraph.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
+import lombok.Getter;
 
 import java.util.List;
 import java.util.Map;
@@ -11,7 +11,7 @@ import java.util.stream.Collectors;
 
 @Builder
 @AllArgsConstructor
-@Data
+@Getter
 public class Model {
 
     private String name;
@@ -22,7 +22,7 @@ public class Model {
 
     public Model() {}
 
-    public Model components(List<Component> components) {
+    public Model setL1Components(List<Component> components) {
         l1Components = components;
         componentMap = components.stream()
                 .flatMap(Component::flattened)
@@ -33,7 +33,7 @@ public class Model {
         return this;
     }
 
-    public Model applications(List<Application> applications) {
+    public Model setApplications(List<Application> applications) {
         assert componentMap != null;
         applicationMap = applications.stream()
                 .peek(a -> {
@@ -45,7 +45,7 @@ public class Model {
         return this;
     }
 
-    public Model informationFlows(List<InformationFlow> informationFlows) {
+    public Model setInformationFlows(List<InformationFlow> informationFlows) {
         assert applicationMap != null;
         informationFlowMap = informationFlows.stream()
                 .peek(i -> {

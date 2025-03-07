@@ -15,7 +15,7 @@ public class ModelTest {
                 new Component("COMP-1", 0, 0, 5, 3, 1),
                 new Component("COMP-2", 7, 0, 4, 3, 1));
         var model = new Model();
-        model.components(components);
+        model.setL1Components(components);
         assertEquals(2, model.getComponentMap().size());
         assertEquals(components.getFirst(), model.getComponentMap().get("COMP-1"));
         assertEquals(components.get(1), model.getComponentMap().get("COMP-2"));
@@ -30,7 +30,7 @@ public class ModelTest {
                 new Component("COMP-11", 0, 1, 2, 2, 2),
                 new Component("COMP-12", 3, 1, 2, 2, 2)));
         var model = new Model();
-        model.components(components);
+        model.setL1Components(components);
         assertEquals(4, model.getComponentMap().size());
         assertEquals(components.getFirst(), model.getComponentMap().get("COMP-1"));
         assertEquals(components.getLast(), model.getComponentMap().get("COMP-2"));
@@ -51,8 +51,8 @@ public class ModelTest {
                 new Application("APP-1", "Application 1", "COMP-1", "", "", ""),
                 new Application("APP-2", "Application 2", "COMP-2", "", "", ""));
         var model = new Model();
-        model.components(components);
-        model.applications(applications);
+        model.setL1Components(components);
+        model.setApplications(applications);
         assertEquals(2, model.getApplicationMap().size());
         assertEquals(applications.getFirst(), model.getApplicationMap().get("APP-1"));
         assertEquals(components.getFirst(), model.getApplicationMap().get("APP-1").getComponent());
@@ -73,9 +73,9 @@ public class ModelTest {
         var if1121 = new InformationFlow("IF-1121", "APP-11", "APP-21", "BO", Direction.ONE_WAY);
         var informationFlows = List.of(if1121, if1112);
         var model = new Model();
-        model.components(components);
-        model.applications(applications);
-        model.informationFlows(informationFlows);
+        model.setL1Components(components);
+        model.setApplications(applications);
+        model.setInformationFlows(informationFlows);
         assertEquals(2, model.getInformationFlowMap().size());
         assertThat(model.getInformationFlowMap().values()).containsExactlyInAnyOrder(if1112, if1121);
         assertEquals(a11, model.getInformationFlowMap().get("IF-1112").getSource());
