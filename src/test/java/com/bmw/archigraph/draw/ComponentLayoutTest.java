@@ -1,9 +1,6 @@
 package com.bmw.archigraph.draw;
 
-import com.bmw.archigraph.model.Application;
-import com.bmw.archigraph.model.Component;
-import com.bmw.archigraph.model.Direction;
-import com.bmw.archigraph.model.InformationFlow;
+import com.bmw.archigraph.model.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
@@ -233,11 +230,9 @@ public class ComponentLayoutTest {
         var appB = new Application("APP-B", "A2", "COMP-1", "", "", "");
         var appC = new Application("APP-C", "A3", "COMP-1", "", "", "");
         var appD = new Application("APP-D", "A4", "COMP-1", "", "", "");
-        appA.setComponent(comp);
-        appB.setComponent(comp);
-        appC.setComponent(comp);
-        appD.setComponent(comp);
-        comp.setApplications(List.of(appA, appB, appC, appD));
+        var model = new Model();
+        model.components(List.of(comp));
+        model.applications(List.of(appA, appB, appC, appD));
         // test
         var cl = new ComponentLayout(comp);
         cl.layout();
@@ -252,6 +247,7 @@ public class ComponentLayoutTest {
     @Test
     void testFindAppPositions2in2x2() {
         // fixture
+        var model = new Model();
         var comp = new Component("COMP-1", 0, 0, 2, 2, 1);
         var appA = new Application("APP-A", "A1", "COMP-1", "", "", "");
         var appB = new Application("APP-B", "A2", "COMP-1", "", "", "");
@@ -259,16 +255,9 @@ public class ComponentLayoutTest {
         var appD = new Application("APP-D", "A4", "COMP-1", "", "", "");
         var ifAC = new InformationFlow("IF-AC", "APP-A", "APP-C", "BO", Direction.ONE_WAY);
         var ifBD = new InformationFlow("IF-BD", "APP-B", "APP-D", "BO", Direction.ONE_WAY);
-        appA.setComponent(comp);
-        appB.setComponent(comp);
-        appC.setComponent(comp);
-        appD.setComponent(comp);
-        ifAC.setSource(appA);
-        ifAC.setDestination(appC);
-        ifBD.setSource(appB);
-        ifBD.setDestination(appD);
-        comp.setApplications(List.of(appA, appB, appC, appD));
-        comp.setInternalInformationFlows(List.of(ifAC, ifBD));
+        model.components(List.of(comp));
+        model.applications(List.of(appA, appB, appC, appD));
+        model.informationFlows(List.of(ifAC, ifBD));
         // test
         var cl = new ComponentLayout(comp);
         cl.layout();
@@ -293,20 +282,10 @@ public class ComponentLayoutTest {
         var ifAB = new InformationFlow("IF-AB", "APP-A", "APP-B", "BO", Direction.ONE_WAY);
         var ifCD = new InformationFlow("IF-CD", "APP-C", "APP-D", "BO", Direction.ONE_WAY);
         var ifEF = new InformationFlow("IF-EF", "APP-E", "APP-F", "BO", Direction.ONE_WAY);
-        appA.setComponent(comp);
-        appB.setComponent(comp);
-        appC.setComponent(comp);
-        appD.setComponent(comp);
-        appE.setComponent(comp);
-        appF.setComponent(comp);
-        ifAB.setSource(appA);
-        ifAB.setDestination(appB);
-        ifCD.setSource(appC);
-        ifCD.setDestination(appD);
-        ifEF.setSource(appE);
-        ifEF.setDestination(appF);
-        comp.setApplications(List.of(appA, appB, appC, appD, appE, appF));
-        comp.setInternalInformationFlows(List.of(ifAB, ifCD, ifEF));
+        var model = new Model();
+        model.components(List.of(comp));
+        model.applications(List.of(appA, appB, appC, appD, appE, appF));
+        model.informationFlows(List.of(ifAB, ifCD, ifEF));
         // test
         var cl = new ComponentLayout(comp);
         cl.layout();
@@ -346,39 +325,11 @@ public class ComponentLayoutTest {
 
         var ifFB = new InformationFlow("IF-FB", "APP-F", "APP-B", "BO", Direction.ONE_WAY);
 
-        appA.setComponent(comp);
-        appB.setComponent(comp);
-        appC.setComponent(comp);
-        appD.setComponent(comp);
-        appE.setComponent(comp);
-        appF.setComponent(comp);
+        var model = new Model();
+        model.components(List.of(comp));
+        model.applications(List.of(appA, appB, appC, appD, appE, appF));
+        model.informationFlows(List.of(ifAB, ifAC, ifBD, ifBE, ifBF, ifCD, ifDA, ifEF, ifFB));
 
-        ifAB.setSource(appA);
-        ifAB.setDestination(appB);
-        ifAC.setSource(appA);
-        ifAC.setDestination(appC);
-
-        ifBD.setSource(appB);
-        ifBD.setDestination(appD);
-        ifBE.setSource(appB);
-        ifBE.setDestination(appE);
-        ifBF.setSource(appB);
-        ifBF.setDestination(appF);
-
-        ifCD.setSource(appC);
-        ifCD.setDestination(appD);
-
-        ifDA.setSource(appD);
-        ifDA.setDestination(appA);
-
-        ifEF.setSource(appE);
-        ifEF.setDestination(appF);
-
-        ifFB.setSource(appF);
-        ifFB.setDestination(appB);
-
-        comp.setApplications(List.of(appA, appB, appC, appD, appE, appF));
-        comp.setInternalInformationFlows(List.of(ifAB, ifAC, ifBD, ifBE, ifBF, ifCD, ifDA, ifEF, ifFB));
         // test
         var cl = new ComponentLayout(comp);
         cl.layout();

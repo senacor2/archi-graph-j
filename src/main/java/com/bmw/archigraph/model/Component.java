@@ -1,6 +1,8 @@
 package com.bmw.archigraph.model;
 
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Collection;
@@ -9,30 +11,31 @@ import java.util.List;
 import java.util.stream.Stream;
 
 @Slf4j
-@Data
+@Getter
 public class Component {
 
-    private String name;
+    private final String name;
 
-    private int x;
+    private final int x;
 
-    private int y;
+    private final int y;
 
-    private int w;
+    private final int w;
 
-    private int h;
+    private final int h;
 
-    private int level;
+    private final int level;
 
     private Component l1Component;
 
-    private List<Application> applications = List.of();
+    private final List<Application> applications = new LinkedList<>();
 
-    private List<Component> components = List.of();
+    @Setter
+    private List<Component> components = new LinkedList<>();
 
-    private List<InformationFlow> internalInformationFlows = new LinkedList<>();
+    private final List<InformationFlow> internalInformationFlows = new LinkedList<>();
 
-    private List<InformationFlow> crossCompInformationFlows = new LinkedList<>();
+    private final List<InformationFlow> crossCompInformationFlows = new LinkedList<>();
 
     public Component(String name, int x, int y, int w, int h, int level) {
         this.name = name;
@@ -50,13 +53,13 @@ public class Component {
     }
 
     void wireL1Component(Component l1Comp) {
-        setL1Component(l1Comp);
+        l1Component = l1Comp;
         for (Component c : getComponents()) {
             c.wireL1Component(l1Comp);
         }
     }
 
-    void selectInformationFlows(Collection<InformationFlow> allFlows) {
+    public void selectInformationFlows(Collection<InformationFlow> allFlows) {
         log.debug("Selecting information flows for {}", getName());
         for (var i : allFlows) {
             var srcIn = applications.contains(i.getSource());
@@ -88,4 +91,7 @@ public class Component {
         return name.equals(((Component) other).name);
     }
 
+    public void addApplication(Application a) {
+        applications.add(a);
+    }
 }

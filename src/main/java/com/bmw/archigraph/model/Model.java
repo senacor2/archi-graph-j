@@ -36,7 +36,11 @@ public class Model {
     public Model applications(List<Application> applications) {
         assert componentMap != null;
         applicationMap = applications.stream()
-                .peek(a -> a.setComponent(componentMap.get(a.getComponentName())))
+                .peek(a -> {
+                    var c = componentMap.get(a.getComponentName());
+                    a.setComponent(c);
+                    c.addApplication(a);
+                })
                 .collect(Collectors.toMap(Application::getId, Function.identity()));
         return this;
     }

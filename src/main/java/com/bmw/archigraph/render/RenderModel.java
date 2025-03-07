@@ -72,40 +72,43 @@ public class RenderModel {
 
     /**
      * Render a component consisting of a heading and the body where the apps are drawn.
-     * @param c A component
+     * @param comp A component
      * @param origX the grid position (column) of the components left edge.
      * @param origY the grid position (row) of the components top.
      */
-    void render(Component c, int origX, int origY) {
+    void render(Component comp, int origX, int origY) {
         // Heading rectangle
         add(Rectangle.builder()
-                .id(c.getName().replace(" ", "_") + "_head")
-                .text(c.getName())
+                .id(comp.getName().replace(" ", "_") + "_head")
+                .text(comp.getName())
                 .background(BG_COLOR_COMP)
                 .foreground(FG_COLOR_COMP)
-                .fontSize(switch (c.getLevel()) {
+                .fontSize(switch (comp.getLevel()) {
                     case 1 -> 24;
                     case 2 -> 20;
                     case 3 -> 16;
                     default -> 12;
                 })
-                .x(origX + c.getX() * COL_WIDTH)
-                .y(origY + c.getY() * ROW_HEIGHT)
-                .w(c.getW() * COL_WIDTH)
+                .x(origX + comp.getX() * COL_WIDTH)
+                .y(origY + comp.getY() * ROW_HEIGHT)
+                .w(comp.getW() * COL_WIDTH)
                 .h(ROW_HEIGHT_HALF)
                 .build()
         );
         // Body rectangle
         add(Rectangle.builder()
-                .id(c.getName().replace(" ", "_") + "_body")
+                .id(comp.getName().replace(" ", "_") + "_body")
                 .background(Color.WHITE)
-                .x(origX + c.getX() * COL_WIDTH)
-                .y(origY + c.getY() * ROW_HEIGHT)
-                .w(c.getW() * COL_WIDTH)
-                .h(c.getH() * ROW_HEIGHT + ROW_HEIGHT_HALF)
+                .x(origX + comp.getX() * COL_WIDTH)
+                .y(origY + comp.getY() * ROW_HEIGHT)
+                .w(comp.getW() * COL_WIDTH)
+                .h(comp.getH() * ROW_HEIGHT + ROW_HEIGHT_HALF)
                 .build()
         );
-        renderApplications(c, origX, origY);
+        renderApplications(comp, origX, origY + ROW_HEIGHT_HALF);
+        for (var c : comp.getComponents()) {
+            render(c, origX + COL_WIDTH_HALF, origY + ROW_HEIGHT_HALF);
+        }
     }
 
     /**
@@ -129,7 +132,7 @@ public class RenderModel {
                 .id(app.getId())
                 .text(app.getName())
                 .background(Color.WHITE)
-                .background(Color.BLACK)
+                .foreground(Color.BLACK)
                 .fontSize(12)
                 .rounded(true)
                 .x(origX + col * COL_WIDTH + SPACING)

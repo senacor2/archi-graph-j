@@ -72,8 +72,6 @@ public class ModelTest {
         var if1112 = new InformationFlow("IF-1112", "APP-11", "APP-12", "BO", Direction.ONE_WAY);
         var if1121 = new InformationFlow("IF-1121", "APP-11", "APP-21", "BO", Direction.ONE_WAY);
         var informationFlows = List.of(if1121, if1112);
-        c1.setApplications(List.of(a11, a12));
-        c2.setApplications(List.of(a21));
         var model = new Model();
         model.components(components);
         model.applications(applications);
