@@ -16,12 +16,13 @@ import java.util.List;
 public class RenderModel {
 
     private static final Color BG_COLOR_MODEL = new Color(0, 0, 156);
-    private static final Color FG_COLOR_MODEL = new Color(255, 255, 255);
-    private static final Color BG_COLOR_COMP = new Color(0, 0, 110);
-    private static final Color FG_COLOR_COMP = new Color(255, 255, 255);
-    private static final Color BG_COLOR_APP = new Color(255, 255, 255);
-    private static final Color FG_COLOR_APP = new Color(0, 0, 0);
-    private static final Color COLOR_LINE = new Color(0, 0, 0);
+    private static final Color FG_COLOR_MODEL = Color.WHITE;
+    private static final Color BG_COLOR_COMP_HEAD = new Color(0, 0, 110);
+    private static final Color FG_COLOR_COMP_HEAD = Color.WHITE;
+    private static final Color BG_COLOR_COMP_BODY = Color.WHITE;
+    private static final Color BG_COLOR_APP = Color.WHITE;
+    private static final Color FG_COLOR_APP = Color.BLACK;
+    private static final Color COLOR_LINE = Color.BLACK;
 
     private static final int ROW_HEIGHT = 200;
     private static final int COL_WIDTH = (int) (ROW_HEIGHT * 1.6);
@@ -81,8 +82,8 @@ public class RenderModel {
         add(Rectangle.builder()
                 .id(comp.getName().replace(" ", "_") + "_head")
                 .text(comp.getName())
-                .background(BG_COLOR_COMP)
-                .foreground(FG_COLOR_COMP)
+                .background(BG_COLOR_COMP_HEAD)
+                .foreground(FG_COLOR_COMP_HEAD)
                 .fontSize(switch (comp.getLevel()) {
                     case 1 -> 24;
                     case 2 -> 20;
@@ -98,7 +99,7 @@ public class RenderModel {
         // Body rectangle
         add(Rectangle.builder()
                 .id(comp.getName().replace(" ", "_") + "_body")
-                .background(Color.WHITE)
+                .background(BG_COLOR_COMP_BODY)
                 .x(origX + comp.getX() * COL_WIDTH)
                 .y(origY + comp.getY() * ROW_HEIGHT)
                 .w(comp.getW() * COL_WIDTH)
@@ -131,8 +132,8 @@ public class RenderModel {
         add(Rectangle.builder()
                 .id(app.getId())
                 .text(app.getName())
-                .background(Color.WHITE)
-                .foreground(Color.BLACK)
+                .background(BG_COLOR_APP)
+                .foreground(FG_COLOR_APP)
                 .fontSize(12)
                 .rounded(true)
                 .x(origX + col * COL_WIDTH + SPACING)
