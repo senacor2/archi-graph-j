@@ -1,7 +1,7 @@
 package com.bmw.archigraph;
 
 import ch.qos.logback.classic.Level;
-import com.bmw.archigraph.draw.DrawModel;
+import com.bmw.archigraph.draw.DrawModelDrawIO;
 import com.bmw.archigraph.render.RenderModel;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.cli.HelpFormatter;
@@ -60,7 +60,7 @@ public class Main {
             var outputFile = buildOutputFileName(compFile);
             var model = reader.readModels();
             var renderModel = new RenderModel().render(model);
-            var drawModel = new DrawModel().draw(renderModel).write(outputFile);
+            new DrawModelDrawIO().draw(renderModel).write(outputFile);
         } catch (ParseException pe) {
             System.err.println("Could not parse command line: " + pe.getMessage());
             usage(options);

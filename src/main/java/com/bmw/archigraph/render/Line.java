@@ -1,5 +1,6 @@
 package com.bmw.archigraph.render;
 
+import com.bmw.archigraph.draw.DrawModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
@@ -20,4 +21,8 @@ public class Line extends RenderModelElement {
 
     private boolean hasStartArrow = false;
     private boolean hasEndArrow = true;
+
+    public void draw(DrawModel model) {
+        model.draw(this);
+    }
 }

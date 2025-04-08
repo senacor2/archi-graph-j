@@ -1,5 +1,6 @@
 package com.bmw.archigraph.render;
 
+import com.bmw.archigraph.draw.DrawModel;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.SuperBuilder;
@@ -24,4 +25,9 @@ public class Rectangle extends RenderModelElement {
     private String text;
 
     private boolean rounded;
+
+    @Override
+    public void draw(DrawModel drawModel) {
+        drawModel.draw(this);
+    }
 }
