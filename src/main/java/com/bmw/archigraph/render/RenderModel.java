@@ -86,6 +86,10 @@ public class RenderModel {
      * @param origY the grid position (row) of the components top.
      */
     void render(Component comp, int origX, int origY) {
+        int x = origX + comp.getX() * COL_WIDTH;
+        int y = origY + comp.getY() * ROW_HEIGHT;
+        log.debug("Render comp {} orig {}/{}", comp.getName(), x, y);
+
         // Heading rectangle
         add(Rectangle.builder()
                 .id(comp.getName().replace(" ", "_") + "_head")
@@ -98,8 +102,8 @@ public class RenderModel {
                     case 3 -> 16;
                     default -> 12;
                 })
-                .x(origX + comp.getX() * COL_WIDTH)
-                .y(origY + comp.getY() * ROW_HEIGHT)
+                .x(x)
+                .y(y)
                 .w(comp.getW() * COL_WIDTH)
                 .h(ROW_HEIGHT_HALF)
                 .build()
@@ -108,16 +112,16 @@ public class RenderModel {
         add(Rectangle.builder()
                 .id(comp.getName().replace(" ", "_") + "_body")
                 .background(BG_COLOR_COMP_BODY)
-                .x(origX + comp.getX() * COL_WIDTH)
-                .y(origY + comp.getY() * ROW_HEIGHT)
+                .x(x)
+                .y(y)
                 .w(comp.getW() * COL_WIDTH)
                 .h(comp.getH() * ROW_HEIGHT + ROW_HEIGHT_HALF)
                 .build()
         );
-        var layout = renderApplications(comp, origX, origY + ROW_HEIGHT_HALF);
-        renderInternalFlows(comp, origX, origY, layout);
+        var layout = renderApplications(comp, x, y + ROW_HEIGHT_HALF);
+        renderInternalFlows(comp, x, y, layout);
         for (var c : comp.getComponents()) {
-            render(c, origX + COL_WIDTH_HALF, origY + ROW_HEIGHT_HALF);
+            render(c, x + COL_WIDTH_HALF, y + ROW_HEIGHT_HALF);
         }
     }
 
@@ -140,6 +144,7 @@ public class RenderModel {
     }
 
     void render(Application app, int origX, int origY, int row, int col) {
+        log.debug("Render app {} orig {}/{} row {} col {}", app.getId(), origX, origY, row, col);
         add(Rectangle.builder()
                 .id(app.getId())
                 .text(app.getName())
@@ -161,6 +166,7 @@ public class RenderModel {
     }
 
     void render(InformationFlow flow, int origX, int origY, ComponentLayout layout) {
+        log.debug("Render flow {}", flow.getId());
         Rectangle sourceRect = elements.stream()
                 .filter(elem -> elem instanceof Rectangle)
                 .map(elem -> (Rectangle) elem)
@@ -189,30 +195,31 @@ public class RenderModel {
         var dstCoord = layout.getAppCoordinate(dest);
         int distanceHor = Math.abs(srcCoord.getCol() - dstCoord.getCol());
         int distanceVrt = Math.abs(srcCoord.getRow() - dstCoord.getRow());
+        Point[] result;
 
         if ((distanceHor == 0 && distanceVrt == 1) || (distanceVrt == 0 && distanceHor == 1)) {
             // directly adjacent
-            return new Point[0];
+            result = new Point[0];
         } else if (distanceVrt == 0 && distanceHor > 1 && allCellsEmptyHor(layout, srcCoord, dstCoord)) {
             // same row and the column is empty between the cells
-            return new Point[0];
+            result = new Point[0];
         } else if (distanceHor == 0 && distanceVrt > 1 && allCellsEmptyVert(layout, srcCoord, dstCoord)) {
             // same column and the row is empty between the cells
-            return new Point[0];
+            result = new Point[0];
         } else if (distanceVrt == 0 && distanceHor > 1) {
             // same row with apps between
             // Start line at the top
             var x1 = origX + srcCoord.getCol() * COL_WIDTH + COL_WIDTH_HALF;
             var x2 = origX + dstCoord.getCol() * COL_WIDTH + COL_WIDTH_HALF;
             var y = origY + srcCoord.getRow() * ROW_HEIGHT + SPACING_HALF;
-            return new Point[]{new Point(x1, y), new Point(x2, y)};
+            result = new Point[]{new Point(x1, y), new Point(x2, y)};
         } else if (distanceHor == 0 && distanceVrt > 1) {
             // same column with apps between
             // Start line at the right
             var x = origX + (srcCoord.getCol() + 1) * COL_WIDTH - SPACING_HALF;
             var y1 = origY + srcCoord.getRow() * ROW_HEIGHT + ROW_HEIGHT_HALF;
             var y2 = origY + dstCoord.getRow() * ROW_HEIGHT + ROW_HEIGHT_HALF;
-            return new Point[]{new Point(x, y1), new Point(x, y2)};
+            result = new Point[]{new Point(x, y1), new Point(x, y2)};
         } else {
             // different rows and columns
             var topToBottom = srcCoord.getRow() < dstCoord.getRow();
@@ -221,11 +228,13 @@ public class RenderModel {
             var endPoint = coordOnApp(origX, origY, dstCoord, sideTo(leftToRight));
             var horSpacing = leftToRight ? - SPACING_HALF : SPACING_HALF;
             var vrtSpacing = topToBottom ? SPACING_HALF : - SPACING_HALF;
-            return new Point[]{
+            result = new Point[]{
                     new Point(startPoint.x, startPoint.y + vrtSpacing),
                     new Point(endPoint.x + horSpacing, startPoint.y + vrtSpacing),
                     new Point(endPoint.x + horSpacing, endPoint.y)};
         }
+        log.debug("Line anchors {}", result);
+        return result;
     }
 
     boolean allCellsEmptyHor(ComponentLayout layout, Coordinate src, Coordinate dst) {
