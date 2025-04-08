@@ -92,7 +92,7 @@ public class ComponentLayout {
      * @return The layout used with the computed layout quality.
      */
     RatedLayout layoutQuality(Map<Application, Coordinate> appPositions, List<InformationFlow> flows) {
-        log.debug("Calculating layout quality of {}", appPositions);
+        log.trace("Calculating layout quality of {}", appPositions);
         // TODO should also consider the length of the information flow lines, favoring shorter non-intersecting ones.
         var combinations = new Combinator<>(flows, 2);
         var quality = StreamSupport.stream(combinations.spliterator(), false)
@@ -103,7 +103,7 @@ public class ComponentLayout {
                         appPositions.get(flowCombi.getLast().getDestination())))
                 .map(apps -> linesIntersect(apps.get(0), apps.get(1), apps.get(2), apps.get(3)) ? 1 : 0)
                 .reduce(0, Integer::sum);
-        log.debug("Layout quality is {}", quality);
+        log.trace("Layout quality is {}", quality);
         return new RatedLayout(quality, appPositions);
     }
 
