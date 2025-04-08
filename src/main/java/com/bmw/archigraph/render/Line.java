@@ -17,4 +17,7 @@ public class Line extends RenderModelElement {
     private Point[] anchors;
 
     private String text;
+
+    private boolean hasStartArrow = false;
+    private boolean hasEndArrow = true;
 }

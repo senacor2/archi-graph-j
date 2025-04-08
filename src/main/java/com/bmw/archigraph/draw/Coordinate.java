@@ -1,5 +1,10 @@
 package com.bmw.archigraph.draw;
 
+/**
+ * Row/column address inside the drawing grid.
+ * @param row
+ * @param col
+ */
 public record Coordinate(
         int row,
         int col

@@ -1,15 +1,16 @@
 package com.bmw.archigraph.render;
 
-import com.bmw.archigraph.model.Application;
+import com.bmw.archigraph.draw.ComponentLayout;
+import com.bmw.archigraph.draw.Coordinate;
+import com.bmw.archigraph.model.*;
 import com.bmw.archigraph.model.Component;
-import com.bmw.archigraph.model.Model;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class RenderModelTest {
 
@@ -225,5 +226,366 @@ public class RenderModelTest {
                                 .build()
                 );
     }
+
+    @Test
+    void testModelWithInformationFlows() {
+        // fixture
+        var model = Model.builder()
+                .name("System 1")
+                .build();
+        var app1 = new Application("A1", "A1", "C1", "", "", "");
+        var app2 = new Application("A2", "A2", "C1", "", "", "");
+        var comp1 = new Component("C1", 0, 0, 3, 3, 1);
+        var if1 = new InformationFlow("IF12", "A1", "A2", "BO", Direction.ONE_WAY);
+        model.setL1Components(List.of(comp1));
+        model.setApplications(List.of(app1, app2));
+        model.setInformationFlows(List.of(if1));
+        // test
+        var fixture = new RenderModel();
+        var result = fixture.render(model);
+        // verify
+        var rectApp1 = Rectangle.builder()
+                .id("A1")
+                .text("A1")
+                .rounded(true)
+                .x(40)
+                .y(340)
+                .w(240)
+                .h(120)
+                .foreground(Color.BLACK)
+                .background(Color.WHITE)
+                .fontSize(12)
+                .build();
+        var rectApp2 = Rectangle.builder()
+                .id("A2")
+                .text("A2")
+                .rounded(true)
+                .x(360)
+                .y(340)
+                .w(240)
+                .h(120)
+                .foreground(Color.BLACK)
+                .background(Color.WHITE)
+                .fontSize(12)
+                .build();
+        assertThat(result.getElements())
+                .containsExactlyInAnyOrder(
+                        Rectangle.builder()
+                                .id("ROOT")
+                                .text("System 1")
+                                .x(0)
+                                .y(0)
+                                .w(960)
+                                .h(100)
+                                .foreground(Color.WHITE)
+                                .background(new Color(0, 0, 156))
+                                .fontSize(28)
+                                .build(),
+                        Rectangle.builder()
+                                .id("C1_body")
+                                .x(0)
+                                .y(200)
+                                .w(960)
+                                .h(700)
+                                .background(Color.WHITE)
+                                .build(),
+                        Rectangle.builder()
+                                .id("C1_head")
+                                .text("C1")
+                                .x(0)
+                                .y(200)
+                                .w(960)
+                                .h(100)
+                                .foreground(Color.WHITE)
+                                .background(new Color(0, 0, 110))
+                                .fontSize(24)
+                                .build(),
+                        rectApp1,
+                        rectApp2,
+                        Line.builder()
+                                .id("IF12")
+                                .text("BO")
+                                .start(rectApp1)
+                                .end(rectApp2)
+                                .anchors(new Point[0])
+                                .build()
+                );
+    }
+
+    @Test
+    void testCoordOnAppTop() {
+        var fixture = new RenderModel();
+        assertEquals(new Point(530, 290),
+                fixture.coordOnApp(50, 50, new Coordinate(1, 1), RenderModel.Side.TOP));
+    }
+
+    @Test
+    void testCoordOnAppBottom() {
+        var fixture = new RenderModel();
+        assertEquals(new Point(530, 410),
+                fixture.coordOnApp(50, 50, new Coordinate(1, 1), RenderModel.Side.BOTTOM));
+    }
+
+    @Test
+    void testCoordOnAppLeft() {
+        var fixture = new RenderModel();
+        assertEquals(new Point(410, 350),
+                fixture.coordOnApp(50, 50, new Coordinate(1, 1), RenderModel.Side.LEFT));
+    }
+
+    @Test
+    void testCoordOnAppRight() {
+        var fixture = new RenderModel();
+        assertEquals(new Point(650, 350),
+                fixture.coordOnApp(50, 50, new Coordinate(1, 1), RenderModel.Side.RIGHT));
+    }
+
+    @Test
+    void testCoordOnAppTopOfBottomLeft() {
+        var fixture = new RenderModel();
+        assertEquals(new Point(210, 290),
+                fixture.coordOnApp(50, 50, new Coordinate(1, 0), RenderModel.Side.TOP));
+    }
+
+    @Test
+    void testCoordOnAppLeftOfTopRight() {
+        var fixture = new RenderModel();
+        assertEquals(new Point(410, 150),
+                fixture.coordOnApp(50, 50, new Coordinate(0, 1), RenderModel.Side.LEFT));
+    }
+
+    @Test
+    void testSideFromTo() {
+        var fixture = new RenderModel();
+        assertEquals(RenderModel.Side.LEFT, fixture.sideTo(true));
+        assertEquals(RenderModel.Side.RIGHT, fixture.sideTo(false));
+        assertEquals(RenderModel.Side.BOTTOM, fixture.sideFrom(true));
+        assertEquals(RenderModel.Side.TOP, fixture.sideFrom(false));
+    }
+
+    @Test
+    void testEmptyCellsOneEmptyHor() {
+        var fixture = new RenderModel();
+        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
+        var c1 = new Coordinate(0, 0);
+        var c2 = new Coordinate(0, 2);
+        layout.add(c1, new Application("A1", "A1", "C1", "", "", ""));
+        layout.add(c2, new Application("A2", "A2", "C1", "", "", ""));
+        assertTrue(fixture.allCellsEmptyHor(layout, c1, c2));
+    }
+
+    @Test
+    void testEmptyCellsOneEmptyVert() {
+        var fixture = new RenderModel();
+        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
+        var c1 = new Coordinate(0, 0);
+        var c2 = new Coordinate(2, 0);
+        layout.add(c1, new Application("A1", "A1", "C1", "", "", ""));
+        layout.add(c2, new Application("A2", "A2", "C1", "", "", ""));
+        assertTrue(fixture.allCellsEmptyVert(layout, c1, c2));
+    }
+
+    @Test
+    void testEmptyCellsTwoEmptyHor() {
+        var fixture = new RenderModel();
+        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
+        var c1 = new Coordinate(0, 0);
+        var c2 = new Coordinate(0, 3);
+        layout.add(c1, new Application("A1", "A1", "C1", "", "", ""));
+        layout.add(c2, new Application("A2", "A2", "C1", "", "", ""));
+        assertTrue(fixture.allCellsEmptyHor(layout, c1, c2));
+    }
+
+    @Test
+    void testEmptyCellsTwoEmptyVert() {
+        var fixture = new RenderModel();
+        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
+        var c1 = new Coordinate(0, 0);
+        var c2 = new Coordinate(3, 0);
+        layout.add(c1, new Application("A1", "A1", "C1", "", "", ""));
+        layout.add(c2, new Application("A2", "A2", "C1", "", "", ""));
+        assertTrue(fixture.allCellsEmptyVert(layout, c1, c2));
+    }
+
+    @Test
+    void testThreeCellsInALine() {
+        var fixture = new RenderModel();
+        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
+        var c1 = new Coordinate(0, 0);
+        var c2 = new Coordinate(0, 1);
+        var c3 = new Coordinate(0, 2);
+        layout.add(c1, new Application("A1", "A1", "C1", "", "", ""));
+        layout.add(c2, new Application("A2", "A2", "C1", "", "", ""));
+        layout.add(c3, new Application("A3", "A3", "C1", "", "", ""));
+        assertFalse(fixture.allCellsEmptyHor(layout, c1, c3));
+    }
+
+    @Test
+    void testThreeCellsInALineOfFive() {
+        var fixture = new RenderModel();
+        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 5, 1));
+        var c1 = new Coordinate(0, 0);
+        var c2 = new Coordinate(0, 2);
+        var c3 = new Coordinate(0, 4);
+        layout.add(c1, new Application("A1", "A1", "C1", "", "", ""));
+        layout.add(c2, new Application("A2", "A2", "C1", "", "", ""));
+        layout.add(c3, new Application("A3", "A3", "C1", "", "", ""));
+        assertFalse(fixture.allCellsEmptyHor(layout, c1, c3));
+    }
+
+    @Test
+    void testThreeCellsInARow() {
+        var fixture = new RenderModel();
+        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
+        var c1 = new Coordinate(0, 0);
+        var c2 = new Coordinate(1, 0);
+        var c3 = new Coordinate(2, 0);
+        layout.add(c1, new Application("A1", "A1", "C1", "", "", ""));
+        layout.add(c2, new Application("A2", "A2", "C1", "", "", ""));
+        layout.add(c3, new Application("A3", "A3", "C1", "", "", ""));
+        assertFalse(fixture.allCellsEmptyVert(layout, c1, c3));
+    }
+
+    @Test
+    void testCellsRightToLeft() {
+        var fixture = new RenderModel();
+        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
+        var c1 = new Coordinate(0, 1);
+        var c2 = new Coordinate(1, 0);
+        var c3 = new Coordinate(0, 2);
+        var c4 = new Coordinate(1, 2);
+        var c5 = new Coordinate(1, 1);
+        var c6 = new Coordinate(0, 0);
+        layout.add(c1, new Application("A1", "A1", "C1", "", "", ""));
+        layout.add(c2, new Application("A2", "A2", "C1", "", "", ""));
+        layout.add(c3, new Application("A3", "A3", "C1", "", "", ""));
+        layout.add(c4, new Application("A4", "A4", "C1", "", "", ""));
+        layout.add(c5, new Application("A5", "A5", "C1", "", "", ""));
+        layout.add(c6, new Application("A6", "A6", "C1", "", "", ""));
+        assertFalse(fixture.allCellsEmptyHor(layout, c3, c6));
+    }
+
+    @Test
+    void testGetAnchorTwoHorizSideBySide() {
+        var fixture = new RenderModel();
+        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
+        var c1 = new Coordinate(0, 0);
+        var c2 = new Coordinate(1, 0);
+        Application a1 = new Application("A1", "A1", "C1", "", "", "");
+        Application a2 = new Application("A2", "A2", "C1", "", "", "");
+        layout.add(c1, a1);
+        layout.add(c2, a2);
+        assertThat(fixture.getAnchors(layout, a1, a2, 100, 100))
+                .isEmpty();
+    }
+
+    @Test
+    void testGetAnchorTwoVertSideBySide() {
+        var fixture = new RenderModel();
+        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
+        var c1 = new Coordinate(0, 0);
+        var c2 = new Coordinate(0, 1);
+        Application a1 = new Application("A1", "A1", "C1", "", "", "");
+        Application a2 = new Application("A2", "A2", "C1", "", "", "");
+        layout.add(c1, a1);
+        layout.add(c2, a2);
+        assertThat(fixture.getAnchors(layout, a1, a2, 100, 100))
+                .isEmpty();
+    }
+
+    @Test
+    void testGetAnchorTwoSameRowWithGap() {
+        var fixture = new RenderModel();
+        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
+        var c1 = new Coordinate(0, 0);
+        var c2 = new Coordinate(0, 2);
+        Application a1 = new Application("A1", "A1", "C1", "", "", "");
+        Application a2 = new Application("A2", "A2", "C1", "", "", "");
+        layout.add(c1, a1);
+        layout.add(c2, a2);
+        assertThat(fixture.getAnchors(layout, a1, a2, 100, 100))
+                .isEmpty();
+    }
+
+    @Test
+    void testGetAnchorTwoVertWithGap() {
+        var fixture = new RenderModel();
+        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
+        var c1 = new Coordinate(0, 0);
+        var c2 = new Coordinate(2, 0);
+        Application a1 = new Application("A1", "A1", "C1", "", "", "");
+        Application a2 = new Application("A2", "A2", "C1", "", "", "");
+        layout.add(c1, a1);
+        layout.add(c2, a2);
+        assertThat(fixture.getAnchors(layout, a1, a2, 100, 100))
+                .isEmpty();
+    }
+
+    @Test
+    void testGetAnchorThreeInARow() {
+        var fixture = new RenderModel();
+        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
+        var c1 = new Coordinate(0, 0);
+        var c2 = new Coordinate(0, 1);
+        var c3 = new Coordinate(0, 2);
+        Application a1 = new Application("A1", "A1", "C1", "", "", "");
+        Application a2 = new Application("A2", "A2", "C1", "", "", "");
+        Application a3 = new Application("A3", "A3", "C1", "", "", "");
+        layout.add(c1, a1);
+        layout.add(c2, a2);
+        layout.add(c3, a3);
+        assertThat(fixture.getAnchors(layout, a1, a3, 100, 100))
+                .containsExactly(new Point(260, 120), new Point(900, 120));
+    }
+
+    @Test
+    void testGetAnchorThreeInACol() {
+        var fixture = new RenderModel();
+        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
+        var c1 = new Coordinate(0, 0);
+        var c2 = new Coordinate(1, 0);
+        var c3 = new Coordinate(2, 0);
+        Application a1 = new Application("A1", "A1", "C1", "", "", "");
+        Application a2 = new Application("A2", "A2", "C1", "", "", "");
+        Application a3 = new Application("A3", "A3", "C1", "", "", "");
+        layout.add(c1, a1);
+        layout.add(c2, a2);
+        layout.add(c3, a3);
+        assertThat(fixture.getAnchors(layout, a1, a3, 100, 100))
+                .containsExactly(new Point(400, 200), new Point(400, 600));
+    }
+
+    @Test
+    void testGetAnchorTwoOneRowColApartBottomLeftTopRight() {
+        var fixture = new RenderModel();
+        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
+        var c1 = new Coordinate(1, 0);
+        var c2 = new Coordinate(0, 1);
+        Application a1 = new Application("A1", "A1", "C1", "", "", "");
+        Application a2 = new Application("A2", "A2", "C1", "", "", "");
+        layout.add(c1, a1);
+        layout.add(c2, a2);
+        assertThat(fixture.getAnchors(layout, a1, a2, 100, 100))
+                .containsExactly(new Point(260, 320),
+                        new Point(440, 320),
+                        new Point(440, 200));
+    }
+
+    @Test
+    void testGetAnchorTwoOneRowColApartTopLeftBottomRight() {
+        var fixture = new RenderModel();
+        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
+        var c1 = new Coordinate(0, 0);
+        var c2 = new Coordinate(1, 1);
+        Application a1 = new Application("A1", "A1", "C1", "", "", "");
+        Application a2 = new Application("A2", "A2", "C1", "", "", "");
+        layout.add(c1, a1);
+        layout.add(c2, a2);
+        assertThat(fixture.getAnchors(layout, a1, a2, 100, 100))
+                .containsExactly(new Point(260, 280),
+                        new Point(440, 280),
+                        new Point(440, 400));
+    }
+
 
 }

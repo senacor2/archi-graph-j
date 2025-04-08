@@ -165,6 +165,15 @@ public class ComponentLayout {
         return quality;
     }
 
+    public Set<Coordinate> getUsedCells() {
+        return new HashSet<>(layout.values());
+    }
+
+    public void add(Coordinate coord, Application a) {
+        if (layout == null) layout = new HashMap<>();
+        layout.put(a, coord);
+    }
+
     private record AppCoordinate(Application app, Coordinate coord) {
         Application getApp() { return app; }
         Coordinate getCoord() { return coord; }
