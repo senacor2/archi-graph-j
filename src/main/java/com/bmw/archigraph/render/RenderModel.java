@@ -70,7 +70,7 @@ public class RenderModel {
                 .w(model.getL1Components().stream()
                         .map(c -> c.getX() + c.getW())
                         .max(Integer::compareTo)
-                        .orElse(0) * COL_WIDTH)
+                        .orElse(0) * COL_WIDTH + COL_WIDTH)
                 .h(ROW_HEIGHT_HALF)
                 .build());
         for (var c : model.getL1Components()) {

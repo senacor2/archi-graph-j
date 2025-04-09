@@ -29,10 +29,11 @@ public class Reader {
     }
 
     public Model readModels() throws IOException {
-        return new Model()
-                .setL1Components(readComponents())
-                .setApplications(readApplications())
-                .setInformationFlows(readInformationFlows());
+        var model = new Model();
+        readComponentModel(model);
+        model.setApplications(readApplications());
+        model.setInformationFlows(readInformationFlows());
+        return model;
     }
 
     private List<Component> mapComponents(JsonNode node, int level) {
@@ -52,13 +53,13 @@ public class Reader {
         return result;
     }
 
-    List<Component> readComponents() throws IOException {
+    void readComponentModel(Model model) throws IOException {
         log.debug("Reading components from {}", compFile);
         var mapper = new ObjectMapper();
-        var componentModel = mapper.readTree(new File(compFile));
-        var result = mapComponents(componentModel, 1);
-        log.debug("Reading components: {} components read", result.size());
-        return result;
+        var jsonModel = mapper.readTree(new File(compFile));
+        model.setL1Components(mapComponents(jsonModel, 1));
+        model.setName(jsonModel.get("system").textValue());
+        log.debug("Reading components: Model {} read", model.getName());
     }
 
     List<Application> readApplications() throws IOException {

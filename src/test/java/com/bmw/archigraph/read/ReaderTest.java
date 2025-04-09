@@ -1,13 +1,11 @@
 package com.bmw.archigraph.read;
 
-import com.bmw.archigraph.model.Application;
-import com.bmw.archigraph.model.Component;
-import com.bmw.archigraph.model.Direction;
-import com.bmw.archigraph.model.InformationFlow;
+import com.bmw.archigraph.model.*;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ReaderTest {
@@ -40,9 +38,11 @@ public class ReaderTest {
 
     @Test
     void testReadComponents() throws IOException {
-        var comps = reader.readComponents();
-        assertEquals(2, comps.size());
-        assertEquals(new Component("Component 1", 1, 1, 3, 2, 1), comps.getFirst());
-        assertEquals(new Component("Component 2", 5, 1, 2, 2, 1), comps.getLast());
+        var model = new Model();
+        reader.readComponentModel(model);
+        var comps = model.getComponentMap().values();
+        assertThat(comps).containsExactlyInAnyOrder(
+                new Component("Component 1", 1, 1, 3, 2, 1),
+                new Component("Component 2", 5, 1, 2, 2, 1));
     }
 }
