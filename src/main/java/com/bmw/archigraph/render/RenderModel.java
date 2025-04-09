@@ -10,6 +10,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
+import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -108,6 +109,7 @@ public class RenderModel {
                 .h(ROW_HEIGHT_HALF)
                 .build()
         );
+        y += ROW_HEIGHT_HALF;
         // Body rectangle
         add(Rectangle.builder()
                 .id(comp.getName().replace(" ", "_") + "_body")
@@ -115,10 +117,10 @@ public class RenderModel {
                 .x(x)
                 .y(y)
                 .w(comp.getW() * COL_WIDTH)
-                .h(comp.getH() * ROW_HEIGHT + ROW_HEIGHT_HALF)
+                .h(comp.getH() * ROW_HEIGHT)
                 .build()
         );
-        var layout = renderApplications(comp, x, y + ROW_HEIGHT_HALF);
+        var layout = renderApplications(comp, x, y);
         renderInternalFlows(comp, x, y, layout);
         for (var c : comp.getComponents()) {
             render(c, x + COL_WIDTH_HALF, y + ROW_HEIGHT_HALF);
@@ -233,7 +235,7 @@ public class RenderModel {
                     new Point(endPoint.x + horSpacing, startPoint.y + vrtSpacing),
                     new Point(endPoint.x + horSpacing, endPoint.y)};
         }
-        log.debug("Line anchors {}", result);
+        log.debug("Line anchors {}", Arrays.toString(result));
         return result;
     }
 

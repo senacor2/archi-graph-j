@@ -62,9 +62,9 @@ public class RenderModelTest {
                         Rectangle.builder()
                                 .id("COMP-1_body")
                                 .x(0)
-                                .y(200)
+                                .y(300)
                                 .w(960)
-                                .h(700)
+                                .h(600)
                                 .background(Color.WHITE)
                                 .build(),
                         Rectangle.builder()
@@ -81,9 +81,9 @@ public class RenderModelTest {
                         Rectangle.builder()
                                 .id("COMP-2_body")
                                 .x(1280)
-                                .y(200)
+                                .y(300)
                                 .w(640)
-                                .h(700)
+                                .h(600)
                                 .background(Color.WHITE)
                                 .build()
                 );
@@ -129,9 +129,9 @@ public class RenderModelTest {
                         Rectangle.builder()
                                 .id("COMP-1_body")
                                 .x(0)
-                                .y(200)
+                                .y(300)
                                 .w(960)
-                                .h(700)
+                                .h(600)
                                 .background(Color.WHITE)
                                 .build(),
                         Rectangle.builder()
@@ -200,16 +200,16 @@ public class RenderModelTest {
                         Rectangle.builder()
                                 .id("COMP-1_body")
                                 .x(0)
-                                .y(200)
+                                .y(300)
                                 .w(1280)
-                                .h(700)
+                                .h(600)
                                 .background(Color.WHITE)
                                 .build(),
                         Rectangle.builder()
                                 .id("COMP-11_head")
                                 .text("COMP-11")
                                 .x(160)
-                                .y(300)
+                                .y(400)
                                 .w(960)
                                 .h(100)
                                 .foreground(Color.WHITE)
@@ -219,9 +219,9 @@ public class RenderModelTest {
                         Rectangle.builder()
                                 .id("COMP-11_body")
                                 .x(160)
-                                .y(300)
+                                .y(500)
                                 .w(960)
-                                .h(500)
+                                .h(400)
                                 .background(Color.WHITE)
                                 .build()
                 );
@@ -284,9 +284,9 @@ public class RenderModelTest {
                         Rectangle.builder()
                                 .id("C1_body")
                                 .x(0)
-                                .y(200)
+                                .y(300)
                                 .w(960)
-                                .h(700)
+                                .h(600)
                                 .background(Color.WHITE)
                                 .build(),
                         Rectangle.builder()
@@ -587,5 +587,20 @@ public class RenderModelTest {
                         new Point(440, 400));
     }
 
+    @Test
+    void testGetAnchorTwoByThreeBottomLeftToTopRight() {
+        var fixture = new RenderModel();
+        var layout = new ComponentLayout(new Component("C1", 1, 1, 3, 2, 1));
+        var c1 = new Coordinate(1, 0);
+        var c2 = new Coordinate(0, 2);
+        var a1 = new Application("A1", "A1", "C1", "", "", "");
+        var a2 = new Application("A2", "A2", "C1", "", "", "");
+        layout.add(c1, a1);
+        layout.add(c2, a2);
+        assertThat(fixture.getAnchors(layout, a1, a2, 320, 500))
+                .containsExactly(new Point(480, 720),
+                        new Point(980, 720),
+                        new Point(980, 600));
+    }
 
 }
