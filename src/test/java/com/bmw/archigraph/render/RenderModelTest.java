@@ -316,42 +316,42 @@ public class RenderModelTest {
     void testCoordOnAppTop() {
         var fixture = new RenderModel();
         assertEquals(new Point(530, 290),
-                fixture.coordOnApp(50, 50, new Coordinate(1, 1), RenderModel.Side.TOP));
+                fixture.coordOnApp(1, 50, 50, new Coordinate(1, 1), RenderModel.Side.TOP));
     }
 
     @Test
     void testCoordOnAppBottom() {
         var fixture = new RenderModel();
         assertEquals(new Point(530, 410),
-                fixture.coordOnApp(50, 50, new Coordinate(1, 1), RenderModel.Side.BOTTOM));
+                fixture.coordOnApp(1, 50, 50, new Coordinate(1, 1), RenderModel.Side.BOTTOM));
     }
 
     @Test
     void testCoordOnAppLeft() {
         var fixture = new RenderModel();
         assertEquals(new Point(410, 350),
-                fixture.coordOnApp(50, 50, new Coordinate(1, 1), RenderModel.Side.LEFT));
+                fixture.coordOnApp(1, 50, 50, new Coordinate(1, 1), RenderModel.Side.LEFT));
     }
 
     @Test
     void testCoordOnAppRight() {
         var fixture = new RenderModel();
         assertEquals(new Point(650, 350),
-                fixture.coordOnApp(50, 50, new Coordinate(1, 1), RenderModel.Side.RIGHT));
+                fixture.coordOnApp(1, 50, 50, new Coordinate(1, 1), RenderModel.Side.RIGHT));
     }
 
     @Test
     void testCoordOnAppTopOfBottomLeft() {
         var fixture = new RenderModel();
         assertEquals(new Point(210, 290),
-                fixture.coordOnApp(50, 50, new Coordinate(1, 0), RenderModel.Side.TOP));
+                fixture.coordOnApp(1, 50, 50, new Coordinate(1, 0), RenderModel.Side.TOP));
     }
 
     @Test
     void testCoordOnAppLeftOfTopRight() {
         var fixture = new RenderModel();
         assertEquals(new Point(410, 150),
-                fixture.coordOnApp(50, 50, new Coordinate(0, 1), RenderModel.Side.LEFT));
+                fixture.coordOnApp(1, 50, 50, new Coordinate(0, 1), RenderModel.Side.LEFT));
     }
 
     @Test
@@ -475,7 +475,7 @@ public class RenderModelTest {
         Application a2 = new Application("A2", "A2", "C1", "", "", "");
         layout.add(c1, a1);
         layout.add(c2, a2);
-        assertThat(fixture.getAnchors(layout, a1, a2, 100, 100))
+        assertThat(fixture.getAnchors(layout, 1, a1, a2, 100, 100))
                 .isEmpty();
     }
 
@@ -489,7 +489,7 @@ public class RenderModelTest {
         Application a2 = new Application("A2", "A2", "C1", "", "", "");
         layout.add(c1, a1);
         layout.add(c2, a2);
-        assertThat(fixture.getAnchors(layout, a1, a2, 100, 100))
+        assertThat(fixture.getAnchors(layout, 1, a1, a2, 100, 100))
                 .isEmpty();
     }
 
@@ -503,7 +503,7 @@ public class RenderModelTest {
         Application a2 = new Application("A2", "A2", "C1", "", "", "");
         layout.add(c1, a1);
         layout.add(c2, a2);
-        assertThat(fixture.getAnchors(layout, a1, a2, 100, 100))
+        assertThat(fixture.getAnchors(layout, 1, a1, a2, 100, 100))
                 .isEmpty();
     }
 
@@ -517,7 +517,7 @@ public class RenderModelTest {
         Application a2 = new Application("A2", "A2", "C1", "", "", "");
         layout.add(c1, a1);
         layout.add(c2, a2);
-        assertThat(fixture.getAnchors(layout, a1, a2, 100, 100))
+        assertThat(fixture.getAnchors(layout, 1, a1, a2, 100, 100))
                 .isEmpty();
     }
 
@@ -534,7 +534,7 @@ public class RenderModelTest {
         layout.add(c1, a1);
         layout.add(c2, a2);
         layout.add(c3, a3);
-        assertThat(fixture.getAnchors(layout, a1, a3, 100, 100))
+        assertThat(fixture.getAnchors(layout, 1, a1, a3, 100, 100))
                 .containsExactly(new Point(260, 120), new Point(900, 120));
     }
 
@@ -551,7 +551,7 @@ public class RenderModelTest {
         layout.add(c1, a1);
         layout.add(c2, a2);
         layout.add(c3, a3);
-        assertThat(fixture.getAnchors(layout, a1, a3, 100, 100))
+        assertThat(fixture.getAnchors(layout, 1, a1, a3, 100, 100))
                 .containsExactly(new Point(400, 200), new Point(400, 600));
     }
 
@@ -565,7 +565,7 @@ public class RenderModelTest {
         Application a2 = new Application("A2", "A2", "C1", "", "", "");
         layout.add(c1, a1);
         layout.add(c2, a2);
-        assertThat(fixture.getAnchors(layout, a1, a2, 100, 100))
+        assertThat(fixture.getAnchors(layout, 1, a1, a2, 100, 100))
                 .containsExactly(new Point(260, 320),
                         new Point(440, 320),
                         new Point(440, 200));
@@ -581,7 +581,7 @@ public class RenderModelTest {
         Application a2 = new Application("A2", "A2", "C1", "", "", "");
         layout.add(c1, a1);
         layout.add(c2, a2);
-        assertThat(fixture.getAnchors(layout, a1, a2, 100, 100))
+        assertThat(fixture.getAnchors(layout, 1, a1, a2, 100, 100))
                 .containsExactly(new Point(260, 280),
                         new Point(440, 280),
                         new Point(440, 400));
@@ -597,7 +597,7 @@ public class RenderModelTest {
         var a2 = new Application("A2", "A2", "C1", "", "", "");
         layout.add(c1, a1);
         layout.add(c2, a2);
-        assertThat(fixture.getAnchors(layout, a1, a2, 320, 500))
+        assertThat(fixture.getAnchors(layout, 1, a1, a2, 320, 500))
                 .containsExactly(new Point(480, 720),
                         new Point(980, 720),
                         new Point(980, 600));

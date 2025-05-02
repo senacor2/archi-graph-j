@@ -168,13 +168,20 @@ public class RenderModel {
                 .build());
     }
 
+    /**
+     * Draw the internal flow lines
+     * @param comp The enclosing component
+     * @param origX The x position of the components left edge
+     * @param origY The y position of the components top edge
+     * @param layout The row column positions of all apps inside the component.
+     */
     void renderInternalFlows(Component comp, int origX, int origY, ComponentLayout layout) {
         for (var flow : comp.getInternalInformationFlows()) {
-            render(flow, origX, origY, layout);
+            render(flow, comp.getLevel(), origX, origY, layout);
         }
     }
 
-    void render(InformationFlow flow, int origX, int origY, ComponentLayout layout) {
+    void render(InformationFlow flow, int level, int origX, int origY, ComponentLayout layout) {
         log.debug("Render flow {}", flow.getId());
         Rectangle sourceRect = elements.stream()
                 .filter(elem -> elem instanceof Rectangle)
@@ -188,7 +195,8 @@ public class RenderModel {
                 .filter(elem -> elem.getId().equals(flow.getDestId()))
                 .findFirst()
                 .orElseThrow();
-        Point[] anchors = getAnchors(layout, flow.getSource(), flow.getDestination(), origX, origY);
+        log.debug("Render flow from {} to {}", sourceRect, destRect);
+        Point[] anchors = getAnchors(layout, level, flow.getSource(), flow.getDestination(), origX, origY);
 
         add(Line.builder()
                 .id(flow.getId())
@@ -199,42 +207,43 @@ public class RenderModel {
                 .build());
     }
 
-    Point[] getAnchors(ComponentLayout layout, Application source, Application dest, int origX, int origY) {
+    Point[] getAnchors(ComponentLayout layout, int level, Application source, Application dest, int origX, int origY) {
         var srcCoord = layout.getAppCoordinate(source);
         var dstCoord = layout.getAppCoordinate(dest);
         int distanceHor = Math.abs(srcCoord.getCol() - dstCoord.getCol());
         int distanceVrt = Math.abs(srcCoord.getRow() - dstCoord.getRow());
         Point[] result;
 
+        log.debug("Get line anchors from {} to {}", srcCoord, dstCoord);
         if ((distanceHor == 0 && distanceVrt == 1) || (distanceVrt == 0 && distanceHor == 1)) {
-            // directly adjacent
+            log.debug("Directly adjacent");
             result = new Point[0];
         } else if (distanceVrt == 0 && distanceHor > 1 && allCellsEmptyHor(layout, srcCoord, dstCoord)) {
-            // same row and the column is empty between the cells
+            log.debug("Same row and space between is empty");
             result = new Point[0];
         } else if (distanceHor == 0 && distanceVrt > 1 && allCellsEmptyVert(layout, srcCoord, dstCoord)) {
-            // same column and the row is empty between the cells
+            log.debug("Same column and space between is empty");
             result = new Point[0];
         } else if (distanceVrt == 0 && distanceHor > 1) {
-            // same row with apps between
+            log.debug("Same row and apps between");
             // Start line at the top
             var x1 = origX + srcCoord.getCol() * COL_WIDTH + COL_WIDTH_HALF;
             var x2 = origX + dstCoord.getCol() * COL_WIDTH + COL_WIDTH_HALF;
             var y = origY + srcCoord.getRow() * ROW_HEIGHT + SPACING_HALF;
             result = new Point[]{new Point(x1, y), new Point(x2, y)};
         } else if (distanceHor == 0 && distanceVrt > 1) {
-            // same column with apps between
+            log.debug("Same col and apps between");
             // Start line at the right
             var x = origX + (srcCoord.getCol() + 1) * COL_WIDTH - SPACING_HALF;
             var y1 = origY + srcCoord.getRow() * ROW_HEIGHT + ROW_HEIGHT_HALF;
             var y2 = origY + dstCoord.getRow() * ROW_HEIGHT + ROW_HEIGHT_HALF;
             result = new Point[]{new Point(x, y1), new Point(x, y2)};
         } else {
-            // different rows and columns
+            log.debug("Different rows and columns");
             var topToBottom = srcCoord.getRow() < dstCoord.getRow();
             var leftToRight = srcCoord.getCol() < dstCoord.getCol();
-            var startPoint = coordOnApp(origX, origY, srcCoord, sideFrom(topToBottom));
-            var endPoint = coordOnApp(origX, origY, dstCoord, sideTo(leftToRight));
+            var startPoint = coordOnApp(level, origX, origY, srcCoord, sideFrom(topToBottom));
+            var endPoint = coordOnApp(level, origX, origY, dstCoord, sideTo(leftToRight));
             var horSpacing = leftToRight ? - SPACING_HALF : SPACING_HALF;
             var vrtSpacing = topToBottom ? SPACING_HALF : - SPACING_HALF;
             result = new Point[]{
@@ -279,20 +288,22 @@ public class RenderModel {
     /**
      * Returns the docking point of the information flow line for a given position in the
      * component grid.
-     * @param origX origin of the component on the x axis.
-     * @param origY origin of the component on the y axis.
+     * @param level nesting level of the component.
+     * @param origX origin of the component on the x-axis.
+     * @param origY origin of the component on the y-axis.
      * @param coord row/col position of the component.
      * @param side Side where the line shall connect: top, bottom, left of right.
      * @return the point where the information flow line connects to the app rectangle.
      */
-    Point coordOnApp(int origX, int origY, Coordinate coord, Side side) {
+    Point coordOnApp(int level, int origX, int origY, Coordinate coord, Side side) {
         var x = origX + coord.getCol() * COL_WIDTH;
         var y = origY + coord.getRow() * ROW_HEIGHT;
+        var spacing = SPACING - (level-1) * COMP_SPACING;
         return switch (side) {
-            case TOP -> new Point(x + SPACING + APP_WIDTH / 2, y + SPACING);
-            case BOTTOM -> new Point(x + SPACING + APP_WIDTH / 2, y + SPACING + APP_HEIGHT);
-            case LEFT -> new Point(x + SPACING, y + SPACING + APP_HEIGHT / 2);
-            case RIGHT -> new Point(x + SPACING + APP_WIDTH, y + SPACING + APP_HEIGHT / 2);
+            case TOP -> new Point(x + spacing + APP_WIDTH / 2, y + spacing);
+            case BOTTOM -> new Point(x + spacing + APP_WIDTH / 2, y + spacing + APP_HEIGHT);
+            case LEFT -> new Point(x + spacing, y + spacing + APP_HEIGHT / 2);
+            case RIGHT -> new Point(x + spacing + APP_WIDTH, y + spacing + APP_HEIGHT / 2);
         };
     }
 }
