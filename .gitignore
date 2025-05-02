@@ -1,4 +1,4 @@
-data/comp1.drawio.xml
+data/*.drawio.xml
 ### Maven
 target/
 !.mvn/wrapper/maven-wrapper.jar
