@@ -18,6 +18,7 @@ import java.util.List;
 public class Reader {
 
     public static final String COMPONENTS = "components";
+    public static final String SYSTEM = "system";
     private final String compFile;
     private final String appsFile;
     private final String flowsFile;
@@ -31,8 +32,8 @@ public class Reader {
     public Model readModels() throws IOException {
         var model = new Model();
         readComponentModel(model);
-        model.setApplications(readApplications());
-        model.setInformationFlows(readInformationFlows());
+        if (appsFile != null) model.setApplications(readApplications());
+        if (flowsFile != null) model.setInformationFlows(readInformationFlows());
         return model;
     }
 
@@ -40,13 +41,12 @@ public class Reader {
         var result = new LinkedList<Component>();
         for (JsonNode n : node.get(COMPONENTS)) {
             var comp = new Component(n.get("name").textValue(),
-                    n.get("x").intValue(),
-                    n.get("y").intValue(),
+                    n.get("y").intValue(), n.get("x").intValue(),
                     n.get("w").intValue(),
                     n.get("h").intValue(),
                     level);
             if (n.has(COMPONENTS)) {
-                comp.setComponents(mapComponents(n.get(COMPONENTS), level + 1));
+                comp.setComponents(mapComponents(n, level + 1));
             }
             result.add(comp);
         }
@@ -58,7 +58,7 @@ public class Reader {
         var mapper = new ObjectMapper();
         var jsonModel = mapper.readTree(new File(compFile));
         model.setL1Components(mapComponents(jsonModel, 1));
-        model.setName(jsonModel.get("system").textValue());
+        model.setName(jsonModel.get(SYSTEM).textValue());
         log.debug("Reading components: Model {} read", model.getName());
     }
 

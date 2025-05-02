@@ -1,0 +1,8 @@
+app-1,Application 1,Component 1-1-1-1,Linux,AWS,2020
+app-2,Application 2,Component 1-1-1-1,Linux,AWS,2018
+app-3,Application 3,Component 1-2,Linux,AWS,2020
+app-4,Application 4,Component 1-2,Linux,AWS,2020
+app-5,Application 5,Component 1-2,Linux,GCP,2022
+app-6,Application 6,Component 1,Linux,GCP,2022
+app-7,Application 7,Component 1,Linux,Azure,2021
+app-8,Application 8,Component 1,Linux,Azure,2020

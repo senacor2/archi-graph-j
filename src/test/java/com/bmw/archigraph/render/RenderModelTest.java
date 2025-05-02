@@ -29,7 +29,7 @@ public class RenderModelTest {
                 .name("System 1")
                 .build();
         var c1 = new Component("COMP-1", 0, 0, 3, 3, 1);
-        var c2 = new Component("COMP-2", 4, 0, 2, 3, 1);
+        var c2 = new Component("COMP-2", 0, 4, 2, 3, 1);
         model.setL1Components(List.of(c1, c2));
         model.setApplications(List.of());
         model.setInformationFlows(List.of());
@@ -64,7 +64,7 @@ public class RenderModelTest {
                                 .x(0)
                                 .y(300)
                                 .w(960)
-                                .h(600)
+                                .h(700)
                                 .background(Color.WHITE)
                                 .build(),
                         Rectangle.builder()
@@ -83,7 +83,7 @@ public class RenderModelTest {
                                 .x(1280)
                                 .y(300)
                                 .w(640)
-                                .h(600)
+                                .h(700)
                                 .background(Color.WHITE)
                                 .build()
                 );
@@ -131,7 +131,7 @@ public class RenderModelTest {
                                 .x(0)
                                 .y(300)
                                 .w(960)
-                                .h(600)
+                                .h(700)
                                 .background(Color.WHITE)
                                 .build(),
                         Rectangle.builder()
@@ -202,15 +202,15 @@ public class RenderModelTest {
                                 .x(0)
                                 .y(300)
                                 .w(1280)
-                                .h(600)
+                                .h(700)
                                 .background(Color.WHITE)
                                 .build(),
                         Rectangle.builder()
                                 .id("COMP-11_head")
                                 .text("COMP-11")
-                                .x(160)
-                                .y(400)
-                                .w(960)
+                                .x(10)
+                                .y(310)
+                                .w(940)
                                 .h(100)
                                 .foreground(Color.WHITE)
                                 .background(new Color(0, 0, 110))
@@ -218,10 +218,10 @@ public class RenderModelTest {
                                 .build(),
                         Rectangle.builder()
                                 .id("COMP-11_body")
-                                .x(160)
-                                .y(500)
-                                .w(960)
-                                .h(400)
+                                .x(10)
+                                .y(410)
+                                .w(940)
+                                .h(480)
                                 .background(Color.WHITE)
                                 .build()
                 );
@@ -286,7 +286,7 @@ public class RenderModelTest {
                                 .x(0)
                                 .y(300)
                                 .w(960)
-                                .h(600)
+                                .h(700)
                                 .background(Color.WHITE)
                                 .build(),
                         Rectangle.builder()

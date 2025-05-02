@@ -31,6 +31,7 @@ public class RenderModel {
     private static final int COL_WIDTH = (int) (ROW_HEIGHT * 1.6);
     private static final int ROW_HEIGHT_HALF = ROW_HEIGHT / 2;
     private static final int COL_WIDTH_HALF = COL_WIDTH / 2;
+    private static final int COMP_SPACING = 10;
     private static final int SPACING = 40;
     private static final int SPACING_HALF = SPACING / 2;
     private static final int APP_WIDTH = COL_WIDTH - SPACING * 2;
@@ -68,7 +69,7 @@ public class RenderModel {
                 .x(0)
                 .y(0)
                 .w(model.getL1Components().stream()
-                        .map(c -> c.getX() + c.getW())
+                        .map(c -> c.getCol() + c.getW())
                         .max(Integer::compareTo)
                         .orElse(0) * COL_WIDTH + COL_WIDTH)
                 .h(ROW_HEIGHT_HALF)
@@ -83,14 +84,19 @@ public class RenderModel {
      * Render a component consisting of a heading and the body where the apps are drawn.
      *
      * @param comp  A component
-     * @param origX the grid position (column) of the components left edge.
-     * @param origY the grid position (row) of the components top.
+     * @param l1OrigX the grid position (column) of the l1 components left edge.
+     * @param l1OrigY the grid position (row) of the l1 components top.
      */
-    void render(Component comp, int origX, int origY) {
-        int x = origX + comp.getX() * COL_WIDTH;
-        int y = origY + comp.getY() * ROW_HEIGHT;
+    void render(Component comp, int l1OrigX, int l1OrigY) {
+        int x = l1OrigX + comp.getCol() * COL_WIDTH + (comp.getLevel() - 1) * COMP_SPACING;
+        int y = l1OrigY + comp.getRow() * COL_WIDTH + (comp.getLevel() - 1) * COMP_SPACING + (comp.getLevel() -1) * ROW_HEIGHT_HALF;
+        int w = comp.getW() * COL_WIDTH - (comp.getLevel() - 1) * COMP_SPACING * 2;
         log.debug("Render comp {} orig {}/{}", comp.getName(), x, y);
 
+        if (comp.getLevel() == 1) {
+            l1OrigX = x;
+            l1OrigY = y;
+        }
         // Heading rectangle
         add(Rectangle.builder()
                 .id(comp.getName().replace(" ", "_") + "_head")
@@ -105,7 +111,7 @@ public class RenderModel {
                 })
                 .x(x)
                 .y(y)
-                .w(comp.getW() * COL_WIDTH)
+                .w(w)
                 .h(ROW_HEIGHT_HALF)
                 .build()
         );
@@ -116,14 +122,14 @@ public class RenderModel {
                 .background(BG_COLOR_COMP_BODY)
                 .x(x)
                 .y(y)
-                .w(comp.getW() * COL_WIDTH)
-                .h(comp.getH() * ROW_HEIGHT)
+                .w(w)
+                .h(comp.getH() * ROW_HEIGHT - (comp.getLevel() - 1) * COMP_SPACING * 2 + ROW_HEIGHT_HALF)
                 .build()
         );
-        var layout = renderApplications(comp, x, y);
+        var layout = renderApplications(comp, l1OrigX, l1OrigY);
         renderInternalFlows(comp, x, y, layout);
         for (var c : comp.getComponents()) {
-            render(c, x + COL_WIDTH_HALF, y + ROW_HEIGHT_HALF);
+            render(c, l1OrigX, l1OrigY);
         }
     }
 
@@ -131,22 +137,23 @@ public class RenderModel {
      * Render the applications inside a component.
      *
      * @param comp  The enclosing component.
-     * @param origX left edge of the component
-     * @param origY top edge of the component
+     * @param l1OrigX left edge of the L1 component
+     * @param l1OrigY top edge of the L1 component
      * @return the component layout, i.e. the row column positions for each app inside the component.
      */
-    ComponentLayout renderApplications(Component comp, int origX, int origY) {
+    ComponentLayout renderApplications(Component comp, int l1OrigX, int l1OrigY) {
         var cl = new ComponentLayout(comp);
         cl.layout();
         for (var a : comp.getApplications()) {
             var coord = cl.getAppCoordinate(a);
-            render(a, origX, origY, coord.row(), coord.col());
+            render(a, l1OrigX, l1OrigY, comp.getLevel(), comp.getRow(), comp.getCol(), coord);
         }
         return cl;
     }
 
-    void render(Application app, int origX, int origY, int row, int col) {
-        log.debug("Render app {} orig {}/{} row {} col {}", app.getId(), origX, origY, row, col);
+    void render(Application app, int l1OrigX, int l1OrigY, int level, int compRow, int compCol, Coordinate appCoord) {
+        log.debug("Render app {} orig {}/{} compRow {} compCol {} coord {}",
+                app.getId(), l1OrigX, l1OrigY, compRow, compCol, appCoord);
         add(Rectangle.builder()
                 .id(app.getId())
                 .text(app.getName())
@@ -154,8 +161,8 @@ public class RenderModel {
                 .foreground(FG_COLOR_APP)
                 .fontSize(12)
                 .rounded(true)
-                .x(origX + col * COL_WIDTH + SPACING)
-                .y(origY + row * ROW_HEIGHT + SPACING)
+                .x(l1OrigX + compCol * COL_WIDTH + appCoord.getCol() * COL_WIDTH + SPACING)
+                .y(l1OrigY + compRow * ROW_HEIGHT + appCoord.getRow() * ROW_HEIGHT + ROW_HEIGHT_HALF * level + SPACING)
                 .w(APP_WIDTH)
                 .h(APP_HEIGHT)
                 .build());

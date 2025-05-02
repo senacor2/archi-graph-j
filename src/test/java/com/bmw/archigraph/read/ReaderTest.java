@@ -43,6 +43,6 @@ public class ReaderTest {
         var comps = model.getComponentMap().values();
         assertThat(comps).containsExactlyInAnyOrder(
                 new Component("Component 1", 1, 1, 3, 2, 1),
-                new Component("Component 2", 5, 1, 2, 2, 1));
+                new Component("Component 2", 1, 5, 2, 2, 1));
     }
 }

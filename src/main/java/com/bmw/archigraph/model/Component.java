@@ -15,9 +15,9 @@ public class Component {
 
     private final String name;
 
-    private final int x;
+    private final int col;
 
-    private final int y;
+    private final int row;
 
     private final int w;
 
@@ -36,10 +36,10 @@ public class Component {
 
     private final List<InformationFlow> crossCompInformationFlows = new LinkedList<>();
 
-    public Component(String name, int x, int y, int w, int h, int level) {
+    public Component(String name, int row, int col, int w, int h, int level) {
         this.name = name;
-        this.x = x;
-        this.y = y;
+        this.row = row;
+        this.col = col;
         this.w = w;
         this.h = h;
         this.level = level;
@@ -73,7 +73,7 @@ public class Component {
     }
 
     public String toString() {
-        return String.format("Component %s %d,%d %d,%d level %d l1 %s", name, x, y, w, h, level,
+        return String.format("Component %s %d,%d %d,%d level %d l1 %s", name, col, row, w, h, level,
                 l1Component == null ? "null" : l1Component.getName());
     }
 
