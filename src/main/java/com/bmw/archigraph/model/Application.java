@@ -23,6 +23,11 @@ public class Application {
     this.componentName = componentName;
     attributes = Map.of("OS", attr1, "Cloud", attr2, "Expires", attr3);
   }
+
+  public Application(String id, String name, String componentName) {
+    this(id, name, componentName, "", "", "");
+  }
+
   public String getAttribute(String key) {
     return attributes.get(key);
   }

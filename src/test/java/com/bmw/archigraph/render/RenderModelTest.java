@@ -28,8 +28,8 @@ public class RenderModelTest {
         var model = Model.builder()
                 .name("System 1")
                 .build();
-        var c1 = new Component("COMP-1", 0, 0, 3, 3, 1);
-        var c2 = new Component("COMP-2", 0, 4, 2, 3, 1);
+        var c1 = new Component("COMP-1", 1, 0, 3, 3, 1);
+        var c2 = new Component("COMP-2", 1, 4, 2, 3, 1);
         model.setL1Components(List.of(c1, c2));
         model.setApplications(List.of());
         model.setInformationFlows(List.of());
@@ -94,7 +94,7 @@ public class RenderModelTest {
         var model = Model.builder()
                 .name("System 1")
                 .build();
-        var c1 = new Component("COMP-1", 0, 0, 3, 3, 1);
+        var c1 = new Component("COMP-1", 1, 0, 3, 3, 1);
         model.setL1Components(List.of(c1));
         var a1 = new Application("App-1", "Application 1", "COMP-1", "", "", "");
         var a2 = new Application("App-2", "Application 2", "COMP-1", "", "", "");
@@ -159,16 +159,21 @@ public class RenderModelTest {
                                 .fontSize(12)
                                 .build()
                 );
+        assertEquals(new Coordinate(0, 0), c1.getLayout().getAppCoordinate(a1));
+        assertEquals(new Coordinate(0, 1), c1.getLayout().getAppCoordinate(a2));
     }
 
     @Test
     void testModelWithSubComponents() {
         // fixture
-        var comp1 = new Component("COMP-1", 0, 0, 4, 3, 1);
+        var comp1 = new Component("COMP-1", 1, 0, 4, 3, 1);
         var comp2 = new Component("COMP-11", 0, 0, 3, 2, 2);
+        var app1 = new Application("A1", "App-1", "COMP-11");
+        var app2 = new Application("A2", "App-2", "COMP-11");
         comp1.setComponents(List.of(comp2));
         var model = Model.builder().name("System 1").build();
         model.setL1Components(List.of(comp1));
+        model.setApplications(List.of(app1, app2));
         // test
         var renderModel = new RenderModel();
         var result = renderModel.render(model);
@@ -223,8 +228,36 @@ public class RenderModelTest {
                                 .w(940)
                                 .h(480)
                                 .background(Color.WHITE)
+                                .build(),
+                        Rectangle.builder()
+                                .id("A1")
+                                .text("App-1")
+                                .rounded(true)
+                                .x(40)
+                                .y(440)
+                                .w(240)
+                                .h(120)
+                                .background(Color.WHITE)
+                                .foreground(Color.BLACK)
+                                .fontSize(12)
+                                .build(),
+                        Rectangle.builder()
+                                .id("A2")
+                                .text("App-2")
+                                .rounded(true)
+                                .x(360)
+                                .y(440)
+                                .w(240)
+                                .h(120)
+                                .background(Color.WHITE)
+                                .foreground(Color.BLACK)
+                                .fontSize(12)
                                 .build()
                 );
+        assertEquals(new Coordinate(0, 0), comp1.getLayout().getAppCoordinate(app1));
+        assertEquals(new Coordinate(0, 1), comp1.getLayout().getAppCoordinate(app2));
+        assertEquals(new Coordinate(0, 0), comp2.getLayout().getAppCoordinate(app1));
+        assertEquals(new Coordinate(0, 1), comp2.getLayout().getAppCoordinate(app2));
     }
 
     @Test
@@ -235,7 +268,7 @@ public class RenderModelTest {
                 .build();
         var app1 = new Application("A1", "A1", "C1", "", "", "");
         var app2 = new Application("A2", "A2", "C1", "", "", "");
-        var comp1 = new Component("C1", 0, 0, 3, 3, 1);
+        var comp1 = new Component("C1", 1, 0, 3, 3, 1);
         var if1 = new InformationFlow("IF12", "A1", "A2", "BO", Direction.ONE_WAY);
         model.setL1Components(List.of(comp1));
         model.setApplications(List.of(app1, app2));
@@ -369,8 +402,8 @@ public class RenderModelTest {
         var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(0, 2);
-        layout.add(c1, new Application("A1", "A1", "C1", "", "", ""));
-        layout.add(c2, new Application("A2", "A2", "C1", "", "", ""));
+        layout.add(c1, new Application("A1", "A1", "C1"));
+        layout.add(c2, new Application("A2", "A2", "C1"));
         assertTrue(fixture.allCellsEmptyHor(layout, c1, c2));
     }
 
@@ -380,8 +413,8 @@ public class RenderModelTest {
         var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(2, 0);
-        layout.add(c1, new Application("A1", "A1", "C1", "", "", ""));
-        layout.add(c2, new Application("A2", "A2", "C1", "", "", ""));
+        layout.add(c1, new Application("A1", "A1", "C1"));
+        layout.add(c2, new Application("A2", "A2", "C1"));
         assertTrue(fixture.allCellsEmptyVert(layout, c1, c2));
     }
 
@@ -391,8 +424,8 @@ public class RenderModelTest {
         var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(0, 3);
-        layout.add(c1, new Application("A1", "A1", "C1", "", "", ""));
-        layout.add(c2, new Application("A2", "A2", "C1", "", "", ""));
+        layout.add(c1, new Application("A1", "A1", "C1"));
+        layout.add(c2, new Application("A2", "A2", "C1"));
         assertTrue(fixture.allCellsEmptyHor(layout, c1, c2));
     }
 
@@ -402,8 +435,8 @@ public class RenderModelTest {
         var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(3, 0);
-        layout.add(c1, new Application("A1", "A1", "C1", "", "", ""));
-        layout.add(c2, new Application("A2", "A2", "C1", "", "", ""));
+        layout.add(c1, new Application("A1", "A1", "C1"));
+        layout.add(c2, new Application("A2", "A2", "C1"));
         assertTrue(fixture.allCellsEmptyVert(layout, c1, c2));
     }
 
@@ -414,9 +447,9 @@ public class RenderModelTest {
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(0, 1);
         var c3 = new Coordinate(0, 2);
-        layout.add(c1, new Application("A1", "A1", "C1", "", "", ""));
-        layout.add(c2, new Application("A2", "A2", "C1", "", "", ""));
-        layout.add(c3, new Application("A3", "A3", "C1", "", "", ""));
+        layout.add(c1, new Application("A1", "A1", "C1"));
+        layout.add(c2, new Application("A2", "A2", "C1"));
+        layout.add(c3, new Application("A3", "A3", "C1"));
         assertFalse(fixture.allCellsEmptyHor(layout, c1, c3));
     }
 
@@ -427,9 +460,9 @@ public class RenderModelTest {
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(0, 2);
         var c3 = new Coordinate(0, 4);
-        layout.add(c1, new Application("A1", "A1", "C1", "", "", ""));
-        layout.add(c2, new Application("A2", "A2", "C1", "", "", ""));
-        layout.add(c3, new Application("A3", "A3", "C1", "", "", ""));
+        layout.add(c1, new Application("A1", "A1", "C1"));
+        layout.add(c2, new Application("A2", "A2", "C1"));
+        layout.add(c3, new Application("A3", "A3", "C1"));
         assertFalse(fixture.allCellsEmptyHor(layout, c1, c3));
     }
 
@@ -440,9 +473,9 @@ public class RenderModelTest {
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(1, 0);
         var c3 = new Coordinate(2, 0);
-        layout.add(c1, new Application("A1", "A1", "C1", "", "", ""));
-        layout.add(c2, new Application("A2", "A2", "C1", "", "", ""));
-        layout.add(c3, new Application("A3", "A3", "C1", "", "", ""));
+        layout.add(c1, new Application("A1", "A1", "C1"));
+        layout.add(c2, new Application("A2", "A2", "C1"));
+        layout.add(c3, new Application("A3", "A3", "C1"));
         assertFalse(fixture.allCellsEmptyVert(layout, c1, c3));
     }
 
@@ -456,12 +489,12 @@ public class RenderModelTest {
         var c4 = new Coordinate(1, 2);
         var c5 = new Coordinate(1, 1);
         var c6 = new Coordinate(0, 0);
-        layout.add(c1, new Application("A1", "A1", "C1", "", "", ""));
-        layout.add(c2, new Application("A2", "A2", "C1", "", "", ""));
-        layout.add(c3, new Application("A3", "A3", "C1", "", "", ""));
-        layout.add(c4, new Application("A4", "A4", "C1", "", "", ""));
-        layout.add(c5, new Application("A5", "A5", "C1", "", "", ""));
-        layout.add(c6, new Application("A6", "A6", "C1", "", "", ""));
+        layout.add(c1, new Application("A1", "A1", "C1"));
+        layout.add(c2, new Application("A2", "A2", "C1"));
+        layout.add(c3, new Application("A3", "A3", "C1"));
+        layout.add(c4, new Application("A4", "A4", "C1"));
+        layout.add(c5, new Application("A5", "A5", "C1"));
+        layout.add(c6, new Application("A6", "A6", "C1"));
         assertFalse(fixture.allCellsEmptyHor(layout, c3, c6));
     }
 
@@ -471,8 +504,8 @@ public class RenderModelTest {
         var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(1, 0);
-        Application a1 = new Application("A1", "A1", "C1", "", "", "");
-        Application a2 = new Application("A2", "A2", "C1", "", "", "");
+        Application a1 = new Application("A1", "A1", "C1");
+        Application a2 = new Application("A2", "A2", "C1");
         layout.add(c1, a1);
         layout.add(c2, a2);
         assertThat(fixture.getAnchors(layout, 1, a1, a2, 100, 100))
@@ -485,8 +518,8 @@ public class RenderModelTest {
         var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(0, 1);
-        Application a1 = new Application("A1", "A1", "C1", "", "", "");
-        Application a2 = new Application("A2", "A2", "C1", "", "", "");
+        Application a1 = new Application("A1", "A1", "C1");
+        Application a2 = new Application("A2", "A2", "C1");
         layout.add(c1, a1);
         layout.add(c2, a2);
         assertThat(fixture.getAnchors(layout, 1, a1, a2, 100, 100))
@@ -499,8 +532,8 @@ public class RenderModelTest {
         var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(0, 2);
-        Application a1 = new Application("A1", "A1", "C1", "", "", "");
-        Application a2 = new Application("A2", "A2", "C1", "", "", "");
+        Application a1 = new Application("A1", "A1", "C1");
+        Application a2 = new Application("A2", "A2", "C1");
         layout.add(c1, a1);
         layout.add(c2, a2);
         assertThat(fixture.getAnchors(layout, 1, a1, a2, 100, 100))
@@ -513,8 +546,8 @@ public class RenderModelTest {
         var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(2, 0);
-        Application a1 = new Application("A1", "A1", "C1", "", "", "");
-        Application a2 = new Application("A2", "A2", "C1", "", "", "");
+        Application a1 = new Application("A1", "A1", "C1");
+        Application a2 = new Application("A2", "A2", "C1");
         layout.add(c1, a1);
         layout.add(c2, a2);
         assertThat(fixture.getAnchors(layout, 1, a1, a2, 100, 100))
@@ -528,9 +561,9 @@ public class RenderModelTest {
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(0, 1);
         var c3 = new Coordinate(0, 2);
-        Application a1 = new Application("A1", "A1", "C1", "", "", "");
-        Application a2 = new Application("A2", "A2", "C1", "", "", "");
-        Application a3 = new Application("A3", "A3", "C1", "", "", "");
+        Application a1 = new Application("A1", "A1", "C1");
+        Application a2 = new Application("A2", "A2", "C1");
+        Application a3 = new Application("A3", "A3", "C1");
         layout.add(c1, a1);
         layout.add(c2, a2);
         layout.add(c3, a3);
@@ -545,9 +578,9 @@ public class RenderModelTest {
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(1, 0);
         var c3 = new Coordinate(2, 0);
-        Application a1 = new Application("A1", "A1", "C1", "", "", "");
-        Application a2 = new Application("A2", "A2", "C1", "", "", "");
-        Application a3 = new Application("A3", "A3", "C1", "", "", "");
+        Application a1 = new Application("A1", "A1", "C1");
+        Application a2 = new Application("A2", "A2", "C1");
+        Application a3 = new Application("A3", "A3", "C1");
         layout.add(c1, a1);
         layout.add(c2, a2);
         layout.add(c3, a3);
@@ -561,8 +594,8 @@ public class RenderModelTest {
         var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
         var c1 = new Coordinate(1, 0);
         var c2 = new Coordinate(0, 1);
-        Application a1 = new Application("A1", "A1", "C1", "", "", "");
-        Application a2 = new Application("A2", "A2", "C1", "", "", "");
+        Application a1 = new Application("A1", "A1", "C1");
+        Application a2 = new Application("A2", "A2", "C1");
         layout.add(c1, a1);
         layout.add(c2, a2);
         assertThat(fixture.getAnchors(layout, 1, a1, a2, 100, 100))
@@ -577,8 +610,8 @@ public class RenderModelTest {
         var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(1, 1);
-        Application a1 = new Application("A1", "A1", "C1", "", "", "");
-        Application a2 = new Application("A2", "A2", "C1", "", "", "");
+        Application a1 = new Application("A1", "A1", "C1");
+        Application a2 = new Application("A2", "A2", "C1");
         layout.add(c1, a1);
         layout.add(c2, a2);
         assertThat(fixture.getAnchors(layout, 1, a1, a2, 100, 100))
@@ -593,8 +626,8 @@ public class RenderModelTest {
         var layout = new ComponentLayout(new Component("C1", 1, 1, 3, 2, 1));
         var c1 = new Coordinate(1, 0);
         var c2 = new Coordinate(0, 2);
-        var a1 = new Application("A1", "A1", "C1", "", "", "");
-        var a2 = new Application("A2", "A2", "C1", "", "", "");
+        var a1 = new Application("A1", "A1", "C1");
+        var a2 = new Application("A2", "A2", "C1");
         layout.add(c1, a1);
         layout.add(c2, a2);
         assertThat(fixture.getAnchors(layout, 1, a1, a2, 320, 500))

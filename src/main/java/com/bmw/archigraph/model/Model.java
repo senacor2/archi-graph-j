@@ -32,12 +32,16 @@ public class Model {
         for (Component c : components) {
             c.wireL1Component(c);
         }
+        for (Component c : components) {
+            c.wireParent(null);
+        }
     }
 
     public void setApplications(List<Application> applications) {
         assert componentMap != null;
         applicationMap = applications.stream()
                 .peek(a -> {
+                    // TODO handle unmapped component
                     var c = componentMap.get(a.getComponentName());
                     a.setComponent(c);
                     c.addApplication(a);

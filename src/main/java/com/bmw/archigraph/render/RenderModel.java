@@ -75,7 +75,7 @@ public class RenderModel {
                 .h(ROW_HEIGHT_HALF)
                 .build());
         for (var c : model.getL1Components()) {
-            render(c, 0, ROW_HEIGHT);
+            render(c);
         }
         return this;
     }
@@ -84,19 +84,14 @@ public class RenderModel {
      * Render a component consisting of a heading and the body where the apps are drawn.
      *
      * @param comp  A component
-     * @param l1OrigX the grid position (column) of the l1 components left edge.
-     * @param l1OrigY the grid position (row) of the l1 components top.
      */
-    void render(Component comp, int l1OrigX, int l1OrigY) {
-        int x = l1OrigX + comp.getCol() * COL_WIDTH + (comp.getLevel() - 1) * COMP_SPACING;
-        int y = l1OrigY + comp.getRow() * COL_WIDTH + (comp.getLevel() - 1) * COMP_SPACING + (comp.getLevel() -1) * ROW_HEIGHT_HALF;
+    void render(Component comp) {
+        // TODO vertikales spacing immer auf ganze ROW_HEIGHT
+        int x = comp.getAbsCol() * COL_WIDTH + (comp.getLevel() - 1) * COMP_SPACING;
+        int y = comp.getAbsRow() * ROW_HEIGHT + (comp.getLevel() - 1) * COMP_SPACING + (comp.getLevel() - 1) * ROW_HEIGHT_HALF;
         int w = comp.getW() * COL_WIDTH - (comp.getLevel() - 1) * COMP_SPACING * 2;
         log.debug("Render comp {} orig {}/{}", comp.getName(), x, y);
 
-        if (comp.getLevel() == 1) {
-            l1OrigX = x;
-            l1OrigY = y;
-        }
         // Heading rectangle
         add(Rectangle.builder()
                 .id(comp.getName().replace(" ", "_") + "_head")
@@ -126,10 +121,17 @@ public class RenderModel {
                 .h(comp.getH() * ROW_HEIGHT - (comp.getLevel() - 1) * COMP_SPACING * 2 + ROW_HEIGHT_HALF)
                 .build()
         );
-        var layout = renderApplications(comp, l1OrigX, l1OrigY);
-        renderInternalFlows(comp, x, y, layout);
+        var layout = renderApplications(comp);
+        renderLocalFlows(comp, x, y, layout);
+        comp.setLayout(layout);
         for (var c : comp.getComponents()) {
-            render(c, l1OrigX, l1OrigY);
+            render(c);
+        }
+        if (comp.getParentComponent() != null) { // L1 components have no parent
+            comp.getParentComponent().getLayout().add(layout, comp.getRow(), comp.getCol());
+        } else { // but non-local flows are rendered at the l1 level
+            renderL1CompFlows(comp, x, y, comp.getLayout());
+            renderCrossL1CompFlows(comp, x, y, comp.getLayout());
         }
     }
 
@@ -137,23 +139,20 @@ public class RenderModel {
      * Render the applications inside a component.
      *
      * @param comp  The enclosing component.
-     * @param l1OrigX left edge of the L1 component
-     * @param l1OrigY top edge of the L1 component
      * @return the component layout, i.e. the row column positions for each app inside the component.
      */
-    ComponentLayout renderApplications(Component comp, int l1OrigX, int l1OrigY) {
+    ComponentLayout renderApplications(Component comp) {
         var cl = new ComponentLayout(comp);
         cl.layout();
         for (var a : comp.getApplications()) {
             var coord = cl.getAppCoordinate(a);
-            render(a, l1OrigX, l1OrigY, comp.getLevel(), comp.getRow(), comp.getCol(), coord);
+            render(a, comp.getLevel(), comp.getAbsRow(), comp.getAbsCol(), coord);
         }
         return cl;
     }
 
-    void render(Application app, int l1OrigX, int l1OrigY, int level, int compRow, int compCol, Coordinate appCoord) {
-        log.debug("Render app {} orig {}/{} compRow {} compCol {} coord {}",
-                app.getId(), l1OrigX, l1OrigY, compRow, compCol, appCoord);
+    void render(Application app, int level, int compRow, int compCol, Coordinate appCoord) {
+        log.debug("Render app {} compRow {} compCol {} coord {}", app.getId(), compRow, compCol, appCoord);
         add(Rectangle.builder()
                 .id(app.getId())
                 .text(app.getName())
@@ -161,8 +160,8 @@ public class RenderModel {
                 .foreground(FG_COLOR_APP)
                 .fontSize(12)
                 .rounded(true)
-                .x(l1OrigX + compCol * COL_WIDTH + appCoord.getCol() * COL_WIDTH + SPACING)
-                .y(l1OrigY + compRow * ROW_HEIGHT + appCoord.getRow() * ROW_HEIGHT + ROW_HEIGHT_HALF * level + SPACING)
+                .x(compCol * COL_WIDTH + appCoord.getCol() * COL_WIDTH + SPACING)
+                .y(compRow * ROW_HEIGHT + appCoord.getRow() * ROW_HEIGHT + ROW_HEIGHT_HALF * level + SPACING)
                 .w(APP_WIDTH)
                 .h(APP_HEIGHT)
                 .build());
@@ -175,9 +174,22 @@ public class RenderModel {
      * @param origY The y position of the components top edge
      * @param layout The row column positions of all apps inside the component.
      */
-    void renderInternalFlows(Component comp, int origX, int origY, ComponentLayout layout) {
-        for (var flow : comp.getInternalInformationFlows()) {
+    void renderLocalFlows(Component comp, int origX, int origY, ComponentLayout layout) {
+        for (var flow : comp.getLocalInformationFlows()) {
             render(flow, comp.getLevel(), origX, origY, layout);
+        }
+    }
+
+    void renderL1CompFlows(Component comp, int origX, int origY, ComponentLayout layout) {
+        for (var flow : comp.getL1CompInformationFlows()) {
+            render(flow, 1, origX, origY, layout);
+        }
+    }
+
+    void renderCrossL1CompFlows(Component comp, int origX, int origY, ComponentLayout layout) {
+        // TODO create a new layout with proxies
+        for (var flow : comp.getCrossL1CompInformationFlows()) {
+            render(flow, 1, origX, origY, layout);
         }
     }
 

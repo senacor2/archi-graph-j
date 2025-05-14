@@ -1,5 +1,6 @@
 package com.bmw.archigraph.model;
 
+import com.bmw.archigraph.draw.ComponentLayout;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
@@ -27,14 +28,21 @@ public class Component {
 
     private Component l1Component;
 
+    private Component parentComponent;
+
     private final List<Application> applications = new LinkedList<>();
 
     @Setter
     private List<Component> components = new LinkedList<>();
 
-    private final List<InformationFlow> internalInformationFlows = new LinkedList<>();
+    private final List<InformationFlow> localInformationFlows = new LinkedList<>();
 
-    private final List<InformationFlow> crossCompInformationFlows = new LinkedList<>();
+    private final List<InformationFlow> l1CompInformationFlows = new LinkedList<>();
+
+    private final List<InformationFlow> crossL1CompInformationFlows = new LinkedList<>();
+
+    @Setter
+    private ComponentLayout layout;
 
     public Component(String name, int row, int col, int w, int h, int level) {
         this.name = name;
@@ -58,16 +66,49 @@ public class Component {
         }
     }
 
+    void wireParent(Component parent) {
+        parentComponent = parent;
+        for (var c : getComponents()) {
+            c.wireParent(this);
+        }
+    }
+
+    /**
+     * Returns the absolute row position of a component summing up the row positions
+     * of all parents.
+     * @return the row position relative to the sheet origin.
+     */
+    public int getAbsRow() {
+        return row + (parentComponent == null ? 0 : parentComponent.getAbsRow());
+    }
+
+    /**
+     * Returns the absolute column position of a component summing up the column
+     * positions of all parents.
+     * @return the column position relative to the sheet origin.
+     */
+    public int getAbsCol() {
+        return col + (parentComponent == null ? 0 : parentComponent.getAbsCol());
+    }
+
     public void selectInformationFlows(Collection<InformationFlow> allFlows) {
         log.debug("Selecting information flows for {}", getName());
         for (var i : allFlows) {
             var srcIn = applications.contains(i.getSource());
             var dstIn = applications.contains(i.getDestination());
-            log.debug("{} is {} {}", i.getId(), srcIn, dstIn);
+            var sameL1Comp = i.getSource().getComponent().getL1Component() == i.getDestination().getComponent().getL1Component();
+            log.debug("{} is src in = {}, dst in = {} same l1 = {}", i.getId(), srcIn, dstIn, sameL1Comp);
             if (srcIn && dstIn) {
-                internalInformationFlows.add(i);
+                log.debug("add {} to local flows if {}", i.getId(), name);
+                localInformationFlows.add(i);
+            } else if ((srcIn || dstIn) && sameL1Comp) {
+                log.debug("add {} to l1 local flows of {}", i.getId(), name);
+                l1CompInformationFlows.add(i);
             } else if (srcIn || dstIn) {
-                crossCompInformationFlows.add(i);
+                log.debug("add {} to cross l1 flows of {}", i.getId(), name);
+                crossL1CompInformationFlows.add(i);
+            } else {
+                log.debug("{} not in any flow of {}", i.getId(), name);
             }
         }
     }

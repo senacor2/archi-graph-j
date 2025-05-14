@@ -31,8 +31,9 @@ public class ComponentLayout {
 
     /**
      * Returns a list of all possible placements of apps inside a component. Apps are placed in a fixed grid.
-     * @param rows Number of rows in the component.
-     * @param columns Number of columns in the component.
+     *
+     * @param rows     Number of rows in the component.
+     * @param columns  Number of columns in the component.
      * @param appCount Number of apps to be placed inside a component.
      * @return The inner list is one possible combination of app positions inside the grid. The outer list
      * collects all possible permutations.
@@ -54,11 +55,12 @@ public class ComponentLayout {
 
     /**
      * Check if the three points a, b and c are positioned CounterClockWise.
-     * @link <a href="https://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/">Line Segment Intersection Algorithm</a>
+     *
      * @param a First point
      * @param b Second point
      * @param c Third point
      * @return Trhe if the slobe of AB is less than the slope of AC.
+     * @link <a href="https://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/">Line Segment Intersection Algorithm</a>
      */
     boolean ccw(Coordinate a, Coordinate b, Coordinate c) {
         return (c.getRow() - a.getRow()) * (b.getCol() - a.getCol()) >
@@ -67,10 +69,11 @@ public class ComponentLayout {
 
     /**
      * Check if the lines from the given apps would intersect.
+     *
      * @param fromApp1 source of the first information flow.
-     * @param toApp1 destination of the first information flow.
+     * @param toApp1   destination of the first information flow.
      * @param fromApp2 source of the second information flow.
-     * @param toApp2 destination of the second information flow.
+     * @param toApp2   destination of the second information flow.
      * @return true, if the first and the second information flow cross each other. False if not. Also false, if
      * information flows share a common endpoint.
      */
@@ -85,10 +88,12 @@ public class ComponentLayout {
                 .collect(Collectors.joining(", "));
         return "AppPos {" + result + "}";
     }
+
     /**
      * Given a possible layout of applications and the information flows, determine the quality of the layout.
+     *
      * @param appPositions A possible placement of apps in the component grid.
-     * @param flows information flows between the apps.
+     * @param flows        information flows between the apps.
      * @return The layout used with the computed layout quality.
      */
     RatedLayout layoutQuality(Map<Application, Coordinate> appPositions, List<InformationFlow> flows) {
@@ -110,7 +115,8 @@ public class ComponentLayout {
     /**
      * Join (zip) the lists and components side by side into a map keyed by the apps with the coords as value.
      * Both lists must have the same length.
-     * @param apps Apps will be used as keys.
+     *
+     * @param apps   Apps will be used as keys.
      * @param coords Coords will be used as values.
      * @return A map where each app in <code>apps</code> is associated with the coord at the same position in
      * <code>coords</code>.
@@ -124,6 +130,7 @@ public class ComponentLayout {
 
     /**
      * Create a default layout for the apps inside the component.
+     *
      * @param apps List of apps.
      * @return the default layout where the component is filled with apps from the top left, line by line.
      */
@@ -139,7 +146,7 @@ public class ComponentLayout {
      * After this operation, the layout quality and the application positions are initialized and can be retrieved.
      */
     public void layout() {
-        var flows = component.getInternalInformationFlows();
+        var flows = component.getLocalInformationFlows();
         if (component.getApplications().isEmpty()) {
             quality = 0;
             layout = new HashMap<>();
@@ -161,6 +168,25 @@ public class ComponentLayout {
         return layout.get(app);
     }
 
+    /**
+     * Add the layout of a subcomponent to this layout with the offset specified.
+     *
+     * @param subComp layout of a subcomponent
+     * @param row     vertical offset of the subcomponent
+     * @param col     horizontal offset of the subcomponent
+     */
+    public void add(ComponentLayout subComp, int row, int col) {
+        layout.putAll(subComp.layout.entrySet().stream()
+                .map(e ->
+                        new AppCoordinate(e.getKey(),
+                        new Coordinate(e.getValue().row() + row, e.getValue().col() + col)))
+                .collect(Collectors.toMap(AppCoordinate::getApp, AppCoordinate::getCoord)));
+    }
+
+    Map<Application, Coordinate> getAppCoordinates() {
+        return layout;
+    }
+
     int getQuality() {
         return quality;
     }
@@ -175,8 +201,13 @@ public class ComponentLayout {
     }
 
     private record AppCoordinate(Application app, Coordinate coord) {
-        Application getApp() { return app; }
-        Coordinate getCoord() { return coord; }
+        Application getApp() {
+            return app;
+        }
+
+        Coordinate getCoord() {
+            return coord;
+        }
     }
 
     static class RatedLayout implements Comparable<RatedLayout> {
