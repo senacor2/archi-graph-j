@@ -1,5 +1,6 @@
 package com.bmw.archigraph.model;
 
+import com.bmw.archigraph.draw.Area;
 import com.bmw.archigraph.draw.ComponentLayout;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,14 +17,19 @@ public class Component {
 
     private final String name;
 
-    private final int col;
+    /**
+     * The cell coordinates and size of the entire component.
+     */
+    private final Area compArea;
 
-    private final int row;
+    /**
+     * The cell coordinates and size of the area where components are drawn inside the app.
+     */
+    private Area appArea;
 
-    private final int w;
-
-    private final int h;
-
+    /**
+     * Component nesting level. The top level components have level == 1.
+     */
     private final int level;
 
     private Component l1Component;
@@ -46,10 +52,7 @@ public class Component {
 
     public Component(String name, int row, int col, int w, int h, int level) {
         this.name = name;
-        this.row = row;
-        this.col = col;
-        this.w = w;
-        this.h = h;
+        this.compArea = new Area(row, col, w, h);
         this.level = level;
     }
 
@@ -73,13 +76,61 @@ public class Component {
         }
     }
 
+    public int getRow() {
+        return compArea.row();
+    }
+
+    public int getCol() {
+        return compArea.col();
+    }
+
+    public int getHeight() {
+        return compArea.height();
+    }
+
+    public int getWidth() {
+        return compArea.width();
+    }
+
+    public int getAbsoluteAppRow() {
+        if (appArea == null) {
+            return getAbsRow();
+        } else {
+            return appArea.row() + (parentComponent == null ? 0 : parentComponent.getAbsRow());
+        }
+    }
+
+    public int getAbsoluteAppCol() {
+        if (appArea == null) {
+            return getAbsCol();
+        } else {
+            return appArea.col() + (parentComponent == null ? 0 : parentComponent.getAbsCol());
+        }
+    }
+
+    public int getAppWidth() {
+        if (appArea == null) {
+            return getWidth();
+        } else {
+            return appArea.width();
+        }
+    }
+
+    public int getAppHeight() {
+        if (appArea == null) {
+            return getHeight();
+        } else {
+            return appArea.height();
+        }
+    }
+
     /**
      * Returns the absolute row position of a component summing up the row positions
      * of all parents.
      * @return the row position relative to the sheet origin.
      */
     public int getAbsRow() {
-        return row + (parentComponent == null ? 0 : parentComponent.getAbsRow());
+        return compArea.row() + (parentComponent == null ? 0 : parentComponent.getAbsRow());
     }
 
     /**
@@ -88,7 +139,7 @@ public class Component {
      * @return the column position relative to the sheet origin.
      */
     public int getAbsCol() {
-        return col + (parentComponent == null ? 0 : parentComponent.getAbsCol());
+        return compArea.col() + (parentComponent == null ? 0 : parentComponent.getAbsCol());
     }
 
     public void selectInformationFlows(Collection<InformationFlow> allFlows) {
@@ -114,7 +165,8 @@ public class Component {
     }
 
     public String toString() {
-        return String.format("Component %s %d,%d %d,%d level %d l1 %s", name, col, row, w, h, level,
+        return String.format("Component %s %d,%d %d,%d level %d l1 %s", name, compArea.col(), compArea.row(),
+                compArea.width(), compArea.height(), level,
                 l1Component == null ? "null" : l1Component.getName());
     }
 

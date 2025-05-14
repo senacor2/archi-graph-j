@@ -69,7 +69,7 @@ public class RenderModel {
                 .x(0)
                 .y(0)
                 .w(model.getL1Components().stream()
-                        .map(c -> c.getCol() + c.getW())
+                        .map(c -> c.getCol() + c.getWidth())
                         .max(Integer::compareTo)
                         .orElse(0) * COL_WIDTH + COL_WIDTH)
                 .h(ROW_HEIGHT_HALF)
@@ -89,7 +89,7 @@ public class RenderModel {
         // TODO vertikales spacing immer auf ganze ROW_HEIGHT
         int x = comp.getAbsCol() * COL_WIDTH + (comp.getLevel() - 1) * COMP_SPACING;
         int y = comp.getAbsRow() * ROW_HEIGHT + (comp.getLevel() - 1) * COMP_SPACING + (comp.getLevel() - 1) * ROW_HEIGHT_HALF;
-        int w = comp.getW() * COL_WIDTH - (comp.getLevel() - 1) * COMP_SPACING * 2;
+        int w = comp.getWidth() * COL_WIDTH - (comp.getLevel() - 1) * COMP_SPACING * 2;
         log.debug("Render comp {} orig {}/{}", comp.getName(), x, y);
 
         // Heading rectangle
@@ -118,7 +118,7 @@ public class RenderModel {
                 .x(x)
                 .y(y)
                 .w(w)
-                .h(comp.getH() * ROW_HEIGHT - (comp.getLevel() - 1) * COMP_SPACING * 2 + ROW_HEIGHT_HALF)
+                .h(comp.getHeight() * ROW_HEIGHT - (comp.getLevel() - 1) * COMP_SPACING * 2 + ROW_HEIGHT_HALF)
                 .build()
         );
         var layout = renderApplications(comp);
@@ -146,7 +146,7 @@ public class RenderModel {
         cl.layout();
         for (var a : comp.getApplications()) {
             var coord = cl.getAppCoordinate(a);
-            render(a, comp.getLevel(), comp.getAbsRow(), comp.getAbsCol(), coord);
+            render(a, comp.getLevel(), comp.getAbsoluteAppRow(), comp.getAbsoluteAppCol(), coord);
         }
         return cl;
     }

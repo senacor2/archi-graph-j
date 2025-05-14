@@ -7,6 +7,12 @@
       "y": 1,
       "w": 8,
       "h": 5,
+      "app-area": {
+        "x": 3,
+        "y": 0,
+        "w": 3,
+        "h": 4
+      },
       "components": [
         {
           "name": "Component 1-1",

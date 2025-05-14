@@ -136,7 +136,7 @@ public class ComponentLayout {
      */
     Map<Application, Coordinate> defaultLayout(List<Application> apps) {
         var coords = IntStream.range(0, apps.size())
-                .mapToObj(i -> Coordinate.fromIndex(component.getW(), i))
+                .mapToObj(i -> Coordinate.fromIndex(component.getWidth(), i))
                 .toList();
         return zipmapAppsAndCoordinates(apps, coords);
     }
@@ -154,7 +154,7 @@ public class ComponentLayout {
             quality = 0;
             layout = defaultLayout(component.getApplications());
         } else {
-            var best = appPositionsInComponent(component.getH(), component.getW(), component.getApplications().size()).stream()
+            var best = appPositionsInComponent(component.getHeight(), component.getWidth(), component.getApplications().size()).stream()
                     .map(l -> zipmapAppsAndCoordinates(component.getApplications(), l))
                     .map(layout -> layoutQuality(layout, flows))
                     .min(RatedLayout::compareTo)
