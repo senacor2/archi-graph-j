@@ -1,5 +1,6 @@
 package com.bmw.archigraph.read;
 
+import com.bmw.archigraph.draw.Area;
 import com.bmw.archigraph.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -19,6 +20,7 @@ public class Reader {
 
     public static final String COMPONENTS = "components";
     public static final String SYSTEM = "system";
+    public static final String APP_AREA = "app-area";
     private final String compFile;
     private final String appsFile;
     private final String flowsFile;
@@ -45,6 +47,14 @@ public class Reader {
                     n.get("w").intValue(),
                     n.get("h").intValue(),
                     level);
+            if (n.has(APP_AREA)) {
+                var areaNode = n.get(APP_AREA);
+                var area = new Area(areaNode.get("y").intValue(),
+                        areaNode.get("x").intValue(),
+                        areaNode.get("w").intValue(),
+                        areaNode.get("h").intValue());
+                comp.setAppArea(area);
+            }
             if (n.has(COMPONENTS)) {
                 comp.setComponents(mapComponents(n, level + 1));
             }

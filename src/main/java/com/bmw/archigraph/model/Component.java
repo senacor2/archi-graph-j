@@ -3,6 +3,7 @@ package com.bmw.archigraph.model;
 import com.bmw.archigraph.draw.Area;
 import com.bmw.archigraph.draw.ComponentLayout;
 import lombok.Getter;
+import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -74,6 +75,11 @@ public class Component {
         for (var c : getComponents()) {
             c.wireParent(this);
         }
+    }
+
+    public void setAppArea(@NonNull Area area) {
+        assert(appArea == null);
+        appArea = area;
     }
 
     public int getRow() {

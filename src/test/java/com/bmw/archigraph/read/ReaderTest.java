@@ -1,20 +1,23 @@
 package com.bmw.archigraph.read;
 
+import com.bmw.archigraph.draw.Area;
 import com.bmw.archigraph.model.*;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ReaderTest {
 
-    public static final String COMP_FILE = "data/comp1.json";
+    public static final String COMP1_FILE = "data/comp1.json";
+    public static final String COMP2_FILE = "data/comp2.json";
     public static final String APPS_FILE = "data/apps1.csv";
     public static final String FLOWS_FILE = "data/flows1.csv";
 
-    private final Reader reader = new Reader(COMP_FILE, APPS_FILE, FLOWS_FILE);
+    private final Reader reader = new Reader(COMP1_FILE, APPS_FILE, FLOWS_FILE);
 
     @Test
     void testReadApplications() throws IOException {
@@ -44,5 +47,17 @@ public class ReaderTest {
         assertThat(comps).containsExactlyInAnyOrder(
                 new Component("Component 1", 1, 1, 3, 2, 1),
                 new Component("Component 2", 1, 5, 2, 2, 1));
+    }
+
+    @Test
+    void testReadNestedComponents() throws IOException {
+        var reader = new Reader(COMP2_FILE, null, null);
+        var model = new Model();
+        reader.readComponentModel(model);
+        var componentMap = model.getComponentMap();
+        assertThat(componentMap.keySet()).containsExactlyInAnyOrder(
+                "Component 1", "Component 1-1", "Component 1-1-1", "Component 1-1-1-1", "Component 1-2"
+        );
+        assertThat(componentMap.get("Component 1").getAppArea()).isEqualTo(new Area(0, 3, 3, 4));
     }
 }
