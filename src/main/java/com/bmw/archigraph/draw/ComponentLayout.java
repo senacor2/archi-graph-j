@@ -154,7 +154,7 @@ public class ComponentLayout {
             quality = 0;
             layout = defaultLayout(component.getApplications());
         } else {
-            var best = appPositionsInComponent(component.getHeight(), component.getWidth(), component.getApplications().size()).stream()
+            var best = appPositionsInComponent(component.getAppHeight(), component.getAppWidth(), component.getApplications().size()).stream()
                     .map(l -> zipmapAppsAndCoordinates(component.getApplications(), l))
                     .map(layout -> layoutQuality(layout, flows))
                     .min(RatedLayout::compareTo)
@@ -181,10 +181,6 @@ public class ComponentLayout {
                         new AppCoordinate(e.getKey(),
                         new Coordinate(e.getValue().row() + row, e.getValue().col() + col)))
                 .collect(Collectors.toMap(AppCoordinate::getApp, AppCoordinate::getCoord)));
-    }
-
-    Map<Application, Coordinate> getAppCoordinates() {
-        return layout;
     }
 
     int getQuality() {
