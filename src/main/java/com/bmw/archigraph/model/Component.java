@@ -102,7 +102,7 @@ public class Component {
         if (appArea == null) {
             return getAbsRow();
         } else {
-            return appArea.row() + (parentComponent == null ? 0 : parentComponent.getAbsRow());
+            return appArea.row() + getAbsRow();
         }
     }
 
@@ -110,7 +110,7 @@ public class Component {
         if (appArea == null) {
             return getAbsCol();
         } else {
-            return appArea.col() + (parentComponent == null ? 0 : parentComponent.getAbsCol());
+            return appArea.col() + getAbsCol();
         }
     }
 
