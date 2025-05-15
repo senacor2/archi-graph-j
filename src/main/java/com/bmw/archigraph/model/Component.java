@@ -51,9 +51,10 @@ public class Component {
     @Setter
     private ComponentLayout layout;
 
-    public Component(String name, int row, int col, int w, int h, int level) {
+    public Component(String name, int row, int col, int width, int height, int level) {
         this.name = name;
-        this.compArea = new Area(row, col, w, h);
+        this.compArea = new Area(row, col, width, height);
+        this.appArea = new Area(0, 0, width, height - 1);
         this.level = level;
     }
 
@@ -78,7 +79,6 @@ public class Component {
     }
 
     public void setAppArea(@NonNull Area area) {
-        assert(appArea == null);
         appArea = area;
     }
 
@@ -99,35 +99,19 @@ public class Component {
     }
 
     public int getAbsoluteAppRow() {
-        if (appArea == null) {
-            return getAbsRow();
-        } else {
-            return appArea.row() + getAbsRow();
-        }
+        return appArea.row() + getAbsRow();
     }
 
     public int getAbsoluteAppCol() {
-        if (appArea == null) {
-            return getAbsCol();
-        } else {
-            return appArea.col() + getAbsCol();
-        }
+        return appArea.col() + getAbsCol();
     }
 
     public int getAppWidth() {
-        if (appArea == null) {
-            return getWidth();
-        } else {
-            return appArea.width();
-        }
+        return appArea.width();
     }
 
     public int getAppHeight() {
-        if (appArea == null) {
-            return getHeight();
-        } else {
-            return appArea.height();
-        }
+        return appArea.height();
     }
 
     /**

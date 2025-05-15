@@ -86,11 +86,10 @@ public class RenderModel {
      * @param comp  A component
      */
     void render(Component comp) {
-        // TODO vertikales spacing immer auf ganze ROW_HEIGHT
-        int x = comp.getAbsCol() * COL_WIDTH + (comp.getLevel() - 1) * COMP_SPACING;
-        int y = comp.getAbsRow() * ROW_HEIGHT + (comp.getLevel() - 1) * COMP_SPACING + (comp.getLevel() - 1) * ROW_HEIGHT_HALF;
+        int x = comp.getAbsCol() * COL_WIDTH + indent(comp);
+        int y = comp.getAbsRow() * ROW_HEIGHT + indent(comp) + (comp.getLevel() - 1) * ROW_HEIGHT;
         int w = comp.getWidth() * COL_WIDTH - (comp.getLevel() - 1) * COMP_SPACING * 2;
-        log.debug("Render comp {} orig {}/{}", comp.getName(), x, y);
+        log.debug("Render comp {} orig {}/{}", comp, x, y);
 
         // Heading rectangle
         add(Rectangle.builder()
@@ -99,18 +98,18 @@ public class RenderModel {
                 .background(BG_COLOR_COMP_HEAD)
                 .foreground(FG_COLOR_COMP_HEAD)
                 .fontSize(switch (comp.getLevel()) {
-                    case 1 -> 24;
-                    case 2 -> 20;
-                    case 3 -> 16;
-                    default -> 12;
+                    case 1 -> 48;
+                    case 2 -> 40;
+                    case 3 -> 32;
+                    default -> 24;
                 })
                 .x(x)
                 .y(y)
                 .w(w)
-                .h(ROW_HEIGHT_HALF)
+                .h(ROW_HEIGHT)
                 .build()
         );
-        y += ROW_HEIGHT_HALF;
+        y += ROW_HEIGHT;
         // Body rectangle
         add(Rectangle.builder()
                 .id(comp.getName().replace(" ", "_") + "_body")
@@ -118,7 +117,7 @@ public class RenderModel {
                 .x(x)
                 .y(y)
                 .w(w)
-                .h(comp.getHeight() * ROW_HEIGHT - (comp.getLevel() - 1) * COMP_SPACING * 2 + ROW_HEIGHT_HALF)
+                .h((comp.getHeight() - 1) * ROW_HEIGHT - indent(comp) * 2)
                 .build()
         );
         var layout = renderApplications(comp);
@@ -133,6 +132,10 @@ public class RenderModel {
             renderL1CompFlows(comp, x, y, comp.getLayout());
             renderCrossL1CompFlows(comp, x, y, comp.getLayout());
         }
+    }
+
+    private static int indent(Component comp) {
+        return (comp.getLevel() - 1) * COMP_SPACING;
     }
 
     /**
@@ -161,7 +164,7 @@ public class RenderModel {
                 .fontSize(12)
                 .rounded(true)
                 .x(compCol * COL_WIDTH + appCoord.getCol() * COL_WIDTH + SPACING)
-                .y(compRow * ROW_HEIGHT + appCoord.getRow() * ROW_HEIGHT + ROW_HEIGHT_HALF * level + SPACING)
+                .y(compRow * ROW_HEIGHT + appCoord.getRow() * ROW_HEIGHT + ROW_HEIGHT * level + SPACING)
                 .w(APP_WIDTH)
                 .h(APP_HEIGHT)
                 .build());
