@@ -65,7 +65,7 @@ public class RenderModel {
                 .text(model.getName())
                 .background(BG_COLOR_MODEL)
                 .foreground(FG_COLOR_MODEL)
-                .fontSize(28)
+                .fontSize(48)
                 .x(0)
                 .y(0)
                 .w(model.getL1Components().stream()
