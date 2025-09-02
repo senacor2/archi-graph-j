@@ -163,53 +163,72 @@ public class RenderModel {
                 .foreground(FG_COLOR_APP)
                 .fontSize(12)
                 .rounded(true)
-                .x(compCol * COL_WIDTH + appCoord.getCol() * COL_WIDTH + SPACING)
-                .y(compRow * ROW_HEIGHT + appCoord.getRow() * ROW_HEIGHT + ROW_HEIGHT * level + SPACING)
+                .x(compCol * COL_WIDTH + appCoord.col() * COL_WIDTH + SPACING)
+                .y(compRow * ROW_HEIGHT + appCoord.row() * ROW_HEIGHT + ROW_HEIGHT * level + SPACING)
                 .w(APP_WIDTH)
                 .h(APP_HEIGHT)
                 .build());
     }
 
     /**
-     * Draw the internal flow lines
+     * Draw the internal flow lines inside one component.
      * @param comp The enclosing component
      * @param origX The x position of the components left edge
      * @param origY The y position of the components top edge
      * @param layout The row column positions of all apps inside the component.
      */
     void renderLocalFlows(Component comp, int origX, int origY, ComponentLayout layout) {
+        log.debug("Render local flows for {}", comp.getName());
         for (var flow : comp.getLocalInformationFlows()) {
-            render(flow, comp.getLevel(), origX, origY, layout);
+            render(flow, comp.getLevel(), origX, origY, comp, layout);
         }
     }
 
+    /**
+     * Draw the flows inside one L1 component.
+     * @param comp the L1 component.
+     * @param origX The x position of the components left edge.
+     * @param origY The y position of the components top edge.
+     * @param layout The row column position of all apps inside this component.
+     */
     void renderL1CompFlows(Component comp, int origX, int origY, ComponentLayout layout) {
+        log.debug("Render l1 flows for {}", comp.getName());
         for (var flow : comp.getL1CompInformationFlows()) {
-            render(flow, 1, origX, origY, layout);
+            render(flow, 1, origX, origY, comp, layout);
         }
     }
 
+    /**
+     *  Render the information flows across L1 component boundaries.
+     *  Apps outside the component are represented by proxies which are placed around the L1 component.
+     * @param comp The L1 component.
+     * @param origX The x position of the components left edge.
+     * @param origY The y position of the components top edge.
+     * @param layout The rol column position of all apps inside this component.
+     */
     void renderCrossL1CompFlows(Component comp, int origX, int origY, ComponentLayout layout) {
-        // TODO create a new layout with proxies
+        log.debug("Render cross l1 flows for {}", comp.getName());
+        // TODO amend the layout with proxies
+
         for (var flow : comp.getCrossL1CompInformationFlows()) {
-            render(flow, 1, origX, origY, layout);
+            render(flow, 1, origX, origY, comp, layout);
         }
     }
 
-    void render(InformationFlow flow, int level, int origX, int origY, ComponentLayout layout) {
+    void render(InformationFlow flow, int level, int origX, int origY, Component comp, ComponentLayout layout) {
         log.debug("Render flow {}", flow.getId());
         Rectangle sourceRect = elements.stream()
                 .filter(elem -> elem instanceof Rectangle)
                 .map(elem -> (Rectangle) elem)
                 .filter(elem -> elem.getId().equals(flow.getSourceId()))
                 .findFirst()
-                .orElseThrow();
+                .orElse(renderApplicationProxy(flow.getSource(), comp, layout));
         Rectangle destRect = elements.stream()
                 .filter(elem -> elem instanceof Rectangle)
                 .map(elem -> (Rectangle) elem)
                 .filter(elem -> elem.getId().equals(flow.getDestId()))
                 .findFirst()
-                .orElseThrow();
+                .orElse(renderApplicationProxy(flow.getDestination(), comp, layout));
         log.debug("Render flow from {} to {}", sourceRect, destRect);
         Point[] anchors = getAnchors(layout, level, flow.getSource(), flow.getDestination(), origX, origY);
 
@@ -222,11 +241,27 @@ public class RenderModel {
                 .build());
     }
 
+    private Rectangle renderApplicationProxy(Application app, Component parent, ComponentLayout layout) {
+        var coord = layout.getAppCoordinate(app);
+        return Rectangle.builder()
+                .id(parent.getName() + "-proxy-" + app.getId())
+                .text(app.getName())
+                .fontSize(12)
+                .background(Color.WHITE)
+                .foreground(Color.BLACK)
+                .rounded(true)
+                .x(0) // TODO
+                .y(0) // TODO
+                .w(APP_WIDTH)
+                .h(APP_HEIGHT)
+                .build();
+    }
+
     Point[] getAnchors(ComponentLayout layout, int level, Application source, Application dest, int origX, int origY) {
         var srcCoord = layout.getAppCoordinate(source);
         var dstCoord = layout.getAppCoordinate(dest);
-        int distanceHor = Math.abs(srcCoord.getCol() - dstCoord.getCol());
-        int distanceVrt = Math.abs(srcCoord.getRow() - dstCoord.getRow());
+        int distanceHor = Math.abs(srcCoord.col() - dstCoord.col());
+        int distanceVrt = Math.abs(srcCoord.row() - dstCoord.row());
         Point[] result;
 
         log.debug("Get line anchors from {} to {}", srcCoord, dstCoord);
@@ -242,21 +277,21 @@ public class RenderModel {
         } else if (distanceVrt == 0 && distanceHor > 1) {
             log.debug("Same row and apps between");
             // Start line at the top
-            var x1 = origX + srcCoord.getCol() * COL_WIDTH + COL_WIDTH_HALF;
-            var x2 = origX + dstCoord.getCol() * COL_WIDTH + COL_WIDTH_HALF;
-            var y = origY + srcCoord.getRow() * ROW_HEIGHT + SPACING_HALF;
+            var x1 = origX + srcCoord.col() * COL_WIDTH + COL_WIDTH_HALF;
+            var x2 = origX + dstCoord.col() * COL_WIDTH + COL_WIDTH_HALF;
+            var y = origY + srcCoord.row() * ROW_HEIGHT + SPACING_HALF;
             result = new Point[]{new Point(x1, y), new Point(x2, y)};
         } else if (distanceHor == 0 && distanceVrt > 1) {
             log.debug("Same col and apps between");
             // Start line at the right
-            var x = origX + (srcCoord.getCol() + 1) * COL_WIDTH - SPACING_HALF;
-            var y1 = origY + srcCoord.getRow() * ROW_HEIGHT + ROW_HEIGHT_HALF;
-            var y2 = origY + dstCoord.getRow() * ROW_HEIGHT + ROW_HEIGHT_HALF;
+            var x = origX + (srcCoord.col() + 1) * COL_WIDTH - SPACING_HALF;
+            var y1 = origY + srcCoord.row() * ROW_HEIGHT + ROW_HEIGHT_HALF;
+            var y2 = origY + dstCoord.row() * ROW_HEIGHT + ROW_HEIGHT_HALF;
             result = new Point[]{new Point(x, y1), new Point(x, y2)};
         } else {
             log.debug("Different rows and columns");
-            var topToBottom = srcCoord.getRow() < dstCoord.getRow();
-            var leftToRight = srcCoord.getCol() < dstCoord.getCol();
+            var topToBottom = srcCoord.row() < dstCoord.row();
+            var leftToRight = srcCoord.col() < dstCoord.col();
             var startPoint = coordOnApp(level, origX, origY, srcCoord, sideFrom(topToBottom));
             var endPoint = coordOnApp(level, origX, origY, dstCoord, sideTo(leftToRight));
             var horSpacing = leftToRight ? - SPACING_HALF : SPACING_HALF;
@@ -272,20 +307,20 @@ public class RenderModel {
 
     boolean allCellsEmptyHor(ComponentLayout layout, Coordinate src, Coordinate dst) {
         var usedCells = layout.getUsedCells();
-        var fromCol = Math.min(src.getCol(), dst.getCol()) + 1;
-        var toCol = Math.max(src.getCol(), dst.getCol());
+        var fromCol = Math.min(src.col(), dst.col()) + 1;
+        var toCol = Math.max(src.col(), dst.col());
         for (int col = fromCol; col < toCol; col++) {
-            if (usedCells.contains(new Coordinate(src.getRow(), col))) return false;
+            if (usedCells.contains(new Coordinate(src.row(), col))) return false;
         }
         return true;
     }
 
     boolean allCellsEmptyVert(ComponentLayout layout, Coordinate src, Coordinate dst) {
         var usedCells = layout.getUsedCells();
-        var fromRow = Math.min(src.getRow(), dst.getRow()) + 1;
-        var toRow = Math.max(src.getRow(), dst.getRow());
+        var fromRow = Math.min(src.row(), dst.row()) + 1;
+        var toRow = Math.max(src.row(), dst.row());
         for (int row = fromRow; row < toRow; row++) {
-            if (usedCells.contains(new Coordinate(row, src.getCol()))) return false;
+            if (usedCells.contains(new Coordinate(row, src.col()))) return false;
         }
         return true;
     }
@@ -311,8 +346,8 @@ public class RenderModel {
      * @return the point where the information flow line connects to the app rectangle.
      */
     Point coordOnApp(int level, int origX, int origY, Coordinate coord, Side side) {
-        var x = origX + coord.getCol() * COL_WIDTH;
-        var y = origY + coord.getRow() * ROW_HEIGHT;
+        var x = origX + coord.col() * COL_WIDTH;
+        var y = origY + coord.row() * ROW_HEIGHT;
         var spacing = SPACING - (level-1) * COMP_SPACING;
         return switch (side) {
             case TOP -> new Point(x + spacing + APP_WIDTH / 2, y + spacing);
