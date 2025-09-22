@@ -114,6 +114,10 @@ public class Component {
         return appArea.height();
     }
 
+    public int getAppRowOffset() { return appArea.row(); }
+
+    public int getAppColOffset() { return appArea.col(); }
+
     /**
      * Returns the absolute row position of a component summing up the row positions
      * of all parents.

@@ -19,26 +19,26 @@ import java.util.stream.StreamSupport;
  * intersections of the information flow arcs.
  */
 @Slf4j
-public class ComponentLayout {
+public class ComponentLayout extends AbstractLayout {
 
-    private final Component component;
     private int quality;
-    private Map<Application, Coordinate> layout;
 
     public ComponentLayout(Component comp) {
-        component = comp;
+        super(comp);
     }
 
     /**
      * Returns a list of all possible placements of apps inside a component. Apps are placed in a fixed grid.
      *
-     * @param rows     Number of rows in the component.
-     * @param columns  Number of columns in the component.
      * @param appCount Number of apps to be placed inside a component.
      * @return The inner list is one possible combination of app positions inside the grid. The outer list
      * collects all possible permutations.
      */
-    List<List<Coordinate>> appPositionsInComponent(final int rows, final int columns, final int appCount) {
+    List<List<Coordinate>> appPositionsInComponent(final int appCount) {
+        final int rows = component.getAppHeight();
+        final int columns = component.getAppWidth();
+        final int rowOffset = component.getAppRowOffset();
+        final int colOffset = component.getAppColOffset();
         if (appCount > rows * columns)
             throw new IllegalArgumentException("Number of apps (%d) exceeds grid size (%d x %d)"
                     .formatted(appCount, rows, columns));
@@ -46,7 +46,7 @@ public class ComponentLayout {
         var result = new LinkedList<List<Coordinate>>();
         for (List<Integer> each : new Permutator<>(indexes, appCount)) {
             List<Coordinate> onePerm = each.stream()
-                    .map(i -> Coordinate.fromIndex(columns, i))
+                    .map(i -> Coordinate.fromIndex(columns, i, rowOffset, colOffset))
                     .collect(Collectors.toList());
             result.add(onePerm);
         }
@@ -63,8 +63,8 @@ public class ComponentLayout {
      * @link <a href="https://bryceboe.com/2006/10/23/line-segment-intersection-algorithm/">Line Segment Intersection Algorithm</a>
      */
     boolean ccw(Coordinate a, Coordinate b, Coordinate c) {
-        return (c.getRow() - a.getRow()) * (b.getCol() - a.getCol()) >
-                (b.getRow() - a.getRow()) * (c.getCol() - a.getCol());
+        return (c.row() - a.row()) * (b.col() - a.col()) >
+                (b.row() - a.row()) * (c.col() - a.col());
     }
 
     /**
@@ -80,13 +80,6 @@ public class ComponentLayout {
     boolean linesIntersect(Coordinate fromApp1, Coordinate toApp1, Coordinate fromApp2, Coordinate toApp2) {
         return ccw(fromApp1, fromApp2, toApp2) != ccw(toApp1, fromApp2, toApp2) &&
                 ccw(fromApp1, toApp1, fromApp2) != ccw(fromApp1, toApp1, toApp2);
-    }
-
-    private static String toString(Map<Application, Coordinate> appPositions) {
-        var result = appPositions.entrySet().stream()
-                .map(e -> String.format("{%s: [%d,%d]}", e.getKey().getId(), e.getValue().row(), e.getValue().col()))
-                .collect(Collectors.joining(", "));
-        return "AppPos {" + result + "}";
     }
 
     /**
@@ -125,7 +118,7 @@ public class ComponentLayout {
         assert apps.size() == coords.size();
         return IntStream.range(0, coords.size())
                 .mapToObj(i -> new AppCoordinate(apps.get(i), coords.get(i)))
-                .collect(Collectors.toMap(AppCoordinate::getApp, AppCoordinate::getCoord));
+                .collect(Collectors.toMap(AppCoordinate::app, AppCoordinate::coord));
     }
 
     /**
@@ -136,7 +129,8 @@ public class ComponentLayout {
      */
     Map<Application, Coordinate> defaultLayout(List<Application> apps) {
         var coords = IntStream.range(0, apps.size())
-                .mapToObj(i -> Coordinate.fromIndex(component.getWidth(), i))
+                .mapToObj(i -> Coordinate.fromIndex(component.getWidth(), i,
+                        component.getAppRowOffset(), component.getAppColOffset()))
                 .toList();
         return zipmapAppsAndCoordinates(apps, coords);
     }
@@ -154,7 +148,7 @@ public class ComponentLayout {
             quality = 0;
             layout = defaultLayout(component.getApplications());
         } else {
-            var best = appPositionsInComponent(component.getAppHeight(), component.getAppWidth(), component.getApplications().size()).stream()
+            var best = appPositionsInComponent(component.getApplications().size()).stream()
                     .map(l -> zipmapAppsAndCoordinates(component.getApplications(), l))
                     .map(layout -> layoutQuality(layout, flows))
                     .min(RatedLayout::compareTo)
@@ -164,46 +158,8 @@ public class ComponentLayout {
         }
     }
 
-    public Coordinate getAppCoordinate(Application app) {
-        return layout.get(app);
-    }
-
-    /**
-     * Add the layout of a subcomponent to this layout with the offset specified.
-     *
-     * @param subComp layout of a subcomponent
-     * @param row     vertical offset of the subcomponent
-     * @param col     horizontal offset of the subcomponent
-     */
-    public void add(ComponentLayout subComp, int row, int col) {
-        layout.putAll(subComp.layout.entrySet().stream()
-                .map(e ->
-                        new AppCoordinate(e.getKey(),
-                        new Coordinate(e.getValue().row() + row, e.getValue().col() + col)))
-                .collect(Collectors.toMap(AppCoordinate::getApp, AppCoordinate::getCoord)));
-    }
-
     int getQuality() {
         return quality;
-    }
-
-    public Set<Coordinate> getUsedCells() {
-        return new HashSet<>(layout.values());
-    }
-
-    public void add(Coordinate coord, Application a) {
-        if (layout == null) layout = new HashMap<>();
-        layout.put(a, coord);
-    }
-
-    private record AppCoordinate(Application app, Coordinate coord) {
-        Application getApp() {
-            return app;
-        }
-
-        Coordinate getCoord() {
-            return coord;
-        }
     }
 
     static class RatedLayout implements Comparable<RatedLayout> {

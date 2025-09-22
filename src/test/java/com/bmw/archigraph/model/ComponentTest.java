@@ -51,4 +51,9 @@ public class ComponentTest {
         assertThat(l1Comp2.getL1CompInformationFlows()).hasSize(0);
         assertThat(l1Comp2.getCrossL1CompInformationFlows()).hasSize(0);
     }
+
+    @Test
+    void testSetArea() {
+
+    }
 }

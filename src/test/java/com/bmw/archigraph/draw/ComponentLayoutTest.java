@@ -20,19 +20,19 @@ public class ComponentLayoutTest {
 
     @Test
     void testAppPositionsInComponentWithOneApp() {
-        var cl = new ComponentLayout(null);
+        var cl = new ComponentLayout(new Component("C1", 0, 0, 2, 3, 1));
         assertEquals(
                 List.of(List.of(nc(0, 0)),
                         List.of(nc(0, 1)),
                         List.of(nc(1, 0)),
                         List.of(nc(1, 1))),
-                cl.appPositionsInComponent(2, 2, 1));
+                cl.appPositionsInComponent(1));
     }
 
     @Test
     void testAppPositionsInComponentWithTwoApps() {
-        var cl = new ComponentLayout(null);
-        assertThat(cl.appPositionsInComponent(2, 2, 2))
+        var cl = new ComponentLayout(new Component("C1", 0, 0, 2, 3, 1));
+        assertThat(cl.appPositionsInComponent(2))
                 .hasSameElementsAs(List.of(
                         List.of(nc(0, 0), nc(0, 1)),
                         List.of(nc(0, 1), nc(0, 0)),
@@ -50,8 +50,8 @@ public class ComponentLayoutTest {
 
     @Test
     void testAppPositionsInComponentWithThreeApps() {
-        var cl = new ComponentLayout(null);
-        assertThat(cl.appPositionsInComponent(2, 2, 3))
+        var cl = new ComponentLayout(new Component("C1", 0, 0, 2, 3, 1));
+        assertThat(cl.appPositionsInComponent(3))
                 .hasSameElementsAs(List.of(
                         List.of(nc(0, 0), nc(0, 1), nc(1, 0)),
                         List.of(nc(0, 0), nc(1, 0), nc(0, 1)),
@@ -82,10 +82,10 @@ public class ComponentLayoutTest {
 
     @Test
     void testAppPositionsIllegalCall() {
-        var cl = new ComponentLayout(null);
+        var cl = new ComponentLayout(new Component("c1", 0, 0, 2, 2, 1));
         var exception = assertThrows(IllegalArgumentException.class,
-                () -> cl.appPositionsInComponent(2, 2, 5));
-        assertEquals("Number of apps (5) exceeds grid size (2 x 2)",
+                () -> cl.appPositionsInComponent(5));
+        assertEquals("Number of apps (5) exceeds grid size (1 x 2)",
                 exception.getMessage());
     }
 
@@ -248,7 +248,7 @@ public class ComponentLayoutTest {
     void testFindAppPositions2in2x2() {
         // fixture
         var model = new Model();
-        var comp = new Component("COMP-1", 0, 0, 2, 2, 1);
+        var comp = new Component("COMP-1", 0, 0, 2, 3, 1);
         var appA = new Application("APP-A", "A1", "COMP-1", "", "", "");
         var appB = new Application("APP-B", "A2", "COMP-1", "", "", "");
         var appC = new Application("APP-C", "A3", "COMP-1", "", "", "");
@@ -302,7 +302,7 @@ public class ComponentLayoutTest {
     @Test
     void testFindAppPositions6in3x3WithMoreFlows() {
         // fixture
-        var comp = new Component("COMP-1", 0, 0, 3, 2, 1);
+        var comp = new Component("COMP-1", 0, 0, 3, 3, 1);
         var appA = new Application("APP-A", "A1", "COMP-1", "", "", "");
         var appB = new Application("APP-B", "A2", "COMP-1", "", "", "");
         var appC = new Application("APP-C", "A3", "COMP-1", "", "", "");

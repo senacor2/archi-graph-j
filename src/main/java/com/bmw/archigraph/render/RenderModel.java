@@ -2,6 +2,8 @@ package com.bmw.archigraph.render;
 
 import com.bmw.archigraph.draw.ComponentLayout;
 import com.bmw.archigraph.draw.Coordinate;
+import com.bmw.archigraph.draw.AbstractLayout;
+import com.bmw.archigraph.draw.ProxyBoxLayout;
 import com.bmw.archigraph.model.Application;
 import com.bmw.archigraph.model.Component;
 import com.bmw.archigraph.model.InformationFlow;
@@ -191,7 +193,7 @@ public class RenderModel {
      * @param origY The y position of the components top edge.
      * @param layout The row column position of all apps inside this component.
      */
-    void renderL1CompFlows(Component comp, int origX, int origY, ComponentLayout layout) {
+    void renderL1CompFlows(Component comp, int origX, int origY, AbstractLayout layout) {
         log.debug("Render l1 flows for {}", comp.getName());
         for (var flow : comp.getL1CompInformationFlows()) {
             render(flow, 1, origX, origY, comp, layout);
@@ -201,6 +203,7 @@ public class RenderModel {
     /**
      *  Render the information flows across L1 component boundaries.
      *  Apps outside the component are represented by proxies which are placed around the L1 component.
+     *  Proxies are created in this function.
      * @param comp The L1 component.
      * @param origX The x position of the components left edge.
      * @param origY The y position of the components top edge.
@@ -208,27 +211,39 @@ public class RenderModel {
      */
     void renderCrossL1CompFlows(Component comp, int origX, int origY, ComponentLayout layout) {
         log.debug("Render cross l1 flows for {}", comp.getName());
-        // TODO amend the layout with proxies
-
+        int proxyOrigX = origX - COL_WIDTH;
+        int proxyOrigY = origY - ROW_HEIGHT;
+        var proxyBoxLayout = createAndPlaceProxies(comp, proxyOrigX, proxyOrigY);
         for (var flow : comp.getCrossL1CompInformationFlows()) {
-            render(flow, 1, origX, origY, comp, layout);
+            render(flow, 1, proxyOrigX, proxyOrigY, comp, proxyBoxLayout);
         }
     }
 
-    void render(InformationFlow flow, int level, int origX, int origY, Component comp, ComponentLayout layout) {
+    /**
+     * Render an information flow.
+     * Adds a line object to the model connecting the source and destination app.
+     * The two apps may be in the same component, in the same L1 component or in different L1 components.
+     * @param flow An InformationFlow
+     * @param level the nesting level of the component. Top level components have level 1.
+     * @param origX The left edge of the enclosing component.
+     * @param origY The top edge of the enclosing component.
+     * @param comp The enclosing component or the L1 component containing one of the apps.
+     * @param layout The layout of the enclosing component.
+     */
+    void render(InformationFlow flow, int level, int origX, int origY, Component comp, AbstractLayout layout) {
         log.debug("Render flow {}", flow.getId());
         Rectangle sourceRect = elements.stream()
                 .filter(elem -> elem instanceof Rectangle)
                 .map(elem -> (Rectangle) elem)
                 .filter(elem -> elem.getId().equals(flow.getSourceId()))
                 .findFirst()
-                .orElse(renderApplicationProxy(flow.getSource(), comp, layout));
+                .orElseThrow();
         Rectangle destRect = elements.stream()
                 .filter(elem -> elem instanceof Rectangle)
                 .map(elem -> (Rectangle) elem)
                 .filter(elem -> elem.getId().equals(flow.getDestId()))
                 .findFirst()
-                .orElse(renderApplicationProxy(flow.getDestination(), comp, layout));
+                .orElseThrow();
         log.debug("Render flow from {} to {}", sourceRect, destRect);
         Point[] anchors = getAnchors(layout, level, flow.getSource(), flow.getDestination(), origX, origY);
 
@@ -241,8 +256,31 @@ public class RenderModel {
                 .build());
     }
 
-    private Rectangle renderApplicationProxy(Application app, Component parent, ComponentLayout layout) {
-        var coord = layout.getAppCoordinate(app);
+    /**
+     * Create application proxies for all apps linked to information flows into or out of the component that
+     * are outside the component.
+     *
+     * @param comp  Enclosing L1 component.
+     * @param origX Left edge x position of the proxy box.
+     * @param origY Top edge y position of the proxy box.
+     * @return Returns a proxy box layout that contains the l1 layout plus all placed proxy apps.
+     */
+    private ProxyBoxLayout createAndPlaceProxies(Component comp, int origX, int origY) {
+        var proxyBoxLayout = new ProxyBoxLayout(comp);
+        for (var flow : comp.getCrossL1CompInformationFlows()) {
+            var proxyApp = flow.getSource().getComponent().getL1Component() == comp ? flow.getDestination() : flow.getSource();
+            var innerApp = flow.getSource().getComponent().getL1Component() == comp ? flow.getSource() : flow.getDestination();
+            if (proxyBoxLayout.getAppCoordinate(proxyApp) == null) {
+                var proxyAppCoord = proxyBoxLayout.findNearestEmptyCell(proxyBoxLayout.getAppCoordinate(innerApp));
+                proxyBoxLayout.setProxyPosition(proxyApp, proxyAppCoord);
+                add(renderApplicationProxy(proxyApp, comp, origX, origY, proxyAppCoord, proxyBoxLayout));
+            }
+        }
+        return proxyBoxLayout;
+    }
+
+    private Rectangle renderApplicationProxy(Application app, Component parent, int origX, int origY,
+                                             Coordinate proxyAppCoord, ProxyBoxLayout layout) {
         return Rectangle.builder()
                 .id(parent.getName() + "-proxy-" + app.getId())
                 .text(app.getName())
@@ -250,14 +288,26 @@ public class RenderModel {
                 .background(Color.WHITE)
                 .foreground(Color.BLACK)
                 .rounded(true)
-                .x(0) // TODO
-                .y(0) // TODO
+                .x(origX + proxyAppCoord.col() * COL_WIDTH + SPACING)
+                .y(origY + proxyAppCoord.row() * ROW_HEIGHT + SPACING)
                 .w(APP_WIDTH)
                 .h(APP_HEIGHT)
                 .build();
     }
 
-    Point[] getAnchors(ComponentLayout layout, int level, Application source, Application dest, int origX, int origY) {
+    /**
+     * Returns a vector of turning points for the line drawn between two applications.
+     * The algorithm considers space blocked by other apps and routes lines around them.
+     * @param layout The component layout that contains the coordinates of the apps and all other apps.
+     * @param level nesting level of the enclosing component. Used to compute offsets.
+     * @param source Application where the information flow starts.
+     * @param dest Application where the information flow ends.
+     * @param origX Left edge of the enclosing component.
+     * @param origY Top edge of the enclosing component.
+     * @return A vector of points where the information flow line shall be bent. The vector will be empty
+     * when the Apps are directly adjacent or on the same for or column with no apps inbetween.
+     */
+    Point[] getAnchors(AbstractLayout layout, int level, Application source, Application dest, int origX, int origY) {
         var srcCoord = layout.getAppCoordinate(source);
         var dstCoord = layout.getAppCoordinate(dest);
         int distanceHor = Math.abs(srcCoord.col() - dstCoord.col());
@@ -305,7 +355,7 @@ public class RenderModel {
         return result;
     }
 
-    boolean allCellsEmptyHor(ComponentLayout layout, Coordinate src, Coordinate dst) {
+    boolean allCellsEmptyHor(AbstractLayout layout, Coordinate src, Coordinate dst) {
         var usedCells = layout.getUsedCells();
         var fromCol = Math.min(src.col(), dst.col()) + 1;
         var toCol = Math.max(src.col(), dst.col());
@@ -315,7 +365,7 @@ public class RenderModel {
         return true;
     }
 
-    boolean allCellsEmptyVert(ComponentLayout layout, Coordinate src, Coordinate dst) {
+    boolean allCellsEmptyVert(AbstractLayout layout, Coordinate src, Coordinate dst) {
         var usedCells = layout.getUsedCells();
         var fromRow = Math.min(src.row(), dst.row()) + 1;
         var toRow = Math.max(src.row(), dst.row());

@@ -26,6 +26,7 @@ public class Main {
     private static Options defineOptions() {
         var options = new Options();
         options.addOption("d", "debug", false, "Turn on debug output");
+        options.addOption("t", "trace", false, "Turn on trace output");
         options.addOption("a", "apps", true, "The applications file");
         options.addOption("f", "flows", true, "The information flows file");
         options.addOption("h", "help", false, "Show help");
@@ -52,9 +53,13 @@ public class Main {
             var compFile = cmdLineArgs[0];
             var appsFile = cmdLine.getOptionValue("a");
             var flowsFile = cmdLine.getOptionValue("f");
-            if (cmdLine.hasOption("d")) {
+            if (cmdLine.hasOption("d") || cmdLine.hasOption("t")) {
                 ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger)LoggerFactory.getLogger("com.bmw.archigraph");
-                root.setLevel(Level.DEBUG);
+                if (cmdLine.hasOption("t")) {
+                    root.setLevel(Level.TRACE);
+                } else {
+                    root.setLevel(Level.DEBUG);
+                }
             }
             var reader = new Reader(compFile, appsFile, flowsFile);
             var outputFile = buildOutputFileName(compFile);
