@@ -54,7 +54,7 @@ public class Component {
     public Component(String name, int row, int col, int width, int height, int level) {
         this.name = name;
         this.compArea = new Area(row, col, width, height);
-        this.appArea = new Area(0, 0, width, height - 1);
+        this.appArea = new Area(1, 0, width, height - 1);
         this.level = level;
     }
 
@@ -79,7 +79,7 @@ public class Component {
     }
 
     public void setAppArea(@NonNull Area area) {
-        appArea = area;
+        appArea = new Area(area.row() + 1, area.col(), area.width(), area.height());
     }
 
     public int getRow() {
@@ -99,11 +99,11 @@ public class Component {
     }
 
     public int getAbsoluteAppRow() {
-        return appArea.row() + getAbsRow();
+        return appArea.row() + getAbsCompRow();
     }
 
     public int getAbsoluteAppCol() {
-        return appArea.col() + getAbsCol();
+        return appArea.col() + getAbsCompCol();
     }
 
     public int getAppWidth() {
@@ -119,21 +119,19 @@ public class Component {
     public int getAppColOffset() { return appArea.col(); }
 
     /**
-     * Returns the absolute row position of a component summing up the row positions
-     * of all parents.
+     * Returns the absolute row position of a component summing up the row positions of all parents.
      * @return the row position relative to the sheet origin.
      */
-    public int getAbsRow() {
-        return compArea.row() + (parentComponent == null ? 0 : parentComponent.getAbsRow());
+    public int getAbsCompRow() {
+        return compArea.row() + (parentComponent == null ? 0 : parentComponent.getAbsCompRow());
     }
 
     /**
-     * Returns the absolute column position of a component summing up the column
-     * positions of all parents.
+     * Returns the absolute column position of a component summing up the column positions of all parents.
      * @return the column position relative to the sheet origin.
      */
-    public int getAbsCol() {
-        return compArea.col() + (parentComponent == null ? 0 : parentComponent.getAbsCol());
+    public int getAbsCompCol() {
+        return compArea.col() + (parentComponent == null ? 0 : parentComponent.getAbsCompCol());
     }
 
     public void selectInformationFlows(Collection<InformationFlow> allFlows) {

@@ -1,16 +1,16 @@
 {
-  "system": "System 1",
+  "system": "System 2",
   "components": [
     {
       "name": "Component 1",
       "x": 1,
-      "y": 1,
+      "y": 2,
       "w": 8,
       "h": 6,
       "app-area": {
         "x": 2,
         "y": 0,
-        "w": 3,
+        "w": 2,
         "h": 4
       },
       "components": [
@@ -41,8 +41,8 @@
         },
         {
           "name": "Component 1-2",
-          "x": 5,
-          "y": 0,
+          "x": 4,
+          "y": 1,
           "w": 2,
           "h": 3
         }

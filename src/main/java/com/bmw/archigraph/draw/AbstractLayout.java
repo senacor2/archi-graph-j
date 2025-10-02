@@ -86,5 +86,5 @@ public abstract class AbstractLayout {
                 .orElse(null);
     }
 
-    protected record AppCoordinate(Application app, Coordinate coord) {};
+    protected record AppCoordinate(Application app, Coordinate coord) {}
 }

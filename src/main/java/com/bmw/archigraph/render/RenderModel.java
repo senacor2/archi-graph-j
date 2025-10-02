@@ -12,8 +12,7 @@ import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
-import java.util.Arrays;
-import java.util.LinkedList;
+import java.util.*;
 import java.util.List;
 
 @Data
@@ -44,6 +43,7 @@ public class RenderModel {
     }
 
     private List<RenderModelElement> elements = new LinkedList<>();
+    private Map<String, RenderModelElement> elementsById = new HashMap<>();
 
     /**
      * Adds a new element to the render model. This method is called during model rendering.
@@ -53,6 +53,7 @@ public class RenderModel {
     void add(RenderModelElement element) {
         log.debug("Add render model element {}", element);
         elements.add(element);
+        elementsById.put(element.getId(), element);
     }
 
     /**
@@ -88,8 +89,8 @@ public class RenderModel {
      * @param comp  A component
      */
     void render(Component comp) {
-        int x = comp.getAbsCol() * COL_WIDTH + indent(comp);
-        int y = comp.getAbsRow() * ROW_HEIGHT + indent(comp) + (comp.getLevel() - 1) * ROW_HEIGHT;
+        int x = comp.getAbsCompCol() * COL_WIDTH + indent(comp);
+        int y = comp.getAbsCompRow() * ROW_HEIGHT + indent(comp) + (comp.getLevel() - 1) * ROW_HEIGHT;
         int w = comp.getWidth() * COL_WIDTH - (comp.getLevel() - 1) * COMP_SPACING * 2;
         log.debug("Render comp {} orig {}/{}", comp, x, y);
 
@@ -122,6 +123,16 @@ public class RenderModel {
                 .h((comp.getHeight() - 1) * ROW_HEIGHT - indent(comp) * 2)
                 .build()
         );
+        // App Area
+        add(Rectangle.builder()
+                .id(comp.getName().replace(" ", "_") + "_apparea")
+                .background(Color.LIGHT_GRAY)
+                .foreground(Color.WHITE)
+                .x(comp.getAbsoluteAppCol() * COL_WIDTH + indent(comp))
+                .y(comp.getAbsoluteAppRow() * ROW_HEIGHT + indent(comp) + (comp.getLevel() - 1) * ROW_HEIGHT)
+                .w(comp.getAppWidth() * COL_WIDTH - (comp.getLevel() - 1) * COMP_SPACING * 2)
+                .h(comp.getAppHeight() * ROW_HEIGHT)
+                .build());
         var layout = renderApplications(comp);
         renderLocalFlows(comp, x, y, layout);
         comp.setLayout(layout);
@@ -156,8 +167,17 @@ public class RenderModel {
         return cl;
     }
 
-    void render(Application app, int level, int compRow, int compCol, Coordinate appCoord) {
-        log.debug("Render app {} compRow {} compCol {} coord {}", app.getId(), compRow, compCol, appCoord);
+    /**
+     * Render an application into the render model.
+     * @param app An Application object.
+     * @param level The nesting level of the enclosing component. Used to calculate the offset of the component
+     *              headings.
+     * @param appAreaRow Absolute row position of the components app area.
+     * @param appAreaCol Absolute column position of the components app area.
+     * @param appCoord Row/Column coordinates of the application inside the component.
+     */
+    void render(Application app, int level, int appAreaRow, int appAreaCol, Coordinate appCoord) {
+        log.debug("Render app {} appAreaRow {} appAreaCol {} coord {}", app.getId(), appAreaRow, appAreaCol, appCoord);
         add(Rectangle.builder()
                 .id(app.getId())
                 .text(app.getName())
@@ -165,8 +185,8 @@ public class RenderModel {
                 .foreground(FG_COLOR_APP)
                 .fontSize(12)
                 .rounded(true)
-                .x(compCol * COL_WIDTH + appCoord.col() * COL_WIDTH + SPACING)
-                .y(compRow * ROW_HEIGHT + appCoord.row() * ROW_HEIGHT + ROW_HEIGHT * level + SPACING)
+                .x(appAreaCol * COL_WIDTH + appCoord.col() * COL_WIDTH + SPACING)
+                .y(appAreaRow * ROW_HEIGHT + appCoord.row() * ROW_HEIGHT + SPACING)
                 .w(APP_WIDTH)
                 .h(APP_HEIGHT)
                 .build());
@@ -232,18 +252,19 @@ public class RenderModel {
      */
     void render(InformationFlow flow, int level, int origX, int origY, Component comp, AbstractLayout layout) {
         log.debug("Render flow {}", flow.getId());
-        Rectangle sourceRect = elements.stream()
-                .filter(elem -> elem instanceof Rectangle)
-                .map(elem -> (Rectangle) elem)
-                .filter(elem -> elem.getId().equals(flow.getSourceId()))
-                .findFirst()
-                .orElseThrow();
-        Rectangle destRect = elements.stream()
-                .filter(elem -> elem instanceof Rectangle)
-                .map(elem -> (Rectangle) elem)
-                .filter(elem -> elem.getId().equals(flow.getDestId()))
-                .findFirst()
-                .orElseThrow();
+        Component compL1 = comp.getParentComponent() == null ? comp : comp.getL1Component();
+        Rectangle sourceRect;
+        Rectangle destRect;
+        if (flow.getSource().getComponent().getL1Component() == compL1) {
+            sourceRect = (Rectangle) elementsById.get(flow.getSourceId());
+        } else {
+            sourceRect = findProxyRectangle(comp.getName(), flow.getSourceId());
+        }
+        if (flow.getDestination().getComponent().getL1Component() == compL1) {
+            destRect = (Rectangle) elementsById.get(flow.getDestId());
+        } else {
+            destRect = findProxyRectangle(comp.getName(), flow.getDestId());
+        }
         log.debug("Render flow from {} to {}", sourceRect, destRect);
         Point[] anchors = getAnchors(layout, level, flow.getSource(), flow.getDestination(), origX, origY);
 
@@ -254,6 +275,21 @@ public class RenderModel {
                 .end(destRect)
                 .anchors(anchors)
                 .build());
+    }
+
+    private Rectangle findProxyRectangle(String compName, String appId) {
+        String proxyId = getProxyAppId(compName, appId);
+        log.debug("Find proxy rectangle for {}", proxyId);
+        if (elementsById.containsKey(proxyId)) {
+            return (Rectangle) elementsById.get(proxyId);
+        } else {
+            log.error("Proxy app {} not found", proxyId);
+            throw new IllegalArgumentException("Proxy app not found: " + proxyId);
+        }
+    }
+
+    private String getProxyAppId(String compName, String appId) {
+        return compName + "-proxy-" + appId;
     }
 
     /**
@@ -282,7 +318,7 @@ public class RenderModel {
     private Rectangle renderApplicationProxy(Application app, Component parent, int origX, int origY,
                                              Coordinate proxyAppCoord, ProxyBoxLayout layout) {
         return Rectangle.builder()
-                .id(parent.getName() + "-proxy-" + app.getId())
+                .id(getProxyAppId(parent.getName(), app.getId()))
                 .text(app.getName())
                 .fontSize(12)
                 .background(Color.WHITE)

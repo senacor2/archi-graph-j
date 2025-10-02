@@ -37,8 +37,6 @@ public class ComponentLayout extends AbstractLayout {
     List<List<Coordinate>> appPositionsInComponent(final int appCount) {
         final int rows = component.getAppHeight();
         final int columns = component.getAppWidth();
-        final int rowOffset = component.getAppRowOffset();
-        final int colOffset = component.getAppColOffset();
         if (appCount > rows * columns)
             throw new IllegalArgumentException("Number of apps (%d) exceeds grid size (%d x %d)"
                     .formatted(appCount, rows, columns));
@@ -46,7 +44,7 @@ public class ComponentLayout extends AbstractLayout {
         var result = new LinkedList<List<Coordinate>>();
         for (List<Integer> each : new Permutator<>(indexes, appCount)) {
             List<Coordinate> onePerm = each.stream()
-                    .map(i -> Coordinate.fromIndex(columns, i, rowOffset, colOffset))
+                    .map(i -> Coordinate.fromIndex(columns, i))
                     .collect(Collectors.toList());
             result.add(onePerm);
         }
@@ -129,8 +127,8 @@ public class ComponentLayout extends AbstractLayout {
      */
     Map<Application, Coordinate> defaultLayout(List<Application> apps) {
         var coords = IntStream.range(0, apps.size())
-                .mapToObj(i -> Coordinate.fromIndex(component.getWidth(), i,
-                        component.getAppRowOffset(), component.getAppColOffset()))
+                .mapToObj(i -> Coordinate.fromIndex(component.getWidth(), i
+                ))
                 .toList();
         return zipmapAppsAndCoordinates(apps, coords);
     }
