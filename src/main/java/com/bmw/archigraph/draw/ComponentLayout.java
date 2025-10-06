@@ -127,8 +127,7 @@ public class ComponentLayout extends AbstractLayout {
      */
     Map<Application, Coordinate> defaultLayout(List<Application> apps) {
         var coords = IntStream.range(0, apps.size())
-                .mapToObj(i -> Coordinate.fromIndex(component.getWidth(), i
-                ))
+                .mapToObj(i -> Coordinate.fromIndex(component.getAppWidth(), i))
                 .toList();
         return zipmapAppsAndCoordinates(apps, coords);
     }
