@@ -20,7 +20,6 @@ public class ProxyBoxLayout extends AbstractLayout {
         rows = comp.getHeight() + 2;
         columns = comp.getWidth() + 2;
         layout = new HashMap<>(rows * columns);
-        add(comp.getLayout(), 1, 1);
         proxyBoxCoords = new LinkedList<>();
         for (int c = 0; c < columns; c++) {
             proxyBoxCoords.add(new Coordinate(0, c));

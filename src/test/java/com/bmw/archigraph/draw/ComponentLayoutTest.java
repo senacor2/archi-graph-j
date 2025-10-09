@@ -91,14 +91,14 @@ public class ComponentLayoutTest {
 
     @Test
     void testLinesIntersect() {
-        var cl = new ComponentLayout(null);
+        var cl = new ComponentLayout(new Component("Comp1", 0, 0, 2, 2, 1));
         assertTrue(cl.linesIntersect(nc(0, 0), nc(1, 1), nc(1, 0), nc(0, 1)));
         assertTrue(cl.linesIntersect(nc(1, 0), nc(0, 1), nc(0, 0), nc(1, 1)));
     }
 
     @Test
     void testLinesDoNotIntersect() {
-        var cl = new ComponentLayout(null);
+        var cl = new ComponentLayout(new Component("Comp1", 0, 0, 2, 2, 1));
         assertFalse(cl.linesIntersect(nc(0, 0), nc(0, 1), nc(1, 0), nc(1, 1)));
         assertFalse(cl.linesIntersect(nc(1, 0), nc(1, 1), nc(0, 0), nc(0, 1)));
         assertFalse(cl.linesIntersect(nc(0, 0), nc(1, 0), nc(0, 1), nc(1, 1)));
@@ -107,19 +107,19 @@ public class ComponentLayoutTest {
 
     @Test
     void testLinesWithSameEndpoint() {
-        var cl = new ComponentLayout(null);
+        var cl = new ComponentLayout(new Component("Comp1", 0, 0, 2, 2, 1));
         assertFalse(cl.linesIntersect(nc(0,1), nc(1, 1), nc(0, 0), nc(1, 1)));
     }
 
     @Test
     void testLinesIntersectViceVersa() {
-        var cl = new ComponentLayout(null);
+        var cl = new ComponentLayout(new Component("Comp1", 0, 0, 2, 2, 1));
         assertFalse(cl.linesIntersect(nc(0, 0), nc(0, 1), nc(0, 1), nc(0, 0)));
     }
 
     @Test
     void testLinesIntersectWithSixApps() {
-        var cl = new ComponentLayout(null);
+        var cl = new ComponentLayout(new Component("Comp1", 0, 0, 2, 2, 1));
         assertFalse(cl.linesIntersect(nc(2, 2), nc(1, 2), nc(0, 2), nc(2, 1)));
         assertFalse(cl.linesIntersect(nc(0, 2), nc(2, 1), nc(0, 1), nc(1, 1)));
         assertFalse(cl.linesIntersect(nc(2, 2), nc(1, 2), nc(0, 1), nc(1, 1)));
@@ -127,7 +127,7 @@ public class ComponentLayoutTest {
 
     @Test
     void testLayoutQualityNoIntersections() {
-        var cl = new ComponentLayout(null);
+        var cl = new ComponentLayout(new Component("Comp 1", 0, 0, 2, 2, 1));
         var appA = new Application("A", "A", "C", "", "", "");
         var appB = new Application("B", "B", "C", "", "", "");
         var appC = new Application("C", "C", "C", "", "", "");
@@ -148,7 +148,7 @@ public class ComponentLayoutTest {
 
     @Test
     void testLayoutQualityDiagonalIntersections() {
-        var cl = new ComponentLayout(null);
+        var cl = new ComponentLayout(new Component("Comp1", 0, 0, 2, 2, 1));
         var appA = new Application("A", "A", "C", "", "", "");
         var appB = new Application("B", "B", "C", "", "", "");
         var appC = new Application("C", "C", "C", "", "", "");
@@ -169,7 +169,7 @@ public class ComponentLayoutTest {
 
     @Test
     void testLayoutQualitySameEndpoint() {
-        var cl = new ComponentLayout(null);
+        var cl = new ComponentLayout(new Component("Comp1", 0, 0, 2, 2, 1));
         var appA = new Application("A", "A", "C", "", "", "");
         var appB = new Application("B", "B", "C", "", "", "");
         var appC = new Application("C", "C", "C", "", "", "");
@@ -188,7 +188,7 @@ public class ComponentLayoutTest {
 
     @Test
     void TestLayoutQualityThreeFlows() {
-        var cl = new ComponentLayout(null);
+        var cl = new ComponentLayout(new Component("Comp1", 0, 0, 3, 3, 1));
         var appA = new Application("A", "A", "C", "", "", "");
         var appB = new Application("B", "B", "C", "", "", "");
         var appC = new Application("C", "C", "C", "", "", "");
@@ -343,4 +343,53 @@ public class ComponentLayoutTest {
         assertEquals(1, cl.getQuality());
     }
 
+    @Test
+    void testAddLayouts() {
+        // Fixture
+        Component outerComp = new Component("Outer", 0, 0, 4, 5, 1);
+        Application app1 = new Application("A1", "App1", "Outer", "", "", "");
+        Application app2 = new Application("A2", "App2", "Outer", "", "", "");
+        Component innerComp = new Component("Inner", 2, 2, 2, 2, 2);
+        Application app3 = new Application("A3", "App3", "Inner", "", "", "");
+        Application app4 = new Application("A4", "App4", "Inner", "", "", "");
+        outerComp.setComponents(List.of(innerComp));
+        Model model = new Model();
+        model.setL1Components(List.of(outerComp));
+        model.setApplications(List.of(app1, app2, app3, app4));
+        // test
+        innerComp.layout();
+        outerComp.layout();
+        System.out.println(outerComp.getAppMatrix().dump());
+        // verify
+        assertEquals(nc(1, 0), outerComp.getAppCoordinate(app1), "App1");
+        assertEquals(nc(1, 1), outerComp.getAppCoordinate(app2), "App2");
+        assertEquals(nc(3, 2), outerComp.getAppCoordinate(app3), "App3");
+        assertEquals(nc(3, 3), outerComp.getAppCoordinate(app4), "App4");
+    }
+
+    @Test
+    void testAddLayoutsWithAppAreaOnOuterComp() {
+        // Fixture
+        Component outerComp = new Component("Outer", 0, 0, 4, 5, 1);
+        outerComp.setAppArea(new Area(1, 3, 1, 2));
+        Application app1 = new Application("A1", "App1", "Outer", "", "", "");
+        Application app2 = new Application("A2", "App2", "Outer", "", "", "");
+        Component innerComp = new Component("Inner", 1, 1, 2, 2, 2);
+        Application app3 = new Application("A3", "App3", "Inner", "", "", "");
+        Application app4 = new Application("A4", "App4", "Inner", "", "", "");
+        outerComp.setComponents(List.of(innerComp));
+        Model model = new Model();
+        model.setL1Components(List.of(outerComp));
+        model.setApplications(List.of(app1, app2, app3, app4));
+        // test
+        innerComp.layout();
+        outerComp.layout();
+        System.out.println(outerComp.getAppMatrix().dump());
+        // verify
+        assertEquals(nc(2, 3), outerComp.getAppCoordinate(app1), "App1");
+        assertEquals(nc(3, 3), outerComp.getAppCoordinate(app2), "App2");
+        assertEquals(nc(2, 1), outerComp.getAppCoordinate(app3), "App3");
+        assertEquals(nc(2, 2), outerComp.getAppCoordinate(app4), "App4");
+
+    }
 }

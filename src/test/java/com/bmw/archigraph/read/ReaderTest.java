@@ -57,6 +57,6 @@ public class ReaderTest {
         assertThat(componentMap.keySet()).containsExactlyInAnyOrder(
                 "Component 1", "Component 1-1", "Component 1-1-1", "Component 1-1-1-1", "Component 1-2"
         );
-        assertThat(componentMap.get("Component 1").getAppArea()).isEqualTo(new Area(0, 3, 3, 4));
+        assertThat(componentMap.get("Component 1").getAppArea()).isEqualTo(new Area(2, 2, 2, 4));
     }
 }

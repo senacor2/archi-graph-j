@@ -1,5 +1,7 @@
 package com.bmw.archigraph.render;
 
+import com.bmw.archigraph.draw.AppMatrix;
+import com.bmw.archigraph.draw.AppMatrixTest;
 import com.bmw.archigraph.draw.ComponentLayout;
 import com.bmw.archigraph.draw.Coordinate;
 import com.bmw.archigraph.model.*;
@@ -159,8 +161,8 @@ public class RenderModelTest {
                                 .fontSize(12)
                                 .build()
                 );
-        assertEquals(new Coordinate(0, 0), c1.getLayout().getAppCoordinate(a1));
-        assertEquals(new Coordinate(0, 1), c1.getLayout().getAppCoordinate(a2));
+        assertEquals(new Coordinate(1, 0), c1.getAppMatrix().getAppCoordinate(a1));
+        assertEquals(new Coordinate(1, 1), c1.getAppMatrix().getAppCoordinate(a2));
     }
 
     @Test
@@ -234,7 +236,7 @@ public class RenderModelTest {
                                 .text("App-1")
                                 .rounded(true)
                                 .x(40)
-                                .y(640)
+                                .y(650)
                                 .w(240)
                                 .h(120)
                                 .background(Color.WHITE)
@@ -246,7 +248,7 @@ public class RenderModelTest {
                                 .text("App-2")
                                 .rounded(true)
                                 .x(360)
-                                .y(640)
+                                .y(650)
                                 .w(240)
                                 .h(120)
                                 .background(Color.WHITE)
@@ -254,10 +256,10 @@ public class RenderModelTest {
                                 .fontSize(12)
                                 .build()
                 );
-        assertEquals(new Coordinate(0, 0), comp1.getLayout().getAppCoordinate(app1));
-        assertEquals(new Coordinate(0, 1), comp1.getLayout().getAppCoordinate(app2));
-        assertEquals(new Coordinate(0, 0), comp2.getLayout().getAppCoordinate(app1));
-        assertEquals(new Coordinate(0, 1), comp2.getLayout().getAppCoordinate(app2));
+        assertEquals(new Coordinate(1, 0), comp1.getAppMatrix().getAppCoordinate(app1));
+        assertEquals(new Coordinate(1, 1), comp1.getAppMatrix().getAppCoordinate(app2));
+        assertEquals(new Coordinate(1, 0), comp2.getAppMatrix().getAppCoordinate(app1));
+        assertEquals(new Coordinate(1, 1), comp2.getAppMatrix().getAppCoordinate(app2));
     }
 
     @Test
@@ -397,208 +399,106 @@ public class RenderModelTest {
     }
 
     @Test
-    void testEmptyCellsOneEmptyHor() {
-        var fixture = new RenderModel();
-        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
-        var c1 = new Coordinate(0, 0);
-        var c2 = new Coordinate(0, 2);
-        layout.add(c1, new Application("A1", "A1", "C1"));
-        layout.add(c2, new Application("A2", "A2", "C1"));
-        assertTrue(fixture.allCellsEmptyHor(layout, c1, c2));
-    }
-
-    @Test
-    void testEmptyCellsOneEmptyVert() {
-        var fixture = new RenderModel();
-        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
-        var c1 = new Coordinate(0, 0);
-        var c2 = new Coordinate(2, 0);
-        layout.add(c1, new Application("A1", "A1", "C1"));
-        layout.add(c2, new Application("A2", "A2", "C1"));
-        assertTrue(fixture.allCellsEmptyVert(layout, c1, c2));
-    }
-
-    @Test
-    void testEmptyCellsTwoEmptyHor() {
-        var fixture = new RenderModel();
-        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
-        var c1 = new Coordinate(0, 0);
-        var c2 = new Coordinate(0, 3);
-        layout.add(c1, new Application("A1", "A1", "C1"));
-        layout.add(c2, new Application("A2", "A2", "C1"));
-        assertTrue(fixture.allCellsEmptyHor(layout, c1, c2));
-    }
-
-    @Test
-    void testEmptyCellsTwoEmptyVert() {
-        var fixture = new RenderModel();
-        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
-        var c1 = new Coordinate(0, 0);
-        var c2 = new Coordinate(3, 0);
-        layout.add(c1, new Application("A1", "A1", "C1"));
-        layout.add(c2, new Application("A2", "A2", "C1"));
-        assertTrue(fixture.allCellsEmptyVert(layout, c1, c2));
-    }
-
-    @Test
-    void testThreeCellsInALine() {
-        var fixture = new RenderModel();
-        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
-        var c1 = new Coordinate(0, 0);
-        var c2 = new Coordinate(0, 1);
-        var c3 = new Coordinate(0, 2);
-        layout.add(c1, new Application("A1", "A1", "C1"));
-        layout.add(c2, new Application("A2", "A2", "C1"));
-        layout.add(c3, new Application("A3", "A3", "C1"));
-        assertFalse(fixture.allCellsEmptyHor(layout, c1, c3));
-    }
-
-    @Test
-    void testThreeCellsInALineOfFive() {
-        var fixture = new RenderModel();
-        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 5, 1));
-        var c1 = new Coordinate(0, 0);
-        var c2 = new Coordinate(0, 2);
-        var c3 = new Coordinate(0, 4);
-        layout.add(c1, new Application("A1", "A1", "C1"));
-        layout.add(c2, new Application("A2", "A2", "C1"));
-        layout.add(c3, new Application("A3", "A3", "C1"));
-        assertFalse(fixture.allCellsEmptyHor(layout, c1, c3));
-    }
-
-    @Test
-    void testThreeCellsInARow() {
-        var fixture = new RenderModel();
-        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
-        var c1 = new Coordinate(0, 0);
-        var c2 = new Coordinate(1, 0);
-        var c3 = new Coordinate(2, 0);
-        layout.add(c1, new Application("A1", "A1", "C1"));
-        layout.add(c2, new Application("A2", "A2", "C1"));
-        layout.add(c3, new Application("A3", "A3", "C1"));
-        assertFalse(fixture.allCellsEmptyVert(layout, c1, c3));
-    }
-
-    @Test
-    void testCellsRightToLeft() {
-        var fixture = new RenderModel();
-        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
-        var c1 = new Coordinate(0, 1);
-        var c2 = new Coordinate(1, 0);
-        var c3 = new Coordinate(0, 2);
-        var c4 = new Coordinate(1, 2);
-        var c5 = new Coordinate(1, 1);
-        var c6 = new Coordinate(0, 0);
-        layout.add(c1, new Application("A1", "A1", "C1"));
-        layout.add(c2, new Application("A2", "A2", "C1"));
-        layout.add(c3, new Application("A3", "A3", "C1"));
-        layout.add(c4, new Application("A4", "A4", "C1"));
-        layout.add(c5, new Application("A5", "A5", "C1"));
-        layout.add(c6, new Application("A6", "A6", "C1"));
-        assertFalse(fixture.allCellsEmptyHor(layout, c3, c6));
-    }
-
-    @Test
     void testGetAnchorTwoHorizSideBySide() {
-        var fixture = new RenderModel();
-        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
+        var model = new RenderModel();
+        var fixture = new AppMatrix(3, 3);
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(1, 0);
         Application a1 = new Application("A1", "A1", "C1");
         Application a2 = new Application("A2", "A2", "C1");
-        layout.add(c1, a1);
-        layout.add(c2, a2);
-        assertThat(fixture.getAnchors(layout, 1, a1, a2, 100, 100))
+        fixture.put(c1, a1);
+        fixture.put(c2, a2);
+        assertThat(model.getAnchors(fixture, 1, a1, a2, 100, 100))
                 .isEmpty();
     }
 
     @Test
     void testGetAnchorTwoVertSideBySide() {
-        var fixture = new RenderModel();
-        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
+        var model = new RenderModel();
+        var fixture = new AppMatrix(3, 3);
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(0, 1);
         Application a1 = new Application("A1", "A1", "C1");
         Application a2 = new Application("A2", "A2", "C1");
-        layout.add(c1, a1);
-        layout.add(c2, a2);
-        assertThat(fixture.getAnchors(layout, 1, a1, a2, 100, 100))
+        fixture.put(c1, a1);
+        fixture.put(c2, a2);
+        assertThat(model.getAnchors(fixture, 1, a1, a2, 100, 100))
                 .isEmpty();
     }
 
     @Test
     void testGetAnchorTwoSameRowWithGap() {
-        var fixture = new RenderModel();
-        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
+        var model = new RenderModel();
+        var fixture = new AppMatrix(3, 3);
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(0, 2);
         Application a1 = new Application("A1", "A1", "C1");
         Application a2 = new Application("A2", "A2", "C1");
-        layout.add(c1, a1);
-        layout.add(c2, a2);
-        assertThat(fixture.getAnchors(layout, 1, a1, a2, 100, 100))
+        fixture.put(c1, a1);
+        fixture.put(c2, a2);
+        assertThat(model.getAnchors(fixture, 1, a1, a2, 100, 100))
                 .isEmpty();
     }
 
     @Test
     void testGetAnchorTwoVertWithGap() {
-        var fixture = new RenderModel();
-        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
+        var model = new RenderModel();
+        var fixture = new AppMatrix(3, 3);
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(2, 0);
         Application a1 = new Application("A1", "A1", "C1");
         Application a2 = new Application("A2", "A2", "C1");
-        layout.add(c1, a1);
-        layout.add(c2, a2);
-        assertThat(fixture.getAnchors(layout, 1, a1, a2, 100, 100))
+        fixture.put(c1, a1);
+        fixture.put(c2, a2);
+        assertThat(model.getAnchors(fixture, 1, a1, a2, 100, 100))
                 .isEmpty();
     }
 
     @Test
     void testGetAnchorThreeInARow() {
-        var fixture = new RenderModel();
-        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
+        var model = new RenderModel();
+        var fixture = new AppMatrix(3, 3);
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(0, 1);
         var c3 = new Coordinate(0, 2);
         Application a1 = new Application("A1", "A1", "C1");
         Application a2 = new Application("A2", "A2", "C1");
         Application a3 = new Application("A3", "A3", "C1");
-        layout.add(c1, a1);
-        layout.add(c2, a2);
-        layout.add(c3, a3);
-        assertThat(fixture.getAnchors(layout, 1, a1, a3, 100, 100))
+        fixture.put(c1, a1);
+        fixture.put(c2, a2);
+        fixture.put(c3, a3);
+        assertThat(model.getAnchors(fixture, 1, a1, a3, 100, 100))
                 .containsExactly(new Point(260, 120), new Point(900, 120));
     }
 
     @Test
     void testGetAnchorThreeInACol() {
-        var fixture = new RenderModel();
-        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
+        var model = new RenderModel();
+        var fixture = new AppMatrix(3, 3);
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(1, 0);
         var c3 = new Coordinate(2, 0);
         Application a1 = new Application("A1", "A1", "C1");
         Application a2 = new Application("A2", "A2", "C1");
         Application a3 = new Application("A3", "A3", "C1");
-        layout.add(c1, a1);
-        layout.add(c2, a2);
-        layout.add(c3, a3);
-        assertThat(fixture.getAnchors(layout, 1, a1, a3, 100, 100))
+        fixture.put(c1, a1);
+        fixture.put(c2, a2);
+        fixture.put(c3, a3);
+        assertThat(model.getAnchors(fixture, 1, a1, a3, 100, 100))
                 .containsExactly(new Point(400, 200), new Point(400, 600));
     }
 
     @Test
     void testGetAnchorTwoOneRowColApartBottomLeftTopRight() {
-        var fixture = new RenderModel();
-        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
+        var model = new RenderModel();
+        var fixture = new AppMatrix(3, 3);
         var c1 = new Coordinate(1, 0);
         var c2 = new Coordinate(0, 1);
         Application a1 = new Application("A1", "A1", "C1");
         Application a2 = new Application("A2", "A2", "C1");
-        layout.add(c1, a1);
-        layout.add(c2, a2);
-        assertThat(fixture.getAnchors(layout, 1, a1, a2, 100, 100))
+        fixture.put(c1, a1);
+        fixture.put(c2, a2);
+        assertThat(model.getAnchors(fixture, 1, a1, a2, 100, 100))
                 .containsExactly(new Point(260, 320),
                         new Point(440, 320),
                         new Point(440, 200));
@@ -606,15 +506,15 @@ public class RenderModelTest {
 
     @Test
     void testGetAnchorTwoOneRowColApartTopLeftBottomRight() {
-        var fixture = new RenderModel();
-        var layout = new ComponentLayout(new Component("C1", 0, 0, 3, 3, 1));
+        var model = new RenderModel();
+        var fixture = new AppMatrix(3, 3);
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(1, 1);
         Application a1 = new Application("A1", "A1", "C1");
         Application a2 = new Application("A2", "A2", "C1");
-        layout.add(c1, a1);
-        layout.add(c2, a2);
-        assertThat(fixture.getAnchors(layout, 1, a1, a2, 100, 100))
+        fixture.put(c1, a1);
+        fixture.put(c2, a2);
+        assertThat(model.getAnchors(fixture, 1, a1, a2, 100, 100))
                 .containsExactly(new Point(260, 280),
                         new Point(440, 280),
                         new Point(440, 400));
@@ -622,18 +522,19 @@ public class RenderModelTest {
 
     @Test
     void testGetAnchorTwoByThreeBottomLeftToTopRight() {
-        var fixture = new RenderModel();
-        var layout = new ComponentLayout(new Component("C1", 1, 1, 3, 2, 1));
+        var model = new RenderModel();
+        var fixture = new AppMatrix(3, 2);
         var c1 = new Coordinate(1, 0);
-        var c2 = new Coordinate(0, 2);
+        var c2 = new Coordinate(0, 1);
         var a1 = new Application("A1", "A1", "C1");
         var a2 = new Application("A2", "A2", "C1");
-        layout.add(c1, a1);
-        layout.add(c2, a2);
-        assertThat(fixture.getAnchors(layout, 1, a1, a2, 320, 500))
+        fixture.put(c1, a1);
+        fixture.put(c2, a2);
+        System.out.println(fixture.dump());
+        assertThat(model.getAnchors(fixture, 1, a1, a2, 320, 500))
                 .containsExactly(new Point(480, 720),
-                        new Point(980, 720),
-                        new Point(980, 600));
+                        new Point(660, 720),
+                        new Point(660, 600));
     }
 
 }

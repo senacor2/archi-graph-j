@@ -17,7 +17,6 @@ public class ProxyBoxLayoutTest {
         // fixture
         var comp = new Component("Comp-1", 4, 8, 2, 2, 1);
         var compLayout = new ComponentLayout(comp);
-        comp.setLayout(compLayout);
         compLayout.layout();
         // test
         var proxyBoxLayout = new ProxyBoxLayout(comp);
@@ -50,7 +49,6 @@ public class ProxyBoxLayoutTest {
         var innerAppCoord = new Coordinate(appRow, appCol);
         var comp = new Component("Comp-1", 4, 8, width, height, 1);
         var compLayout = new ComponentLayout(comp);
-        comp.setLayout(compLayout);
         compLayout.layout();
         var proxyBoxLayout = new ProxyBoxLayout(comp);
         // test

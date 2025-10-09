@@ -15,6 +15,16 @@ public record Coordinate(
     }
 
     /**
+     * Create a new coordinate with a given offset.
+     * @param oldC existing coordinate
+     * @param rowOffset row offset
+     * @param colOffset column offset.
+     */
+    public Coordinate(Coordinate oldC, int rowOffset, int colOffset) {
+        this(oldC.row() + rowOffset, oldC.col() + colOffset);
+    }
+
+    /**
      * Compares two coordinates where order is defined as the smaller being higher up
      * and further left in the grid
      * @param other the object to be compared.
