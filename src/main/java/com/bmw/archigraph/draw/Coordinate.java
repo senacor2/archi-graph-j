@@ -47,11 +47,4 @@ public record Coordinate(
         return Math.sqrt((row - other.row) * (row - other.row) + (col - other.col) * (col - other.col));
     }
 
-    public Coordinate oneBelow() {
-        return new Coordinate(row+1, col);
-    }
-
-    public Coordinate oneRight() {
-        return new Coordinate(row, col+1);
-    }
 }

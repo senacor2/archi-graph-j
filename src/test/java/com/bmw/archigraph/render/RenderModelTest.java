@@ -1,8 +1,6 @@
 package com.bmw.archigraph.render;
 
 import com.bmw.archigraph.draw.AppMatrix;
-import com.bmw.archigraph.draw.AppMatrixTest;
-import com.bmw.archigraph.draw.ComponentLayout;
 import com.bmw.archigraph.draw.Coordinate;
 import com.bmw.archigraph.model.*;
 import com.bmw.archigraph.model.Component;

@@ -2,7 +2,6 @@ package com.bmw.archigraph.render;
 
 import com.bmw.archigraph.draw.AppMatrix;
 import com.bmw.archigraph.draw.Coordinate;
-import com.bmw.archigraph.draw.AbstractLayout;
 import com.bmw.archigraph.draw.ProxyBoxLayout;
 import com.bmw.archigraph.model.Application;
 import com.bmw.archigraph.model.Component;
@@ -227,6 +226,8 @@ public class RenderModel {
         log.debug("Render cross l1 flows for {}", comp.getName());
         int proxyOrigX = origX - COL_WIDTH;
         int proxyOrigY = origY - ROW_HEIGHT;
+        // TODO proxy layout is not used!
+        // method should return an appmatrix or l1 components should have a proxy app matrix.
         var proxyBoxLayout = createAndPlaceProxies(comp, proxyOrigX, proxyOrigY);
         for (var flow : comp.getCrossL1CompInformationFlows()) {
             render(flow, 1, proxyOrigX, proxyOrigY, comp);
@@ -383,26 +384,6 @@ public class RenderModel {
         }
         log.debug("Line anchors {}", Arrays.toString(result));
         return result;
-    }
-
-    boolean allCellsEmptyHor(AbstractLayout layout, Coordinate src, Coordinate dst) {
-        var usedCells = layout.getUsedCells();
-        var fromCol = Math.min(src.col(), dst.col()) + 1;
-        var toCol = Math.max(src.col(), dst.col());
-        for (int col = fromCol; col < toCol; col++) {
-            if (usedCells.contains(new Coordinate(src.row(), col))) return false;
-        }
-        return true;
-    }
-
-    boolean allCellsEmptyVert(AbstractLayout layout, Coordinate src, Coordinate dst) {
-        var usedCells = layout.getUsedCells();
-        var fromRow = Math.min(src.row(), dst.row()) + 1;
-        var toRow = Math.max(src.row(), dst.row());
-        for (int row = fromRow; row < toRow; row++) {
-            if (usedCells.contains(new Coordinate(row, src.col()))) return false;
-        }
-        return true;
     }
 
     Side sideFrom(boolean topToBottom) {

@@ -10,15 +10,13 @@ import java.util.List;
 
 public class ProxyBoxLayout extends AbstractLayout {
 
-    private final int rows;
-    private final int columns;
     @Getter
     private final List<Coordinate> proxyBoxCoords;
 
     public ProxyBoxLayout(Component comp) {
         super(comp);
-        rows = comp.getHeight() + 2;
-        columns = comp.getWidth() + 2;
+        int rows = comp.getHeight() + 2;
+        int columns = comp.getWidth() + 2;
         layout = new HashMap<>(rows * columns);
         proxyBoxCoords = new LinkedList<>();
         for (int c = 0; c < columns; c++) {

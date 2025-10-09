@@ -1,8 +1,6 @@
 package com.bmw.archigraph.draw;
 
 import com.bmw.archigraph.model.Application;
-import com.bmw.archigraph.model.Component;
-import com.bmw.archigraph.render.RenderModel;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
