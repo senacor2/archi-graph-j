@@ -195,7 +195,7 @@ public class RenderModel {
     void renderLocalFlows(Component comp, int origX, int origY) {
         log.debug("Render local flows for {}", comp.getName());
         for (var flow : comp.getLocalInformationFlows()) {
-            render(flow, comp.getLevel(), origX, origY, comp);
+            render(flow, false, comp.getLevel(), origX, origY, comp);
         }
     }
 
@@ -209,7 +209,7 @@ public class RenderModel {
     void renderL1CompFlows(Component comp, int origX, int origY) {
         log.debug("Render l1 flows for {}", comp.getName());
         for (var flow : comp.getL1CompInformationFlows()) {
-            render(flow, 1, origX, origY, comp);
+            render(flow, false, 1, origX, origY, comp);
         }
     }
 
@@ -226,11 +226,9 @@ public class RenderModel {
         log.debug("Render cross l1 flows for {}", comp.getName());
         int proxyOrigX = origX - COL_WIDTH;
         int proxyOrigY = origY - ROW_HEIGHT;
-        // TODO proxy layout is not used!
-        // method should return an appmatrix or l1 components should have a proxy app matrix.
-        var proxyBoxLayout = createAndPlaceProxies(comp, proxyOrigX, proxyOrigY);
+        createAndPlaceProxies(comp, proxyOrigX, proxyOrigY);
         for (var flow : comp.getCrossL1CompInformationFlows()) {
-            render(flow, 1, proxyOrigX, proxyOrigY, comp);
+            render(flow, true, 1, proxyOrigX, proxyOrigY, comp);
         }
     }
 
@@ -240,12 +238,13 @@ public class RenderModel {
      * The two apps may be in the same component, in the same L1 component or in different L1 components.
      *
      * @param flow  An InformationFlow
+     * @param proxy True when proxies shall be rendered, false otherwise.
      * @param level the nesting level of the component. Top level components have level 1.
      * @param origX The left edge of the enclosing component.
      * @param origY The top edge of the enclosing component.
      * @param comp  The enclosing component or the L1 component containing one of the apps.
      */
-    void render(InformationFlow flow, int level, int origX, int origY, Component comp) {
+    void render(InformationFlow flow, boolean proxy, int level, int origX, int origY, Component comp) {
         log.debug("Render flow {}", flow.getId());
         Component compL1 = comp.getParentComponent() == null ? comp : comp.getL1Component();
         Rectangle sourceRect;
@@ -261,7 +260,8 @@ public class RenderModel {
             destRect = findProxyRectangle(comp.getName(), flow.getDestId());
         }
         log.debug("Render flow from {} to {}", sourceRect, destRect);
-        Point[] anchors = getAnchors(comp.getAppMatrix(), level, flow.getSource(), flow.getDestination(), origX, origY);
+        Point[] anchors = getAnchors(proxy ? comp.getL1AppMatrix() : comp.getAppMatrix(),
+                level, flow.getSource(), flow.getDestination(), origX, origY);
 
         add(Line.builder()
                 .id(flow.getId())
@@ -294,20 +294,21 @@ public class RenderModel {
      * @param comp  Enclosing L1 component.
      * @param origX Left edge x position of the proxy box.
      * @param origY Top edge y position of the proxy box.
-     * @return Returns a proxy box layout that contains the l1 layout plus all placed proxy apps.
      */
-    private ProxyBoxLayout createAndPlaceProxies(Component comp, int origX, int origY) {
+    private void createAndPlaceProxies(Component comp, int origX, int origY) {
         var proxyBoxLayout = new ProxyBoxLayout(comp);
+        comp.getL1AppMatrix().merge(comp.getAppMatrix(), 1, 1);
         for (var flow : comp.getCrossL1CompInformationFlows()) {
             var proxyApp = flow.getSource().getComponent().getL1Component() == comp ? flow.getDestination() : flow.getSource();
             var innerApp = flow.getSource().getComponent().getL1Component() == comp ? flow.getSource() : flow.getDestination();
             if (proxyBoxLayout.getAppCoordinate(proxyApp) == null) {
-                var proxyAppCoord = proxyBoxLayout.findNearestEmptyCell(proxyBoxLayout.getAppCoordinate(innerApp));
+                var proxyAppCoord = proxyBoxLayout.findNearestEmptyCell(comp.getL1AppMatrix().getAppCoordinate(innerApp));
                 proxyBoxLayout.setProxyPosition(proxyApp, proxyAppCoord);
                 add(renderApplicationProxy(proxyApp, comp, origX, origY, proxyAppCoord, proxyBoxLayout));
             }
         }
-        return proxyBoxLayout;
+        proxyBoxLayout.stream()
+                .forEach(e -> comp.getL1AppMatrix().put(e.getValue(), e.getKey()));
     }
 
     private Rectangle renderApplicationProxy(Application app, Component parent, int origX, int origY,

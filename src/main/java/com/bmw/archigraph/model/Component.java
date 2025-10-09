@@ -1,9 +1,6 @@
 package com.bmw.archigraph.model;
 
-import com.bmw.archigraph.draw.AppMatrix;
-import com.bmw.archigraph.draw.Area;
-import com.bmw.archigraph.draw.ComponentLayout;
-import com.bmw.archigraph.draw.Coordinate;
+import com.bmw.archigraph.draw.*;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -53,12 +50,19 @@ public class Component {
 
     private final AppMatrix appMatrix;
 
+    private final AppMatrix l1AppMatrix;
+
     public Component(String name, int row, int col, int width, int height, int level) {
         this.name = name;
         this.compArea = new Area(row, col, width, height);
         this.appArea = new Area(1, 0, width, height - 1);
         this.level = level;
         this.appMatrix = new AppMatrix(height, width);
+        if (level == 1) {
+            l1AppMatrix = new AppMatrix(height + 2, width + 2);
+        } else {
+            l1AppMatrix = null;
+        }
     }
 
     /**
