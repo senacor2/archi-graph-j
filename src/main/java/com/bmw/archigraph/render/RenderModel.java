@@ -170,7 +170,7 @@ public class RenderModel {
      * @param appCoord Row/Column coordinates of the application inside the component.
      */
     void render(Application app, int level, int absCompRow, int absCompCol, Coordinate appCoord) {
-        log.debug("Render app {} absCompRow {} appAreaCol {} coord {}", app.getId(), absCompRow, absCompCol, appCoord);
+        log.debug("Render app {} absCompRow {} absCompCol {} coord {}", app.getId(), absCompRow, absCompCol, appCoord);
         add(Rectangle.builder()
                 .id(app.getId())
                 .text(app.getName())
@@ -225,7 +225,7 @@ public class RenderModel {
     void renderCrossL1CompFlows(Component comp, int origX, int origY) {
         log.debug("Render cross l1 flows for {}", comp.getName());
         int proxyOrigX = origX - COL_WIDTH;
-        int proxyOrigY = origY - ROW_HEIGHT;
+        int proxyOrigY = origY - ROW_HEIGHT*2; // take header row offset into account
         createAndPlaceProxies(comp, proxyOrigX, proxyOrigY);
         for (var flow : comp.getCrossL1CompInformationFlows()) {
             render(flow, true, 1, proxyOrigX, proxyOrigY, comp);
@@ -304,7 +304,7 @@ public class RenderModel {
             if (proxyBoxLayout.getAppCoordinate(proxyApp) == null) {
                 var proxyAppCoord = proxyBoxLayout.findNearestEmptyCell(comp.getL1AppMatrix().getAppCoordinate(innerApp));
                 proxyBoxLayout.setProxyPosition(proxyApp, proxyAppCoord);
-                add(renderApplicationProxy(proxyApp, comp, origX, origY, proxyAppCoord, proxyBoxLayout));
+                add(renderApplicationProxy(proxyApp, comp, origX, origY, proxyAppCoord));
             }
         }
         proxyBoxLayout.stream()
@@ -312,7 +312,8 @@ public class RenderModel {
     }
 
     private Rectangle renderApplicationProxy(Application app, Component parent, int origX, int origY,
-                                             Coordinate proxyAppCoord, ProxyBoxLayout layout) {
+                                             Coordinate proxyAppCoord) {
+        log.debug("Render proxy for {} base pos x={} y={} coord = {}", app.getId(), origX, origY, proxyAppCoord);
         return Rectangle.builder()
                 .id(getProxyAppId(parent.getName(), app.getId()))
                 .text(app.getName())

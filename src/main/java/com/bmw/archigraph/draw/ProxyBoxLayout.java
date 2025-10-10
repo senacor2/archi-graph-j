@@ -3,11 +3,13 @@ package com.bmw.archigraph.draw;
 import com.bmw.archigraph.model.Application;
 import com.bmw.archigraph.model.Component;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 
+@Slf4j
 public class ProxyBoxLayout extends AbstractLayout {
 
     @Getter
@@ -29,7 +31,13 @@ public class ProxyBoxLayout extends AbstractLayout {
         }
     }
 
-    public Coordinate findNearestEmptyCell(Coordinate coord) {
+    /**
+     * Find an empty position in the proxy box that is closest to <code>coord</code>.
+     * @param coord Position of an app inside the component box.
+     * @return Position for a proxy app.
+     */
+    public Coordinate findNearestEmptyCell(final Coordinate coord) {
+        log.debug("Find nearest proxy for {}", coord);
         double minDist = 10000000000.0;
         Coordinate result = null;
         for (Coordinate candidate : proxyBoxCoords) {
@@ -40,6 +48,7 @@ public class ProxyBoxLayout extends AbstractLayout {
             }
         }
         proxyBoxCoords.remove(result);
+        log.debug("Found {}", result);
         return result;
     }
 
