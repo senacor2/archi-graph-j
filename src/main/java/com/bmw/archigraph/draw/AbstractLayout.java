@@ -5,8 +5,6 @@ import com.bmw.archigraph.model.Component;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 
@@ -33,12 +31,6 @@ public abstract class AbstractLayout {
      */
     public Coordinate getAppCoordinate(Application app) {
         return layout.get(app);
-    }
-
-    public Set<Coordinate> getUsedCells() {
-        return layout.values().stream()
-                .map(c -> new Coordinate(c, component.getAppRowOffset(), component.getAppColOffset()))
-                .collect(Collectors.toSet());
     }
 
     public Stream<Map.Entry<Application, Coordinate>> stream() {
