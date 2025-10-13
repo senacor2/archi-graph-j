@@ -237,9 +237,6 @@ public class Component {
         layout.layout();
         layout.stream()
                 .forEach(e -> appMatrix.put(translateToComponent(e.getValue()), e.getKey()));
-        if (parentComponent != null) {
-            parentComponent.appMatrix.merge(appMatrix, compArea.row(), compArea.col());
-        }
     }
 
     public String toString() {

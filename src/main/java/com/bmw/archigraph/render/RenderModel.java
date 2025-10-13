@@ -85,7 +85,7 @@ public class RenderModel {
     /**
      * Render a component consisting of a heading and the body where the apps are drawn.
      *
-     * @param comp  A component
+     * @param comp A component
      */
     void render(Component comp) {
         int x = comp.getAbsCompCol() * COL_WIDTH + indent(comp);
@@ -140,6 +140,11 @@ public class RenderModel {
         if (comp.getParentComponent() == null) { // L1 components have no parent
             renderL1CompFlows(comp, x, y);
             renderCrossL1CompFlows(comp, x, y);
+        } else {
+            comp.getParentComponent().getAppMatrix().merge(comp.getAppMatrix(), comp.getRow() + 1, comp.getCol());
+            log.debug("After merge {} into {}: \n{}", comp.getName(), comp.getParentComponent().getName(),
+                    comp.getParentComponent().getAppMatrix().dump());
+
         }
     }
 
@@ -150,7 +155,7 @@ public class RenderModel {
     /**
      * Render the applications inside a component.
      *
-     * @param comp  The enclosing component.
+     * @param comp The enclosing component.
      */
     void renderApplications(Component comp) {
         comp.layout();
@@ -162,12 +167,13 @@ public class RenderModel {
 
     /**
      * Render an application into the render model.
-     * @param app An Application object.
-     * @param level The nesting level of the enclosing component. Used to calculate the offset of the component
-     *              headings.
+     *
+     * @param app        An Application object.
+     * @param level      The nesting level of the enclosing component. Used to calculate the offset of the component
+     *                   headings.
      * @param absCompRow Absolute row position of the component.
      * @param absCompCol Absolute column position of the component.
-     * @param appCoord Row/Column coordinates of the application inside the component.
+     * @param appCoord   Row/Column coordinates of the application inside the component.
      */
     void render(Application app, int level, int absCompRow, int absCompCol, Coordinate appCoord) {
         log.debug("Render app {} absCompRow {} absCompCol {} coord {}", app.getId(), absCompRow, absCompCol, appCoord);
@@ -188,7 +194,8 @@ public class RenderModel {
 
     /**
      * Draw the internal flow lines inside one component.
-     * @param comp The enclosing component
+     *
+     * @param comp  The enclosing component
      * @param origX The x position of the components left edge
      * @param origY The y position of the components top edge
      */
@@ -225,7 +232,7 @@ public class RenderModel {
     void renderCrossL1CompFlows(Component comp, int origX, int origY) {
         log.debug("Render cross l1 flows for {}", comp.getName());
         int proxyOrigX = origX - COL_WIDTH;
-        int proxyOrigY = origY - ROW_HEIGHT*2; // take header row offset into account
+        int proxyOrigY = origY - ROW_HEIGHT * 2; // take header row offset into account
         createAndPlaceProxies(comp, proxyOrigX, proxyOrigY);
         for (var flow : comp.getCrossL1CompInformationFlows()) {
             render(flow, true, 1, proxyOrigX, proxyOrigY, comp);
@@ -245,7 +252,7 @@ public class RenderModel {
      * @param comp  The enclosing component or the L1 component containing one of the apps.
      */
     void render(InformationFlow flow, boolean proxy, int level, int origX, int origY, Component comp) {
-        log.debug("Render flow {}", flow.getId());
+        log.debug("Render flow {} proxy = {}", flow.getId(), proxy);
         Component compL1 = comp.getParentComponent() == null ? comp : comp.getL1Component();
         Rectangle sourceRect;
         Rectangle destRect;
@@ -331,12 +338,13 @@ public class RenderModel {
     /**
      * Returns a vector of turning points for the line drawn between two applications.
      * The algorithm considers space blocked by other apps and routes lines around them.
+     *
      * @param appMatrix The component layout that contains the coordinates of the apps and all other apps.
-     * @param level nesting level of the enclosing component. Used to compute offsets.
-     * @param source Application where the information flow starts.
-     * @param dest Application where the information flow ends.
-     * @param origX Left edge of the enclosing component.
-     * @param origY Top edge of the enclosing component.
+     * @param level     nesting level of the enclosing component. Used to compute offsets.
+     * @param source    Application where the information flow starts.
+     * @param dest      Application where the information flow ends.
+     * @param origX     Left edge of the enclosing component.
+     * @param origY     Top edge of the enclosing component.
      * @return A vector of points where the information flow line shall be bent. The vector will be empty
      * when the Apps are directly adjacent or on the same for or column with no apps inbetween.
      */
@@ -362,7 +370,7 @@ public class RenderModel {
             // Start line at the top
             var x1 = origX + srcCoord.col() * COL_WIDTH + COL_WIDTH_HALF;
             var x2 = origX + dstCoord.col() * COL_WIDTH + COL_WIDTH_HALF;
-            var y = origY + srcCoord.row() * ROW_HEIGHT + SPACING_HALF;
+            var y = origY + (srcCoord.row() - 1) * ROW_HEIGHT + SPACING_HALF;
             result = new Point[]{new Point(x1, y), new Point(x2, y)};
         } else if (distanceHor == 0 && distanceVrt > 1) {
             log.debug("Same col and apps between");
@@ -377,8 +385,8 @@ public class RenderModel {
             var leftToRight = srcCoord.col() < dstCoord.col();
             var startPoint = coordOnApp(level, origX, origY, srcCoord, sideFrom(topToBottom));
             var endPoint = coordOnApp(level, origX, origY, dstCoord, sideTo(leftToRight));
-            var horSpacing = leftToRight ? - SPACING_HALF : SPACING_HALF;
-            var vrtSpacing = topToBottom ? SPACING_HALF : - SPACING_HALF;
+            var horSpacing = leftToRight ? -SPACING_HALF : SPACING_HALF;
+            var vrtSpacing = topToBottom ? SPACING_HALF : -SPACING_HALF;
             result = new Point[]{
                     new Point(startPoint.x, startPoint.y + vrtSpacing),
                     new Point(endPoint.x + horSpacing, startPoint.y + vrtSpacing),
@@ -401,17 +409,18 @@ public class RenderModel {
     /**
      * Returns the docking point of the information flow line for a given position in the
      * component grid.
+     *
      * @param level nesting level of the component.
      * @param origX origin of the component on the x-axis.
      * @param origY origin of the component on the y-axis.
      * @param coord row/col position of the component.
-     * @param side Side where the line shall connect: top, bottom, left of right.
+     * @param side  Side where the line shall connect: top, bottom, left of right.
      * @return the point where the information flow line connects to the app rectangle.
      */
     Point coordOnApp(int level, int origX, int origY, Coordinate coord, Side side) {
         var x = origX + coord.col() * COL_WIDTH;
-        var y = origY + coord.row() * ROW_HEIGHT;
-        var spacing = SPACING - (level-1) * COMP_SPACING;
+        var y = origY + (coord.row() - 1) * ROW_HEIGHT;
+        var spacing = SPACING - (level - 1) * COMP_SPACING;
         return switch (side) {
             case TOP -> new Point(x + spacing + APP_WIDTH / 2, y + spacing);
             case BOTTOM -> new Point(x + spacing + APP_WIDTH / 2, y + spacing + APP_HEIGHT);

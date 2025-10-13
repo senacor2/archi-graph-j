@@ -40,7 +40,7 @@ public class AppMatrix {
     }
 
     public void put(final int row, final int col, final Application app){
-        if (apps[row][col] != null) {
+        if (apps[row][col] != null && apps[row][col] != app) {
             throw new IllegalArgumentException(String.format("Error putting %s. Slot is occupied by %s",
                     app.getId(), apps[row][col].getId()));
         }
