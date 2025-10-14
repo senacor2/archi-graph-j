@@ -254,8 +254,8 @@ public class RenderModelTest {
                                 .fontSize(12)
                                 .build()
                 );
-        assertEquals(new Coordinate(1, 0), comp1.getAppMatrix().getAppCoordinate(app1));
-        assertEquals(new Coordinate(1, 1), comp1.getAppMatrix().getAppCoordinate(app2));
+        assertEquals(new Coordinate(2, 0), comp1.getAppMatrix().getAppCoordinate(app1));
+        assertEquals(new Coordinate(2, 1), comp1.getAppMatrix().getAppCoordinate(app2));
         assertEquals(new Coordinate(1, 0), comp2.getAppMatrix().getAppCoordinate(app1));
         assertEquals(new Coordinate(1, 1), comp2.getAppMatrix().getAppCoordinate(app2));
     }
@@ -349,42 +349,42 @@ public class RenderModelTest {
     void testCoordOnAppTop() {
         var fixture = new RenderModel();
         assertEquals(new Point(530, 290),
-                fixture.coordOnApp(1, 50, 50, new Coordinate(1, 1), RenderModel.Side.TOP));
+                fixture.coordOnApp(1, 50, 50, new Coordinate(2, 1), RenderModel.Side.TOP));
     }
 
     @Test
     void testCoordOnAppBottom() {
         var fixture = new RenderModel();
         assertEquals(new Point(530, 410),
-                fixture.coordOnApp(1, 50, 50, new Coordinate(1, 1), RenderModel.Side.BOTTOM));
+                fixture.coordOnApp(1, 50, 50, new Coordinate(2, 1), RenderModel.Side.BOTTOM));
     }
 
     @Test
     void testCoordOnAppLeft() {
         var fixture = new RenderModel();
         assertEquals(new Point(410, 350),
-                fixture.coordOnApp(1, 50, 50, new Coordinate(1, 1), RenderModel.Side.LEFT));
+                fixture.coordOnApp(1, 50, 50, new Coordinate(2, 1), RenderModel.Side.LEFT));
     }
 
     @Test
     void testCoordOnAppRight() {
         var fixture = new RenderModel();
         assertEquals(new Point(650, 350),
-                fixture.coordOnApp(1, 50, 50, new Coordinate(1, 1), RenderModel.Side.RIGHT));
+                fixture.coordOnApp(1, 50, 50, new Coordinate(2, 1), RenderModel.Side.RIGHT));
     }
 
     @Test
     void testCoordOnAppTopOfBottomLeft() {
         var fixture = new RenderModel();
         assertEquals(new Point(210, 290),
-                fixture.coordOnApp(1, 50, 50, new Coordinate(1, 0), RenderModel.Side.TOP));
+                fixture.coordOnApp(1, 50, 50, new Coordinate(2, 0), RenderModel.Side.TOP));
     }
 
     @Test
     void testCoordOnAppLeftOfTopRight() {
         var fixture = new RenderModel();
         assertEquals(new Point(410, 150),
-                fixture.coordOnApp(1, 50, 50, new Coordinate(0, 1), RenderModel.Side.LEFT));
+                fixture.coordOnApp(1, 50, 50, new Coordinate(1, 1), RenderModel.Side.LEFT));
     }
 
     @Test
@@ -456,9 +456,9 @@ public class RenderModelTest {
     void testGetAnchorThreeInARow() {
         var model = new RenderModel();
         var fixture = new AppMatrix(3, 3);
-        var c1 = new Coordinate(0, 0);
-        var c2 = new Coordinate(0, 1);
-        var c3 = new Coordinate(0, 2);
+        var c1 = new Coordinate(1, 0);
+        var c2 = new Coordinate(1, 1);
+        var c3 = new Coordinate(1, 2);
         Application a1 = new Application("A1", "A1", "C1");
         Application a2 = new Application("A2", "A2", "C1");
         Application a3 = new Application("A3", "A3", "C1");
@@ -490,8 +490,8 @@ public class RenderModelTest {
     void testGetAnchorTwoOneRowColApartBottomLeftTopRight() {
         var model = new RenderModel();
         var fixture = new AppMatrix(3, 3);
-        var c1 = new Coordinate(1, 0);
-        var c2 = new Coordinate(0, 1);
+        var c1 = new Coordinate(2, 0);
+        var c2 = new Coordinate(1, 1);
         Application a1 = new Application("A1", "A1", "C1");
         Application a2 = new Application("A2", "A2", "C1");
         fixture.put(c1, a1);
@@ -506,8 +506,8 @@ public class RenderModelTest {
     void testGetAnchorTwoOneRowColApartTopLeftBottomRight() {
         var model = new RenderModel();
         var fixture = new AppMatrix(3, 3);
-        var c1 = new Coordinate(0, 0);
-        var c2 = new Coordinate(1, 1);
+        var c1 = new Coordinate(1, 0);
+        var c2 = new Coordinate(2, 1);
         Application a1 = new Application("A1", "A1", "C1");
         Application a2 = new Application("A2", "A2", "C1");
         fixture.put(c1, a1);
@@ -522,8 +522,8 @@ public class RenderModelTest {
     void testGetAnchorTwoByThreeBottomLeftToTopRight() {
         var model = new RenderModel();
         var fixture = new AppMatrix(3, 2);
-        var c1 = new Coordinate(1, 0);
-        var c2 = new Coordinate(0, 1);
+        var c1 = new Coordinate(2, 0);
+        var c2 = new Coordinate(1, 1);
         var a1 = new Application("A1", "A1", "C1");
         var a2 = new Application("A2", "A2", "C1");
         fixture.put(c1, a1);

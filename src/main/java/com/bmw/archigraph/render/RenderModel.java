@@ -27,14 +27,37 @@ public class RenderModel {
     private static final Color FG_COLOR_APP = Color.BLACK;
     private static final Color COLOR_LINE = Color.BLACK;
 
+    /**
+     * Grid row height.
+     */
     private static final int ROW_HEIGHT = 200;
+
+    /**
+     * Grid column width.
+     */
     private static final int COL_WIDTH = (int) (ROW_HEIGHT * 1.6);
     private static final int ROW_HEIGHT_HALF = ROW_HEIGHT / 2;
     private static final int COL_WIDTH_HALF = COL_WIDTH / 2;
+    /**
+     * Each component is spaced by this amount w.r.t. the enclosing component.
+     */
     private static final int COMP_SPACING = 10;
+
+    /**
+     * The spacing of a component w.r.t. the cell. Note that the distance to the component border
+     * is different because components may be nested.
+     */
     private static final int SPACING = 40;
     private static final int SPACING_HALF = SPACING / 2;
+
+    /**
+     * Width of an app.
+     */
     private static final int APP_WIDTH = COL_WIDTH - SPACING * 2;
+
+    /**
+     * Height of an app.
+     */
     private static final int APP_HEIGHT = ROW_HEIGHT - SPACING * 2;
 
     enum Side {
@@ -122,16 +145,6 @@ public class RenderModel {
                 .h((comp.getHeight() - 1) * ROW_HEIGHT - indent(comp) * 2)
                 .build()
         );
-        // App Area
-//        add(Rectangle.builder()
-//                .id(comp.getName().replace(" ", "_") + "_apparea")
-//                .background(Color.LIGHT_GRAY)
-//                .foreground(Color.WHITE)
-//                .x(comp.getAbsoluteAppCol() * COL_WIDTH + indent(comp))
-//                .y(comp.getAbsoluteAppRow() * ROW_HEIGHT + indent(comp) + (comp.getLevel() - 1) * ROW_HEIGHT)
-//                .w(comp.getAppWidth() * COL_WIDTH - (comp.getLevel() - 1) * COMP_SPACING * 2)
-//                .h(comp.getAppHeight() * ROW_HEIGHT)
-//                .build());
         renderApplications(comp);
         renderLocalFlows(comp, x, y);
         for (var c : comp.getComponents()) {
@@ -418,14 +431,14 @@ public class RenderModel {
      * @return the point where the information flow line connects to the app rectangle.
      */
     Point coordOnApp(int level, int origX, int origY, Coordinate coord, Side side) {
-        var x = origX + coord.col() * COL_WIDTH;
-        var y = origY + (coord.row() - 1) * ROW_HEIGHT;
-        var spacing = SPACING - (level - 1) * COMP_SPACING;
+        var cellX = origX + coord.col() * COL_WIDTH;
+        var cellY = origY + (coord.row() - 1) * ROW_HEIGHT;
+        var compOffset = SPACING - (level - 1) * COMP_SPACING;
         return switch (side) {
-            case TOP -> new Point(x + spacing + APP_WIDTH / 2, y + spacing);
-            case BOTTOM -> new Point(x + spacing + APP_WIDTH / 2, y + spacing + APP_HEIGHT);
-            case LEFT -> new Point(x + spacing, y + spacing + APP_HEIGHT / 2);
-            case RIGHT -> new Point(x + spacing + APP_WIDTH, y + spacing + APP_HEIGHT / 2);
+            case TOP -> new Point(cellX + compOffset + APP_WIDTH / 2, cellY + compOffset);
+            case BOTTOM -> new Point(cellX + compOffset + APP_WIDTH / 2, cellY + compOffset + APP_HEIGHT);
+            case LEFT -> new Point(cellX + compOffset, cellY + compOffset + APP_HEIGHT / 2);
+            case RIGHT -> new Point(cellX + compOffset + APP_WIDTH, cellY + compOffset + APP_HEIGHT / 2);
         };
     }
 }

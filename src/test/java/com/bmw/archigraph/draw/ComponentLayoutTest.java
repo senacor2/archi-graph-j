@@ -359,12 +359,13 @@ public class ComponentLayoutTest {
         // test
         innerComp.layout();
         outerComp.layout();
+        outerComp.getAppMatrix().merge(innerComp.getAppMatrix(), innerComp.getRow()+1, innerComp.getCol());
         System.out.println(outerComp.getAppMatrix().dump());
         // verify
         assertEquals(nc(1, 0), outerComp.getAppCoordinate(app1), "App1");
         assertEquals(nc(1, 1), outerComp.getAppCoordinate(app2), "App2");
-        assertEquals(nc(3, 2), outerComp.getAppCoordinate(app3), "App3");
-        assertEquals(nc(3, 3), outerComp.getAppCoordinate(app4), "App4");
+        assertEquals(nc(4, 2), outerComp.getAppCoordinate(app3), "App3");
+        assertEquals(nc(4, 3), outerComp.getAppCoordinate(app4), "App4");
     }
 
     @Test
@@ -384,12 +385,13 @@ public class ComponentLayoutTest {
         // test
         innerComp.layout();
         outerComp.layout();
+        outerComp.getAppMatrix().merge(innerComp.getAppMatrix(), innerComp.getRow()+1, innerComp.getCol());
         System.out.println(outerComp.getAppMatrix().dump());
         // verify
         assertEquals(nc(2, 3), outerComp.getAppCoordinate(app1), "App1");
         assertEquals(nc(3, 3), outerComp.getAppCoordinate(app2), "App2");
-        assertEquals(nc(2, 1), outerComp.getAppCoordinate(app3), "App3");
-        assertEquals(nc(2, 2), outerComp.getAppCoordinate(app4), "App4");
+        assertEquals(nc(3, 1), outerComp.getAppCoordinate(app3), "App3");
+        assertEquals(nc(3, 2), outerComp.getAppCoordinate(app4), "App4");
 
     }
 }
