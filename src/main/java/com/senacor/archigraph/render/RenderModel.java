@@ -120,7 +120,7 @@ public class RenderModel {
         add(Rectangle.builder()
                 .id(comp.getName().replace(" ", "_") + "_head")
                 .text(comp.getName())
-                .background(headerBgColor(BG_COLOR_COMP_HEAD, comp.getLevel()))
+                .background(headerBgColor(comp.getLevel()))
                 .foreground(FG_COLOR_COMP_HEAD)
                 .fontSize(switch (comp.getLevel()) {
                     case 1 -> 48;
@@ -161,8 +161,13 @@ public class RenderModel {
         }
     }
 
-    private static Color headerBgColor(Color l1Color, int level) {
-        Color result = l1Color;
+    /**
+     * Returns the color of the component header which is brighter with each level.
+     * @param level Level of the component
+     * @return Background color for the component header.
+     */
+    private static Color headerBgColor(int level) {
+        Color result = BG_COLOR_COMP_HEAD;
         for (int i = level; i > 1; i--){
             result = result.brighter();
         }

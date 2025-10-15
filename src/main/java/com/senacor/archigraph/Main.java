@@ -37,7 +37,7 @@ public class Main {
         return compFileName.replaceFirst("\\.json$", ".drawio.xml");
     }
 
-    public static void main(String[] args) {
+    static void main(String[] args) {
         var parser = new DefaultParser();
         var options = defineOptions();
         try {
