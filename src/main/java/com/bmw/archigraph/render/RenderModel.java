@@ -120,7 +120,7 @@ public class RenderModel {
         add(Rectangle.builder()
                 .id(comp.getName().replace(" ", "_") + "_head")
                 .text(comp.getName())
-                .background(BG_COLOR_COMP_HEAD)
+                .background(headerBgColor(BG_COLOR_COMP_HEAD, comp.getLevel()))
                 .foreground(FG_COLOR_COMP_HEAD)
                 .fontSize(switch (comp.getLevel()) {
                     case 1 -> 48;
@@ -159,6 +159,14 @@ public class RenderModel {
                     comp.getParentComponent().getAppMatrix().dump());
 
         }
+    }
+
+    private static Color headerBgColor(Color l1Color, int level) {
+        Color result = l1Color;
+        for (int i = level; i > 1; i--){
+            result = result.brighter();
+        }
+        return result;
     }
 
     private static int indent(Component comp) {
