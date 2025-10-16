@@ -65,7 +65,6 @@ public class LayoutValidator {
      * @return A validation issue if the components overlap
      */
     private Optional<ValidationIssue> validateNoOverlap(Component c1, Component c2) {
-        // TODO spacing issue between Cross Platform Services and Human Resource Management ... was not detected
         if (c1.getCompArea().overlap(c2.getCompArea())) {
             return Optional.of(new ValidationIssue(c1.getName(), null,
                     String.format("Components %s and %s overlap", c1.getName(), c2.getName())));
