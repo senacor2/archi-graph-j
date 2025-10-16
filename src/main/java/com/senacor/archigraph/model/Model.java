@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 @Builder
 @AllArgsConstructor
 @Getter
+@Slf4j
 public class Model {
 
     @Setter
@@ -41,10 +43,13 @@ public class Model {
         assert componentMap != null;
         applicationMap = applications.stream()
                 .peek(a -> {
-                    // TODO handle unmapped component
                     var c = componentMap.get(a.getComponentName());
-                    a.setComponent(c);
-                    c.addApplication(a);
+                    if (c != null) {
+                        a.setComponent(c);
+                        c.addApplication(a);
+                    } else {
+                        log.warn("Component {} of Application {} not found", a.getComponentName(), a.getId());
+                    }
                 })
                 .collect(Collectors.toMap(Application::getId, Function.identity()));
     }
