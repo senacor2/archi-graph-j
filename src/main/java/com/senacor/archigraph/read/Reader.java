@@ -76,7 +76,8 @@ public class Reader {
         log.debug("Reading applications from {}", appsFile);
         var result = new LinkedList<Application>();
         try (java.io.Reader in = new FileReader(appsFile)) {
-            Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
+            var csvFormat = CSVFormat.DEFAULT;
+            Iterable<CSVRecord> records = csvFormat.parse(in);
             for (CSVRecord record : records) {
                 var id = record.get(0);
                 var name = record.get(1);
@@ -95,7 +96,8 @@ public class Reader {
         log.debug("Reading information flows from {}", flowsFile);
         var result = new LinkedList<InformationFlow>();
         try (java.io.Reader in = new FileReader(flowsFile)) {
-            Iterable<CSVRecord> records = CSVFormat.DEFAULT.parse(in);
+            var csvFormat = CSVFormat.DEFAULT;
+            Iterable<CSVRecord> records = csvFormat.parse(in);
             for (CSVRecord record : records) {
                 var sourceName = record.get(0);
                 var destName = record.get(1);

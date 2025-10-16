@@ -217,6 +217,23 @@ public class Component {
         for (var i : allFlows) {
             var srcIn = applications.contains(i.getSource());
             var dstIn = applications.contains(i.getDestination());
+            if (i.getSource() == null) {
+                log.debug("Skipping information flow {} because source app {} could not be found", i.getId(), i.getSourceId());
+                continue;
+            }
+            if (i.getSource().getComponent() == null) {
+                log.debug("Skipping information flow {} because {} has no component", i.getId(), i.getSource().getId());
+                continue;
+            }
+            if (i.getDestination() == null) {
+                log.debug("Skipping information flow {} because destination app {} could not be found", i.getId(),
+                        i.getDestId());
+                continue;
+            }
+            if (i.getDestination().getComponent() == null) {
+                log.debug("Skipping information flow {} because {} has no component", i.getId(), i.getDestination().getId());
+                continue;
+            }
             var sameL1Comp = i.getSource().getComponent().getL1Component() == i.getDestination().getComponent().getL1Component();
             log.debug("{} is src in = {}, dst in = {} same l1 = {}", i.getId(), srcIn, dstIn, sameL1Comp);
             if (srcIn && dstIn) {
