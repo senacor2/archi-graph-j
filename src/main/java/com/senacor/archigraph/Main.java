@@ -33,6 +33,7 @@ public class Main {
         options.addOption("a", "apps", true, "The applications file");
         options.addOption("f", "flows", true, "The information flows file");
         options.addOption("h", "help", false, "Show help");
+        options.addOption("l", "lenient", false, "Missing components and apps do not cause failure");
         options.addOption("x", "validateOnly", false, "Exit after validation");
         options.addOption("X", "continueWithFailure", false, "Continue even when validation fails");
         return options;
@@ -58,6 +59,7 @@ public class Main {
             var compFile = cmdLineArgs[0];
             var appsFile = cmdLine.getOptionValue("a");
             var flowsFile = cmdLine.getOptionValue("f");
+            var lenient = cmdLine.hasOption("l");
             var exitAfterValidate = cmdLine.hasOption("x");
             var exitAfterFailure = !cmdLine.hasOption("X");
             if (cmdLine.hasOption("d") || cmdLine.hasOption("t")) {
@@ -71,7 +73,7 @@ public class Main {
             var reader = new Reader(compFile, appsFile, flowsFile);
             var outputFile = buildOutputFileName(compFile);
             var model = reader.readModels();
-            validate(exitAfterValidate, exitAfterFailure, model);
+            validate(lenient, exitAfterValidate, exitAfterFailure, model);
             var renderModel = new RenderModel().render(model);
             new DrawModelDrawIO().draw(renderModel).write(outputFile);
         } catch (ParseException pe) {
@@ -83,9 +85,9 @@ public class Main {
         }
     }
 
-    private static void validate(boolean exitAfterValidate, boolean exitAfterFailure, Model model) {
+    private static void validate(boolean lenient, boolean exitAfterValidate, boolean exitAfterFailure, Model model) {
         var issues = new LayoutValidator().validate(model);
-        issues.addAll(new SemanticValidator().validate(model));
+        issues.addAll(new SemanticValidator().validate(model, lenient));
         for (var i : issues) {
             log.error(i.description());
             System.err.println(i.description());

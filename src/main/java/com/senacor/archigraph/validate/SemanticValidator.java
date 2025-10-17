@@ -13,18 +13,18 @@ import java.util.List;
 @Slf4j
 public class SemanticValidator {
 
-    public List<ValidationIssue> validate(Model model) {
+    public List<ValidationIssue> validate(Model model, boolean lenient) {
         log.debug("Starting semantic validation");
         List<ValidationIssue> result = new LinkedList<>();
-        result.addAll(validateAppLinkage(model));
+        result.addAll(validateAppLinkage(model, lenient));
         result.addAll(validateAppCount(model));
-        result.addAll(validateInformationFlows(model));
+        result.addAll(validateInformationFlows(model, lenient));
         log.debug("Semantic validation complete. {} issues found", result.size());
         return result;
     }
 
-    public List<ValidationIssue> validateAppLinkage(Model model) {
-        if (model.getApplicationMap() == null) return new LinkedList<>();
+    public List<ValidationIssue> validateAppLinkage(Model model, boolean lenient) {
+        if (lenient || model.getApplicationMap() == null) return new LinkedList<>();
         return model.getApplicationMap().values().stream()
                 .filter(a -> a.getComponent() == null)
                 .map(a -> new ValidationIssue(a.getComponentName(), a.getId(),
@@ -42,8 +42,8 @@ public class SemanticValidator {
                 .toList();
     }
 
-    public List<ValidationIssue> validateInformationFlows(Model model) {
-        if (model.getInformationFlowMap() == null) return new LinkedList<>();
+    public List<ValidationIssue> validateInformationFlows(Model model, boolean lenient) {
+        if (lenient || model.getInformationFlowMap() == null) return new LinkedList<>();
         return model.getInformationFlowMap().values().stream()
                 .filter(i -> i.getSource() == null || i.getDestination() == null)
                 .map(i -> new ValidationIssue("", i.getId(),

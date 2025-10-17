@@ -17,6 +17,20 @@ actual creative work.
 
 The output is in Draw.IO-Format.
 
+## Command line Syntax
+
+```
+archi-graph-j options -c component-model -a applications.csv -i informationflows.csv 
+```
+
+Options are:
+- `-d` or `--debug` Turn on debug logging.
+- `-t` or `--trace` Turn on tracing (more details than debug)
+- `-l` or `--lenient` Applications that reference a component that is not in the component model are ignored.
+Information flows where the source or destination application is not in the model are also ignored.
+- `-x` or `--validateOnly` Load the model and validate it, then exit. No rendering of output is done.
+- `-X` or `--continueWithFailure` Try rendering, even if validation found issues. May fail during rendering.
+
 ## Future work
 
 - Build a graphical editor for the component file.
