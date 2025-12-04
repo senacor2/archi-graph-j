@@ -36,6 +36,10 @@ public class LayoutValidator {
                 issue.ifPresent(result::add);
             }
         }
+        for (Component c : model.getComponentMap().values()) {
+            var issue = validateAppArea(c);
+            issue.ifPresent(result::add);
+        }
         log.debug("Layout validation complete. {} issues found", result.size());
         return result;
     }
@@ -87,6 +91,21 @@ public class LayoutValidator {
             return Optional.of(new ValidationIssue(c1.getName(), null,
                     String.format("Components %s and %s should be separated by at least %d cells",
                     c1.getName(), c2.getName(), MINDISTANCE)));
+        }
+    }
+
+    /**
+     * Check if a component with subcomponents and applications has an app area.
+     * @param c the Component to check.
+     * @return A validation issue if the component has no place for apps
+     */
+    private Optional<ValidationIssue> validateAppArea(Component c) {
+        if (!c.getComponents().isEmpty() && !c.getApplications().isEmpty() && !c.isAppAreaOverride()) {
+            return Optional.of(new ValidationIssue(c.getName(), null,
+                    String.format("Component %s has subcomponents and applications but no AppArea",
+                            c.getName())));
+        } else {
+            return Optional.empty();
         }
     }
 

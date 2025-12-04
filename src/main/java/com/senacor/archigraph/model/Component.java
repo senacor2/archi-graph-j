@@ -32,6 +32,11 @@ public class Component {
     private Area appArea;
 
     /**
+     * Whether the appArea has been overridden.
+     */
+    private boolean isAppAreaOverride;
+
+    /**
      * Component nesting level. The top level components have level == 1.
      */
     private final int level;
@@ -59,6 +64,7 @@ public class Component {
         this.name = name;
         this.compArea = new Area(row, col, width, height);
         this.appArea = new Area(1, 0, width, height - 1);
+        this.isAppAreaOverride = false;
         this.level = level;
         this.appMatrix = new AppMatrix(height, width);
         if (level == 1) {
@@ -109,6 +115,7 @@ public class Component {
      */
     public void setAppArea(@NonNull Area area) {
         appArea = new Area(area.row() + 1, area.col(), area.width(), area.height());
+        isAppAreaOverride = true;
     }
 
     /**
