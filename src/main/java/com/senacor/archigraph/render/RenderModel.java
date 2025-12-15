@@ -211,8 +211,7 @@ public class RenderModel {
                 .fontSize(12)
                 .rounded(true)
                 .x(absCompCol * COL_WIDTH + appCoord.col() * COL_WIDTH + SPACING)
-                .y(absCompRow * ROW_HEIGHT + indent(app.getComponent()) + (level - 1) * ROW_HEIGHT +
-                        appCoord.row() * ROW_HEIGHT + SPACING)
+                .y(absCompRow * ROW_HEIGHT + (level - 1) * ROW_HEIGHT + appCoord.row() * ROW_HEIGHT + SPACING)
                 .w(APP_WIDTH)
                 .h(APP_HEIGHT)
                 .build());
