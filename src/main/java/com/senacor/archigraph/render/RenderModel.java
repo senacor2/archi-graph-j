@@ -225,10 +225,13 @@ public class RenderModel {
      * @param origY The y position of the components top edge
      */
     void renderLocalFlows(Component comp, int origX, int origY) {
+        var count = 0;
         log.debug("Render local flows for {}", comp.getName());
         for (var flow : comp.getLocalInformationFlows()) {
             render(flow, false, comp.getLevel(), origX, origY, comp);
+            count++;
         }
+        log.debug("Render local flows for {}: {} flows rendered", comp.getName(), count);
     }
 
     /**
@@ -239,10 +242,13 @@ public class RenderModel {
      * @param origY The y position of the components top edge.
      */
     void renderL1CompFlows(Component comp, int origX, int origY) {
+        var count = 0;
         log.debug("Render l1 flows for {}", comp.getName());
         for (var flow : comp.getL1CompInformationFlows()) {
             render(flow, false, 1, origX, origY, comp);
+            count++;
         }
+        log.debug("Render l1 flows for {}: {} flows rendered", comp.getName(), count);
     }
 
     /**
@@ -255,13 +261,16 @@ public class RenderModel {
      * @param origY The y position of the components top edge.
      */
     void renderCrossL1CompFlows(Component comp, int origX, int origY) {
+        var count = 0;
         log.debug("Render cross l1 flows for {}", comp.getName());
         int proxyOrigX = origX - COL_WIDTH;
         int proxyOrigY = origY - ROW_HEIGHT * 2; // take header row offset into account
         createAndPlaceProxies(comp, proxyOrigX, proxyOrigY);
         for (var flow : comp.getCrossL1CompInformationFlows()) {
             render(flow, true, 1, proxyOrigX, proxyOrigY, comp);
+            count++;
         }
+        log.debug("Render cross l1 flows for {}: {} flows rendered", comp.getName(), count);
     }
 
     /**

@@ -36,6 +36,10 @@ public class Reader {
         readComponentModel(model);
         if (appsFile != null) model.setApplications(readApplications());
         if (flowsFile != null) model.setInformationFlows(readInformationFlows());
+        log.info("Model size:");
+        log.info("Components:        {}", model.getComponentMap().size());
+        log.info("Applications:      {}", model.getApplicationMap().size());
+        log.info("Information Flows: {}", model.getInformationFlowMap().size());
         return model;
     }
 

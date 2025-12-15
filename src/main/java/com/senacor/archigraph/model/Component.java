@@ -219,41 +219,49 @@ public class Component {
         return appMatrix.getAppCoordinate(app);
     }
 
+    /**
+     * Scan all information flows and sort them into
+     * <ul>
+     *     <li>information flows local to this component,</li>
+     *     <li>information flows with one end in this component and the other end in a different component,
+     *     which is in the same l1 component,</li>
+     *     <li>information flows with one end in this component and the other end in a different l1 component</li>
+     *     <li>information flows not relevant for this component</li>
+     * </ul>
+     * @param allFlows All information flows in this model.
+     */
     public void selectInformationFlows(Collection<InformationFlow> allFlows) {
         log.debug("Selecting information flows for {}", getName());
         for (var i : allFlows) {
             var srcIn = applications.contains(i.getSource());
             var dstIn = applications.contains(i.getDestination());
             if (i.getSource() == null) {
-                log.debug("Skipping information flow {} because source app {} could not be found", i.getId(), i.getSourceId());
+                log.trace("Skipping information flow {} because source app {} could not be found", i.getId(), i.getSourceId());
                 continue;
             }
             if (i.getSource().getComponent() == null) {
-                log.debug("Skipping information flow {} because {} has no component", i.getId(), i.getSource().getId());
+                log.trace("Skipping information flow {} because {} has no component", i.getId(), i.getSource().getId());
                 continue;
             }
             if (i.getDestination() == null) {
-                log.debug("Skipping information flow {} because destination app {} could not be found", i.getId(),
+                log.trace("Skipping information flow {} because destination app {} could not be found", i.getId(),
                         i.getDestId());
                 continue;
             }
             if (i.getDestination().getComponent() == null) {
-                log.debug("Skipping information flow {} because {} has no component", i.getId(), i.getDestination().getId());
+                log.trace("Skipping information flow {} because {} has no component", i.getId(), i.getDestination().getId());
                 continue;
             }
             var sameL1Comp = i.getSource().getComponent().getL1Component() == i.getDestination().getComponent().getL1Component();
-            log.debug("{} is src in = {}, dst in = {} same l1 = {}", i.getId(), srcIn, dstIn, sameL1Comp);
+            log.trace("{} is src in = {}, dst in = {} same l1 = {}", i.getId(), srcIn, dstIn, sameL1Comp);
             if (srcIn && dstIn) {
-                log.debug("add {} to local flows if {}", i.getId(), name);
-                localInformationFlows.add(i);
+                addToLocalInformationFlows(i);
             } else if ((srcIn || dstIn) && sameL1Comp) {
-                log.debug("add {} to l1 local flows of {}", i.getId(), name);
-                l1CompInformationFlows.add(i);
-            } else if (srcIn || dstIn) {
-                log.debug("add {} to cross l1 flows of {}", i.getId(), name);
-                crossL1CompInformationFlows.add(i);
+                l1Component.addToL1InformationFlows(i);
+            } else if (srcIn) {
+                l1Component.addToCrossL1InformationFlows(i);
             } else {
-                log.debug("{} not in any flow of {}", i.getId(), name);
+                log.trace("{} not in any flow of {}", i.getId(), name);
             }
         }
     }
@@ -287,6 +295,21 @@ public class Component {
 
     public void addApplication(Application a) {
         applications.add(a);
+    }
+
+    void addToLocalInformationFlows(InformationFlow flow) {
+        log.debug("add {} to local flows of {}", flow.getId(), name);
+        localInformationFlows.add(flow);
+    }
+
+    void addToL1InformationFlows(InformationFlow flow) {
+        log.debug("add {} to l1 local flows of {}", flow.getId(), name);
+        l1CompInformationFlows.add(flow);
+    }
+
+    void addToCrossL1InformationFlows(InformationFlow flow) {
+        log.debug("add {} to cross l1 flows of {}", flow.getId(), name);
+        crossL1CompInformationFlows.add(flow);
     }
 
     public Application getApplicationAt(Coordinate coord) {
