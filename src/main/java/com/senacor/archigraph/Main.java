@@ -33,7 +33,8 @@ public class Main {
         options.addOption("a", "apps", true, "The applications file");
         options.addOption("f", "flows", true, "The information flows file");
         options.addOption("h", "help", false, "Show help");
-        options.addOption("l", "lenient", false, "Missing components and apps do not cause failure");
+        options.addOption("lc", "lenient-comp", false, "Missing components do not cause failure");
+        options.addOption("lf", "lenient-flow", false, "Missing apps in flows do not cause failure.");
         options.addOption("x", "validateOnly", false, "Exit after validation");
         options.addOption("X", "continueWithFailure", false, "Continue even when validation fails");
         return options;
@@ -59,21 +60,24 @@ public class Main {
             var compFile = cmdLineArgs[0];
             var appsFile = cmdLine.getOptionValue("a");
             var flowsFile = cmdLine.getOptionValue("f");
-            var lenient = cmdLine.hasOption("l");
+            var lenientComp = cmdLine.hasOption("lenient-comp");
+            var lenientFlow = cmdLine.hasOption("lenient-flow");
             var exitAfterValidate = cmdLine.hasOption("x");
             var exitAfterFailure = !cmdLine.hasOption("X");
+            ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger)LoggerFactory.getLogger("com.bmw.archigraph");
             if (cmdLine.hasOption("d") || cmdLine.hasOption("t")) {
-                ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger)LoggerFactory.getLogger("com.bmw.archigraph");
                 if (cmdLine.hasOption("t")) {
                     root.setLevel(Level.TRACE);
                 } else {
                     root.setLevel(Level.DEBUG);
                 }
+            } else {
+                root.setLevel(Level.INFO);
             }
             var reader = new Reader(compFile, appsFile, flowsFile);
             var outputFile = buildOutputFileName(compFile);
             var model = reader.readModels();
-            validate(lenient, exitAfterValidate, exitAfterFailure, model);
+            validate(lenientComp, lenientFlow, exitAfterValidate, exitAfterFailure, model);
             var renderModel = new RenderModel().render(model);
             new DrawModelDrawIO().draw(renderModel).write(outputFile);
         } catch (ParseException pe) {
@@ -85,9 +89,10 @@ public class Main {
         }
     }
 
-    private static void validate(boolean lenient, boolean exitAfterValidate, boolean exitAfterFailure, Model model) {
+    private static void validate(boolean lenientComp, boolean lenientFlow, boolean exitAfterValidate,
+                                 boolean exitAfterFailure, Model model) {
         var issues = new LayoutValidator().validate(model);
-        issues.addAll(new SemanticValidator().validate(model, lenient));
+        issues.addAll(new SemanticValidator().validate(model, lenientComp, lenientFlow));
         for (var i : issues) {
             log.error(i.description());
             System.err.println(i.description());

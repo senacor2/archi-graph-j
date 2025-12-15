@@ -8,23 +8,37 @@ import java.util.List;
 
 /**
  * This validator checks the semantic integrity of the model.
- * Applications should have a
+ * Applications must have a component, information flows must have two apps and the number of apps in one
+ * component must be smaller than the sizes of the component.
  */
 @Slf4j
 public class SemanticValidator {
 
-    public List<ValidationIssue> validate(Model model, boolean lenient) {
+    /**
+     * Check the model for semantic errors.
+     * @param model Model to be checked.
+     * @param lenientComp skip the check for missing components.
+     * @param lenientFlow skip the check for apps referenced in information flows but missing in the model.
+     * @return A possibly empty list of validation errors.
+     */
+    public List<ValidationIssue> validate(Model model, boolean lenientComp, boolean lenientFlow) {
         log.debug("Starting semantic validation");
         List<ValidationIssue> result = new LinkedList<>();
-        result.addAll(validateAppLinkage(model, lenient));
+        result.addAll(validateAppLinkage(model, lenientComp));
         result.addAll(validateAppCount(model));
-        result.addAll(validateInformationFlows(model, lenient));
+        result.addAll(validateInformationFlows(model, lenientFlow));
         log.debug("Semantic validation complete. {} issues found", result.size());
         return result;
     }
 
-    public List<ValidationIssue> validateAppLinkage(Model model, boolean lenient) {
-        if (lenient || model.getApplicationMap() == null) return new LinkedList<>();
+    /**
+     * Check if each app in the model points to one parent component which is also part of the model.
+     * @param model Model to be checked.
+     * @param lenientComp if false, this check is skipped.
+     * @return a possibly empty list of validation errors.
+     */
+    public List<ValidationIssue> validateAppLinkage(Model model, boolean lenientComp) {
+        if (lenientComp || model.getApplicationMap() == null) return new LinkedList<>();
         return model.getApplicationMap().values().stream()
                 .filter(a -> a.getComponent() == null)
                 .map(a -> new ValidationIssue(a.getComponentName(), a.getId(),
@@ -32,6 +46,12 @@ public class SemanticValidator {
                 .toList();
     }
 
+    /**
+     * Validate that the number of apps directly contained in a component is smaller than the row*columns of
+     * said component (which may also be checked against the app are size).
+     * @param model Model to be checked.
+     * @return a possibly empty list of validation error messages.
+     */
     public List<ValidationIssue> validateAppCount(Model model) {
         if (model.getApplicationMap() == null) return new LinkedList<>();
         return model.getComponentMap().values().stream()
@@ -42,8 +62,14 @@ public class SemanticValidator {
                 .toList();
     }
 
-    public List<ValidationIssue> validateInformationFlows(Model model, boolean lenient) {
-        if (lenient || model.getInformationFlowMap() == null) return new LinkedList<>();
+    /**
+     * Validate that the source and destination app referenced by the flow exist in the model.
+     * @param model Model to be checked.
+     * @param lenientFlow skip the check if false.
+     * @return a possibly empty list of validation error messages.
+     */
+    public List<ValidationIssue> validateInformationFlows(Model model, boolean lenientFlow) {
+        if (lenientFlow || model.getInformationFlowMap() == null) return new LinkedList<>();
         return model.getInformationFlowMap().values().stream()
                 .filter(i -> i.getSource() == null || i.getDestination() == null)
                 .map(i -> new ValidationIssue("", i.getId(),
