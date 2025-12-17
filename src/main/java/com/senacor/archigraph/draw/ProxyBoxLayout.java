@@ -47,6 +47,10 @@ public class ProxyBoxLayout extends AbstractLayout {
                 result = candidate;
             }
         }
+        if (result == null) {
+            log.error("Could not find an empty proxy cell");
+            throw new IllegalArgumentException("No empty proxy cell");
+        }
         proxyBoxCoords.remove(result);
         log.debug("Found {}", result);
         return result;

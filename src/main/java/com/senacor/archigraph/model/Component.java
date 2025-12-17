@@ -258,7 +258,7 @@ public class Component {
                 addToLocalInformationFlows(i);
             } else if ((srcIn || dstIn) && sameL1Comp) {
                 l1Component.addToL1InformationFlows(i);
-            } else if (srcIn) {
+            } else if (srcIn || dstIn) {
                 l1Component.addToCrossL1InformationFlows(i);
             } else {
                 log.trace("{} not in any flow of {}", i.getId(), name);

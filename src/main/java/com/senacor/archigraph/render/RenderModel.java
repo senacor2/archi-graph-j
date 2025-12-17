@@ -30,12 +30,12 @@ public class RenderModel {
     /**
      * Grid row height.
      */
-    private static final int ROW_HEIGHT = 200;
+    static final int ROW_HEIGHT = 200;
 
     /**
      * Grid column width.
      */
-    private static final int COL_WIDTH = (int) (ROW_HEIGHT * 1.6);
+    static final int COL_WIDTH = (int) (ROW_HEIGHT * 1.6);
     private static final int ROW_HEIGHT_HALF = ROW_HEIGHT / 2;
     private static final int COL_WIDTH_HALF = COL_WIDTH / 2;
     /**
@@ -47,18 +47,18 @@ public class RenderModel {
      * The spacing of a component w.r.t. the cell. Note that the distance to the component border
      * is different because components may be nested.
      */
-    private static final int SPACING = 40;
+    static final int SPACING = 40;
     private static final int SPACING_HALF = SPACING / 2;
 
     /**
      * Width of an app.
      */
-    private static final int APP_WIDTH = COL_WIDTH - SPACING * 2;
+    static final int APP_WIDTH = COL_WIDTH - SPACING * 2;
 
     /**
      * Height of an app.
      */
-    private static final int APP_HEIGHT = ROW_HEIGHT - SPACING * 2;
+    static final int APP_HEIGHT = ROW_HEIGHT - SPACING * 2;
 
     enum Side {
         TOP, BOTTOM, LEFT, RIGHT
@@ -302,7 +302,7 @@ public class RenderModel {
         }
         log.debug("Render flow from {} to {}", sourceRect, destRect);
         Point[] anchors = getAnchors(proxy ? comp.getL1AppMatrix() : comp.getAppMatrix(),
-                level, flow.getSource(), flow.getDestination(), origX, origY);
+                level, flow.getSource(), flow.getDestination(), sourceRect, destRect, origX, origY);
 
         add(Line.builder()
                 .id(flow.getId())
@@ -382,7 +382,8 @@ public class RenderModel {
      * @return A vector of points where the information flow line shall be bent. The vector will be empty
      * when the Apps are directly adjacent or on the same for or column with no apps inbetween.
      */
-    Point[] getAnchors(AppMatrix appMatrix, int level, Application source, Application dest, int origX, int origY) {
+    Point[] getAnchors(AppMatrix appMatrix, int level, Application source, Application dest,
+                       Rectangle sourceRect, Rectangle destRect, int origX, int origY) {
         var srcCoord = appMatrix.getAppCoordinate(source);
         var dstCoord = appMatrix.getAppCoordinate(dest);
         int distanceHor = Math.abs(srcCoord.col() - dstCoord.col());
@@ -417,8 +418,8 @@ public class RenderModel {
             log.debug("Different rows and columns");
             var topToBottom = srcCoord.row() < dstCoord.row();
             var leftToRight = srcCoord.col() < dstCoord.col();
-            var startPoint = coordOnApp(level, origX, origY, srcCoord, sideFrom(topToBottom));
-            var endPoint = coordOnApp(level, origX, origY, dstCoord, sideTo(leftToRight));
+            var startPoint = coordOnApp(sourceRect, sideFrom(topToBottom));
+            var endPoint = coordOnApp(destRect, sideTo(leftToRight));
             var horSpacing = leftToRight ? -SPACING_HALF : SPACING_HALF;
             var vrtSpacing = topToBottom ? SPACING_HALF : -SPACING_HALF;
             result = new Point[]{
@@ -441,25 +442,18 @@ public class RenderModel {
     }
 
     /**
-     * Returns the docking point of the information flow line for a given position in the
-     * component grid.
+     * Returns the docking point of the information flow line for an application rectangle,
      *
-     * @param level nesting level of the component.
-     * @param origX origin of the component on the x-axis.
-     * @param origY origin of the component on the y-axis.
-     * @param coord row/col position of the component.
-     * @param side  Side where the line shall connect: top, bottom, left of right.
+     * @param rect An application rectangle.
+     * @param side Side where the line shall connect: top, bottom, left of right.
      * @return the point where the information flow line connects to the app rectangle.
      */
-    Point coordOnApp(int level, int origX, int origY, Coordinate coord, Side side) {
-        var cellX = origX + coord.col() * COL_WIDTH;
-        var cellY = origY + (coord.row() - 1) * ROW_HEIGHT;
-        var compOffset = SPACING - (level - 1) * COMP_SPACING;
+    Point coordOnApp(Rectangle rect, Side side) {
         return switch (side) {
-            case TOP -> new Point(cellX + compOffset + APP_WIDTH / 2, cellY + compOffset);
-            case BOTTOM -> new Point(cellX + compOffset + APP_WIDTH / 2, cellY + compOffset + APP_HEIGHT);
-            case LEFT -> new Point(cellX + compOffset, cellY + compOffset + APP_HEIGHT / 2);
-            case RIGHT -> new Point(cellX + compOffset + APP_WIDTH, cellY + compOffset + APP_HEIGHT / 2);
+            case TOP -> new Point(rect.getX() + APP_WIDTH / 2, rect.getY());
+            case BOTTOM -> new Point(rect.getX() + APP_WIDTH / 2, rect.getY() + APP_HEIGHT);
+            case LEFT -> new Point(rect.getX(), rect.getY() + APP_HEIGHT / 2);
+            case RIGHT -> new Point(rect.getX() + APP_WIDTH, rect.getY() + APP_HEIGHT / 2);
         };
     }
 }
