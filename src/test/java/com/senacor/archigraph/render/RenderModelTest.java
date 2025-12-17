@@ -5,7 +5,6 @@ import com.senacor.archigraph.draw.Coordinate;
 import com.senacor.archigraph.model.*;
 import com.senacor.archigraph.model.Component;
 import org.junit.jupiter.api.Test;
-import org.w3c.dom.css.Rect;
 
 import java.awt.*;
 import java.util.List;
@@ -512,7 +511,7 @@ public class RenderModelTest {
         Application a2 = new Application("A2", "A2", "C1");
         fixture.put(c1, a1);
         fixture.put(c2, a2);
-        assertThat(model.getAnchors(fixture, 1, a1, a2, rect1, rect2, 100, 100))
+        assertThat(model.getAnchors(fixture, a1, a2, rect1, rect2))
                 .isEmpty();
     }
 
@@ -528,7 +527,7 @@ public class RenderModelTest {
         Application a2 = new Application("A2", "A2", "C1");
         fixture.put(c1, a1);
         fixture.put(c2, a2);
-        assertThat(model.getAnchors(fixture, 1, a1, a2, rect1, rect2, 100, 100))
+        assertThat(model.getAnchors(fixture, a1, a2, rect1, rect2))
                 .isEmpty();
     }
 
@@ -544,7 +543,7 @@ public class RenderModelTest {
         Application a2 = new Application("A2", "A2", "C1");
         fixture.put(c1, a1);
         fixture.put(c2, a2);
-        assertThat(model.getAnchors(fixture, 1, a1, a2, rect1, rect2, 100, 100))
+        assertThat(model.getAnchors(fixture, a1, a2, rect1, rect2))
                 .isEmpty();
     }
 
@@ -560,7 +559,7 @@ public class RenderModelTest {
         Application a2 = new Application("A2", "A2", "C1");
         fixture.put(c1, a1);
         fixture.put(c2, a2);
-        assertThat(model.getAnchors(fixture, 1, a1, a2, rect1, rect2, 100, 100))
+        assertThat(model.getAnchors(fixture, a1, a2, rect1, rect2))
                 .isEmpty();
     }
 
@@ -579,8 +578,8 @@ public class RenderModelTest {
         fixture.put(c1, a1);
         fixture.put(c2, a2);
         fixture.put(c3, a3);
-        assertThat(model.getAnchors(fixture, 1, a1, a3, rect1, rect2, 100, 100))
-                .containsExactly(new Point(260, 120), new Point(900, 120));
+        assertThat(model.getAnchors(fixture, a1, a3, rect1, rect2))
+                .containsExactly(new Point(260, 320), new Point(900, 320));
     }
 
     @Test
@@ -598,7 +597,7 @@ public class RenderModelTest {
         fixture.put(c1, a1);
         fixture.put(c2, a2);
         fixture.put(c3, a3);
-        assertThat(model.getAnchors(fixture, 1, a1, a3, rect1, rect2, 100, 100))
+        assertThat(model.getAnchors(fixture, a1, a3, rect1, rect2))
                 .containsExactly(new Point(400, 200), new Point(400, 600));
     }
 
@@ -614,7 +613,7 @@ public class RenderModelTest {
         Application a2 = new Application("A2", "A2", "C1");
         fixture.put(c1, a1);
         fixture.put(c2, a2);
-        assertThat(model.getAnchors(fixture, 1, a1, a2, rect1, rect2, 100, 100))
+        assertThat(model.getAnchors(fixture, a1, a2, rect1, rect2))
                 .containsExactly(new Point(260, 520),
                         new Point(440, 520),
                         new Point(440, 400));
@@ -632,7 +631,7 @@ public class RenderModelTest {
         Application a2 = new Application("A2", "A2", "C1");
         fixture.put(c1, a1);
         fixture.put(c2, a2);
-        assertThat(model.getAnchors(fixture, 1, a1, a2, rect1, rect2, 100, 100))
+        assertThat(model.getAnchors(fixture, a1, a2, rect1, rect2))
                 .containsExactly(new Point(260, 480),
                         new Point(440, 480),
                         new Point(440, 600));
@@ -651,7 +650,7 @@ public class RenderModelTest {
         fixture.put(c1, a1);
         fixture.put(c2, a2);
         System.out.println(fixture.dump());
-        assertThat(model.getAnchors(fixture, 1, a1, a2, rect1, rect2, 320, 500))
+        assertThat(model.getAnchors(fixture, a1, a2, rect1, rect2))
                 .containsExactly(new Point(260, 520),
                         new Point(440, 520),
                         new Point(440, 400));

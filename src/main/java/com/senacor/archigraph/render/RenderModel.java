@@ -48,17 +48,23 @@ public class RenderModel {
      * is different because components may be nested.
      */
     static final int SPACING = 40;
+
+    /**
+     * A half spacing is used to place information flow lines.
+     */
     private static final int SPACING_HALF = SPACING / 2;
 
     /**
      * Width of an app.
      */
     static final int APP_WIDTH = COL_WIDTH - SPACING * 2;
+    public static final int APP_WIDTH_HALF = APP_WIDTH / 2;
 
     /**
      * Height of an app.
      */
     static final int APP_HEIGHT = ROW_HEIGHT - SPACING * 2;
+    public static final int APP_HEIGHT_HALF = APP_HEIGHT / 2;
 
     enum Side {
         TOP, BOTTOM, LEFT, RIGHT
@@ -146,12 +152,12 @@ public class RenderModel {
                 .build()
         );
         renderApplications(comp);
-        renderLocalFlows(comp, x, y);
+        renderLocalFlows(comp);
         for (var c : comp.getComponents()) {
             render(c);
         }
         if (comp.getParentComponent() == null) { // L1 components have no parent
-            renderL1CompFlows(comp, x, y);
+            renderL1CompFlows(comp);
             renderCrossL1CompFlows(comp, x, y);
         } else {
             comp.getParentComponent().getAppMatrix().merge(comp.getAppMatrix(), comp.getRow() + 1, comp.getCol());
@@ -221,14 +227,12 @@ public class RenderModel {
      * Draw the internal flow lines inside one component.
      *
      * @param comp  The enclosing component
-     * @param origX The x position of the components left edge
-     * @param origY The y position of the components top edge
      */
-    void renderLocalFlows(Component comp, int origX, int origY) {
+    void renderLocalFlows(Component comp) {
         var count = 0;
         log.debug("Render local flows for {}", comp.getName());
         for (var flow : comp.getLocalInformationFlows()) {
-            render(flow, false, comp.getLevel(), origX, origY, comp);
+            render(flow, false, comp);
             count++;
         }
         log.debug("Render local flows for {}: {} flows rendered", comp.getName(), count);
@@ -238,14 +242,12 @@ public class RenderModel {
      * Draw the flows inside one L1 component.
      *
      * @param comp  the L1 component.
-     * @param origX The x position of the components left edge.
-     * @param origY The y position of the components top edge.
      */
-    void renderL1CompFlows(Component comp, int origX, int origY) {
+    void renderL1CompFlows(Component comp) {
         var count = 0;
         log.debug("Render l1 flows for {}", comp.getName());
         for (var flow : comp.getL1CompInformationFlows()) {
-            render(flow, false, 1, origX, origY, comp);
+            render(flow, false, comp);
             count++;
         }
         log.debug("Render l1 flows for {}: {} flows rendered", comp.getName(), count);
@@ -267,7 +269,7 @@ public class RenderModel {
         int proxyOrigY = origY - ROW_HEIGHT * 2; // take header row offset into account
         createAndPlaceProxies(comp, proxyOrigX, proxyOrigY);
         for (var flow : comp.getCrossL1CompInformationFlows()) {
-            render(flow, true, 1, proxyOrigX, proxyOrigY, comp);
+            render(flow, true, comp);
             count++;
         }
         log.debug("Render cross l1 flows for {}: {} flows rendered", comp.getName(), count);
@@ -280,12 +282,9 @@ public class RenderModel {
      *
      * @param flow  An InformationFlow
      * @param proxy True when proxies shall be rendered, false otherwise.
-     * @param level the nesting level of the component. Top level components have level 1.
-     * @param origX The left edge of the enclosing component.
-     * @param origY The top edge of the enclosing component.
      * @param comp  The enclosing component or the L1 component containing one of the apps.
      */
-    void render(InformationFlow flow, boolean proxy, int level, int origX, int origY, Component comp) {
+    void render(InformationFlow flow, boolean proxy, Component comp) {
         log.debug("Render flow {} proxy = {}", flow.getId(), proxy);
         Component compL1 = comp.getParentComponent() == null ? comp : comp.getL1Component();
         Rectangle sourceRect;
@@ -302,7 +301,7 @@ public class RenderModel {
         }
         log.debug("Render flow from {} to {}", sourceRect, destRect);
         Point[] anchors = getAnchors(proxy ? comp.getL1AppMatrix() : comp.getAppMatrix(),
-                level, flow.getSource(), flow.getDestination(), sourceRect, destRect, origX, origY);
+                flow.getSource(), flow.getDestination(), sourceRect, destRect);
 
         add(Line.builder()
                 .id(flow.getId())
@@ -374,16 +373,13 @@ public class RenderModel {
      * The algorithm considers space blocked by other apps and routes lines around them.
      *
      * @param appMatrix The component layout that contains the coordinates of the apps and all other apps.
-     * @param level     nesting level of the enclosing component. Used to compute offsets.
      * @param source    Application where the information flow starts.
      * @param dest      Application where the information flow ends.
-     * @param origX     Left edge of the enclosing component.
-     * @param origY     Top edge of the enclosing component.
      * @return A vector of points where the information flow line shall be bent. The vector will be empty
      * when the Apps are directly adjacent or on the same for or column with no apps inbetween.
      */
-    Point[] getAnchors(AppMatrix appMatrix, int level, Application source, Application dest,
-                       Rectangle sourceRect, Rectangle destRect, int origX, int origY) {
+    Point[] getAnchors(AppMatrix appMatrix, Application source, Application dest,
+                       Rectangle sourceRect, Rectangle destRect) {
         var srcCoord = appMatrix.getAppCoordinate(source);
         var dstCoord = appMatrix.getAppCoordinate(dest);
         int distanceHor = Math.abs(srcCoord.col() - dstCoord.col());
@@ -403,16 +399,16 @@ public class RenderModel {
         } else if (distanceVrt == 0 && distanceHor > 1) {
             log.debug("Same row and apps between");
             // Start line at the top
-            var x1 = origX + srcCoord.col() * COL_WIDTH + COL_WIDTH_HALF;
-            var x2 = origX + dstCoord.col() * COL_WIDTH + COL_WIDTH_HALF;
-            var y = origY + (srcCoord.row() - 1) * ROW_HEIGHT + SPACING_HALF;
+            var x1 = sourceRect.getX() + APP_WIDTH_HALF;
+            var x2 = destRect.getX() + APP_WIDTH_HALF;
+            var y = sourceRect.getY() - SPACING_HALF;
             result = new Point[]{new Point(x1, y), new Point(x2, y)};
         } else if (distanceHor == 0 && distanceVrt > 1) {
             log.debug("Same col and apps between");
             // Start line at the right
-            var x = origX + (srcCoord.col() + 1) * COL_WIDTH - SPACING_HALF;
-            var y1 = origY + srcCoord.row() * ROW_HEIGHT + ROW_HEIGHT_HALF;
-            var y2 = origY + dstCoord.row() * ROW_HEIGHT + ROW_HEIGHT_HALF;
+            var x = sourceRect.getX() + APP_WIDTH + SPACING_HALF;
+            var y1 = sourceRect.getY() + APP_HEIGHT_HALF;
+            var y2 = destRect.getY() + APP_HEIGHT_HALF;
             result = new Point[]{new Point(x, y1), new Point(x, y2)};
         } else {
             log.debug("Different rows and columns");
@@ -450,10 +446,10 @@ public class RenderModel {
      */
     Point coordOnApp(Rectangle rect, Side side) {
         return switch (side) {
-            case TOP -> new Point(rect.getX() + APP_WIDTH / 2, rect.getY());
-            case BOTTOM -> new Point(rect.getX() + APP_WIDTH / 2, rect.getY() + APP_HEIGHT);
-            case LEFT -> new Point(rect.getX(), rect.getY() + APP_HEIGHT / 2);
-            case RIGHT -> new Point(rect.getX() + APP_WIDTH, rect.getY() + APP_HEIGHT / 2);
+            case TOP -> new Point(rect.getX() + APP_WIDTH_HALF, rect.getY());
+            case BOTTOM -> new Point(rect.getX() + APP_WIDTH_HALF, rect.getY() + APP_HEIGHT);
+            case LEFT -> new Point(rect.getX(), rect.getY() + APP_HEIGHT_HALF);
+            case RIGHT -> new Point(rect.getX() + APP_WIDTH, rect.getY() + APP_HEIGHT_HALF);
         };
     }
 }
