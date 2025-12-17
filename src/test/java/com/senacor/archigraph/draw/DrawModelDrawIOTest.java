@@ -25,7 +25,7 @@ public class DrawModelDrawIOTest {
                         .text("Rectangle 1")
                         .fontSize(22)
                         .background(Color.WHITE)
-                        .foreground(Color.BLACK)
+                        .fontcolor(Color.BLACK)
                         .build()));
         var fixture = new DrawModelDrawIO();
         // test

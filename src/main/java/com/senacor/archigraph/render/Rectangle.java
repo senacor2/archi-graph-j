@@ -18,7 +18,8 @@ public class Rectangle extends RenderModelElement {
     private int h;
 
     private Color background;
-    private Color foreground;
+    private Color fontcolor;
+    private Color bordercolor;
 
     private int fontSize;
 

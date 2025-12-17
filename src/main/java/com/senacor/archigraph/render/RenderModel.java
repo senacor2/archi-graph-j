@@ -95,7 +95,7 @@ public class RenderModel {
                 .id("ROOT")
                 .text(model.getName())
                 .background(BG_COLOR_MODEL)
-                .foreground(FG_COLOR_MODEL)
+                .fontcolor(FG_COLOR_MODEL)
                 .fontSize(48)
                 .x(0)
                 .y(0)
@@ -127,7 +127,7 @@ public class RenderModel {
                 .id(comp.getName().replace(" ", "_") + "_head")
                 .text(comp.getName())
                 .background(headerBgColor(comp.getLevel()))
-                .foreground(FG_COLOR_COMP_HEAD)
+                .fontcolor(FG_COLOR_COMP_HEAD)
                 .fontSize(switch (comp.getLevel()) {
                     case 1 -> 48;
                     case 2 -> 40;
@@ -213,7 +213,8 @@ public class RenderModel {
                 .id(app.getId())
                 .text(app.getName())
                 .background(BG_COLOR_APP)
-                .foreground(FG_COLOR_APP)
+                .bordercolor(FG_COLOR_APP)
+                .fontcolor(FG_COLOR_APP)
                 .fontSize(12)
                 .rounded(true)
                 .x(absCompCol * COL_WIDTH + appCoord.col() * COL_WIDTH + SPACING)
@@ -359,7 +360,7 @@ public class RenderModel {
                 .text(app.getName())
                 .fontSize(12)
                 .background(Color.WHITE)
-                .foreground(Color.BLACK)
+                .fontcolor(Color.BLACK)
                 .rounded(true)
                 .x(origX + proxyAppCoord.col() * COL_WIDTH + SPACING)
                 .y(origY + proxyAppCoord.row() * ROW_HEIGHT + SPACING)

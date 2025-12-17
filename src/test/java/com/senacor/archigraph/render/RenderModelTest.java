@@ -46,7 +46,7 @@ public class RenderModelTest {
                                 .text("System 1")
                                 .fontSize(48)
                                 .background(new Color(0, 0, 156))
-                                .foreground(Color.WHITE)
+                                .fontcolor(Color.WHITE)
                                 .build(),
                         Rectangle.builder()
                                 .id("COMP-1_head")
@@ -57,7 +57,7 @@ public class RenderModelTest {
                                 .text("COMP-1")
                                 .fontSize(48)
                                 .background(new Color(0, 0, 110))
-                                .foreground(Color.WHITE)
+                                .fontcolor(Color.WHITE)
                                 .build(),
                         Rectangle.builder()
                                 .id("COMP-1_body")
@@ -76,7 +76,7 @@ public class RenderModelTest {
                                 .h(200)
                                 .fontSize(48)
                                 .background(new Color(0, 0, 110))
-                                .foreground(Color.WHITE)
+                                .fontcolor(Color.WHITE)
                                 .build(),
                         Rectangle.builder()
                                 .id("COMP-2_body")
@@ -112,7 +112,7 @@ public class RenderModelTest {
                                 .w(1280)
                                 .h(100)
                                 .background(new Color(0, 0, 156))
-                                .foreground(Color.WHITE)
+                                .fontcolor(Color.WHITE)
                                 .fontSize(48)
                                 .build(),
                         Rectangle.builder()
@@ -123,7 +123,7 @@ public class RenderModelTest {
                                 .w(960)
                                 .h(200)
                                 .background(new Color(0, 0, 110))
-                                .foreground(Color.WHITE)
+                                .fontcolor(Color.WHITE)
                                 .fontSize(48)
                                 .build(),
                         Rectangle.builder()
@@ -143,7 +143,7 @@ public class RenderModelTest {
                                 .w(240)
                                 .h(120)
                                 .background(Color.WHITE)
-                                .foreground(Color.BLACK)
+                                .fontcolor(Color.BLACK)
                                 .fontSize(12)
                                 .build(),
                         Rectangle.builder()
@@ -155,7 +155,7 @@ public class RenderModelTest {
                                 .w(240)
                                 .h(120)
                                 .background(Color.WHITE)
-                                .foreground(Color.BLACK)
+                                .fontcolor(Color.BLACK)
                                 .fontSize(12)
                                 .build()
                 );
@@ -187,7 +187,7 @@ public class RenderModelTest {
                                 .y(0)
                                 .w(1600)
                                 .h(100)
-                                .foreground(Color.WHITE)
+                                .fontcolor(Color.WHITE)
                                 .background(new Color(0, 0, 156))
                                 .fontSize(48)
                                 .build(),
@@ -198,7 +198,7 @@ public class RenderModelTest {
                                 .y(200)
                                 .w(1280)
                                 .h(200)
-                                .foreground(Color.WHITE)
+                                .fontcolor(Color.WHITE)
                                 .background(new Color(0, 0, 110))
                                 .fontSize(48)
                                 .build(),
@@ -217,7 +217,7 @@ public class RenderModelTest {
                                 .y(410)
                                 .w(940)
                                 .h(200)
-                                .foreground(Color.WHITE)
+                                .fontcolor(Color.WHITE)
                                 .background(new Color(0, 0, 157))
                                 .fontSize(40)
                                 .build(),
@@ -238,7 +238,7 @@ public class RenderModelTest {
                                 .w(240)
                                 .h(120)
                                 .background(Color.WHITE)
-                                .foreground(Color.BLACK)
+                                .fontcolor(Color.BLACK)
                                 .fontSize(12)
                                 .build(),
                         Rectangle.builder()
@@ -250,7 +250,7 @@ public class RenderModelTest {
                                 .w(240)
                                 .h(120)
                                 .background(Color.WHITE)
-                                .foreground(Color.BLACK)
+                                .fontcolor(Color.BLACK)
                                 .fontSize(12)
                                 .build()
                 );
@@ -285,7 +285,7 @@ public class RenderModelTest {
                 .y(440)
                 .w(240)
                 .h(120)
-                .foreground(Color.BLACK)
+                .fontcolor(Color.BLACK)
                 .background(Color.WHITE)
                 .fontSize(12)
                 .build();
@@ -297,7 +297,7 @@ public class RenderModelTest {
                 .y(440)
                 .w(240)
                 .h(120)
-                .foreground(Color.BLACK)
+                .fontcolor(Color.BLACK)
                 .background(Color.WHITE)
                 .fontSize(12)
                 .build();
@@ -310,7 +310,7 @@ public class RenderModelTest {
                                 .y(0)
                                 .w(1280)
                                 .h(100)
-                                .foreground(Color.WHITE)
+                                .fontcolor(Color.WHITE)
                                 .background(new Color(0, 0, 156))
                                 .fontSize(48)
                                 .build(),
@@ -329,7 +329,7 @@ public class RenderModelTest {
                                 .y(200)
                                 .w(960)
                                 .h(200)
-                                .foreground(Color.WHITE)
+                                .fontcolor(Color.WHITE)
                                 .background(new Color(0, 0, 110))
                                 .fontSize(48)
                                 .build(),
@@ -375,7 +375,7 @@ public class RenderModelTest {
                 .y(640)
                 .w(240)
                 .h(120)
-                .foreground(Color.BLACK)
+                .fontcolor(Color.BLACK)
                 .background(Color.WHITE)
                 .fontSize(12)
                 .build();
@@ -387,7 +387,7 @@ public class RenderModelTest {
                 .y(840)
                 .w(240)
                 .h(120)
-                .foreground(Color.BLACK)
+                .fontcolor(Color.BLACK)
                 .background(Color.WHITE)
                 .fontSize(12)
                 .build();
@@ -399,7 +399,7 @@ public class RenderModelTest {
                 .y(640)
                 .w(240)
                 .h(120)
-                .foreground(Color.BLACK)
+                .fontcolor(Color.BLACK)
                 .background(Color.WHITE)
                 .fontSize(12)
                 .build();

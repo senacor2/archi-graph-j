@@ -87,8 +87,11 @@ public class DrawModelDrawIO implements DrawModel {
         if (rect.getBackground() != null) {
             str.append("fillColor="); str.append(formatColor(rect.getBackground())); str.append(';');
         }
-        if (rect.getForeground() != null) {
-            str.append("fontColor="); str.append(formatColor(rect.getForeground())); str.append(';');
+        if (rect.getFontcolor() != null) {
+            str.append("fontColor="); str.append(formatColor(rect.getFontcolor())); str.append(';');
+        }
+        if (rect.getBordercolor() != null) {
+            str.append("strokeColor="); str.append(formatColor(rect.getBordercolor())); str.append(';');
         }
         return str.toString();
     }
