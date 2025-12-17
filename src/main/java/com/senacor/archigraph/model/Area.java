@@ -1,4 +1,4 @@
-package com.senacor.archigraph.draw;
+package com.senacor.archigraph.model;
 
 public record Area(
         int row,

@@ -1,8 +1,5 @@
-package com.senacor.archigraph.draw;
+package com.senacor.archigraph.model;
 
-import com.senacor.archigraph.model.Application;
-import com.senacor.archigraph.model.Component;
-import com.senacor.archigraph.model.InformationFlow;
 import com.github.dakusui.combinatoradix.Combinator;
 import com.github.dakusui.combinatoradix.Permutator;
 import lombok.Getter;

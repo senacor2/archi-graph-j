@@ -1,8 +1,8 @@
 package com.senacor.archigraph.render;
 
-import com.senacor.archigraph.draw.AppMatrix;
-import com.senacor.archigraph.draw.Coordinate;
-import com.senacor.archigraph.draw.ProxyBoxLayout;
+import com.senacor.archigraph.model.AppMatrix;
+import com.senacor.archigraph.model.Coordinate;
+import com.senacor.archigraph.model.ProxyBoxLayout;
 import com.senacor.archigraph.model.Application;
 import com.senacor.archigraph.model.Component;
 import com.senacor.archigraph.model.InformationFlow;

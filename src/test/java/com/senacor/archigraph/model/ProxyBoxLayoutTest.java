@@ -1,6 +1,5 @@
-package com.senacor.archigraph.draw;
+package com.senacor.archigraph.model;
 
-import com.senacor.archigraph.model.Component;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;

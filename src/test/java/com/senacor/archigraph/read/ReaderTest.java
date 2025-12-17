@@ -1,6 +1,6 @@
 package com.senacor.archigraph.read;
 
-import com.senacor.archigraph.draw.Area;
+import com.senacor.archigraph.model.Area;
 import com.senacor.archigraph.model.*;
 import org.junit.jupiter.api.Test;
 

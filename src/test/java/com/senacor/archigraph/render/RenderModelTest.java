@@ -1,7 +1,7 @@
 package com.senacor.archigraph.render;
 
-import com.senacor.archigraph.draw.AppMatrix;
-import com.senacor.archigraph.draw.Coordinate;
+import com.senacor.archigraph.model.AppMatrix;
+import com.senacor.archigraph.model.Coordinate;
 import com.senacor.archigraph.model.*;
 import com.senacor.archigraph.model.Component;
 import org.junit.jupiter.api.Test;

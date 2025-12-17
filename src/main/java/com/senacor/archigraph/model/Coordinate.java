@@ -1,4 +1,4 @@
-package com.senacor.archigraph.draw;
+package com.senacor.archigraph.model;
 
 /**
  * Row/column address inside the drawing grid.

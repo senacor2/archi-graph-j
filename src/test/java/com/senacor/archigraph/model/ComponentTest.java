@@ -12,10 +12,10 @@ public class ComponentTest {
     public void testSelectInformationFlows() {
         // fixture
         var model = new Model();
-        var l1Comp1 = new Component("l1 1", 0, 0, 0, 0, 1);
+        var l1Comp1 = new Component("C l1 1", 0, 0, 0, 0, 1);
         var comp11 = new Component("C11", 0, 0, 0, 0, 2);
         var comp12 = new Component("C12", 0, 0, 0, 0, 2);
-        var l1Comp2 = new Component("l1 2", 0, 0, 0, 0, 1);
+        var l1Comp2 = new Component("C l1 2", 0, 0, 0, 0, 1);
         var comp21 = new Component("C21", 0, 0, 0, 0, 2);
         l1Comp1.setComponents(List.of(comp11, comp12));
         l1Comp2.setComponents(List.of(comp21));
@@ -32,24 +32,24 @@ public class ComponentTest {
         model.setInformationFlows(List.of(ifXL1, ifLocal, ifL1Local));
         // verify
         assertThat(comp11.getLocalInformationFlows()).containsExactly(ifLocal);
-        assertThat(comp11.getL1CompInformationFlows()).containsExactly(ifL1Local);
-        assertThat(comp11.getCrossL1CompInformationFlows()).containsExactly(ifXL1);
+        assertThat(comp11.getL1CompInformationFlows()).hasSize(0);
+        assertThat(comp11.getCrossL1CompInformationFlows()).hasSize(0);
 
         assertThat(comp12.getLocalInformationFlows()).hasSize(0);
-        assertThat(comp12.getL1CompInformationFlows()).containsExactly(ifL1Local);
+        assertThat(comp12.getL1CompInformationFlows()).hasSize(0);
         assertThat(comp12.getCrossL1CompInformationFlows()).hasSize(0);
 
         assertThat(comp21.getLocalInformationFlows()).hasSize(0);
         assertThat(comp21.getL1CompInformationFlows()).hasSize(0);
-        assertThat(comp21.getCrossL1CompInformationFlows()).containsExactly(ifXL1);
+        assertThat(comp21.getCrossL1CompInformationFlows()).hasSize(0);
 
         assertThat(l1Comp1.getLocalInformationFlows()).hasSize(0);
-        assertThat(l1Comp1.getL1CompInformationFlows()).hasSize(0);
-        assertThat(l1Comp1.getCrossL1CompInformationFlows()).hasSize(0);
+        assertThat(l1Comp1.getL1CompInformationFlows()).containsExactly(ifL1Local);
+        assertThat(l1Comp1.getCrossL1CompInformationFlows()).containsExactly(ifXL1);
 
         assertThat(l1Comp2.getLocalInformationFlows()).hasSize(0);
         assertThat(l1Comp2.getL1CompInformationFlows()).hasSize(0);
-        assertThat(l1Comp2.getCrossL1CompInformationFlows()).hasSize(0);
+        assertThat(l1Comp2.getCrossL1CompInformationFlows()).containsExactly(ifXL1);
     }
 
     @Test

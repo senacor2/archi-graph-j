@@ -1,6 +1,5 @@
-package com.senacor.archigraph.draw;
+package com.senacor.archigraph.model;
 
-import com.senacor.archigraph.model.Application;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;

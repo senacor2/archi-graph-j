@@ -1,6 +1,4 @@
-package com.senacor.archigraph.draw;
-
-import com.senacor.archigraph.model.Application;
+package com.senacor.archigraph.model;
 
 import java.util.Iterator;
 

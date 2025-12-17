@@ -1,17 +1,11 @@
 package com.senacor.archigraph.model;
 
-import com.senacor.archigraph.draw.AppMatrix;
-import com.senacor.archigraph.draw.Area;
-import com.senacor.archigraph.draw.ComponentLayout;
-import com.senacor.archigraph.draw.Coordinate;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Stream;
 
 @Slf4j
@@ -52,9 +46,9 @@ public class Component {
 
     private final List<InformationFlow> localInformationFlows = new LinkedList<>();
 
-    private final List<InformationFlow> l1CompInformationFlows = new LinkedList<>();
+    private final Set<InformationFlow> l1CompInformationFlows = new HashSet<>();
 
-    private final List<InformationFlow> crossL1CompInformationFlows = new LinkedList<>();
+    private final Set<InformationFlow> crossL1CompInformationFlows = new HashSet<>();
 
     private final AppMatrix appMatrix;
 
