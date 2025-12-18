@@ -32,8 +32,9 @@ public class Main {
         options.addOption("t", "trace", false, "Turn on trace output");
         options.addOption("a", "apps", true, "The applications file");
         options.addOption("f", "flows", true, "The information flows file");
+        options.addOption("o", "output", true, "Output file name.");
         options.addOption("h", "help", false, "Show help");
-        options.addOption("lc", "lenient-comp", false, "Missing components do not cause failure");
+        options.addOption("lc", "lenient-comp", false, "Missing components do not cause failure.");
         options.addOption("lf", "lenient-flow", false, "Missing apps in flows do not cause failure.");
         options.addOption("x", "validateOnly", false, "Exit after validation");
         options.addOption("X", "continueWithFailure", false, "Continue even when validation fails");
@@ -60,6 +61,7 @@ public class Main {
             var compFile = cmdLineArgs[0];
             var appsFile = cmdLine.getOptionValue("a");
             var flowsFile = cmdLine.getOptionValue("f");
+            var outputFile = cmdLine.getOptionValue("o");
             var lenientComp = cmdLine.hasOption("lenient-comp");
             var lenientFlow = cmdLine.hasOption("lenient-flow");
             var exitAfterValidate = cmdLine.hasOption("x");
@@ -75,7 +77,9 @@ public class Main {
                 root.setLevel(Level.INFO);
             }
             var reader = new Reader(compFile, appsFile, flowsFile);
-            var outputFile = buildOutputFileName(compFile);
+            if (outputFile == null) {
+                outputFile = buildOutputFileName(compFile);
+            }
             var model = reader.readModels();
             validate(lenientComp, lenientFlow, exitAfterValidate, exitAfterFailure, model);
             var renderModel = new RenderModel().render(model);
