@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * This validator checks that the layout constraints are met. Components must not overlap,
@@ -29,11 +30,10 @@ public class LayoutValidator {
         model.getL1Components().toArray(components);
         for (int i = 0; i < components.length; i++) {
             result.addAll(validateContainment(components[i]));
+            validateProxySpace(components[i]).ifPresent(result::add);
             for (int j = i+1; j < components.length; j++){
-                var issue = validateNoOverlap(components[i], components[j]);
-                issue.ifPresent(result::add);
-                issue = validateSpacing(components[i], components[j]);
-                issue.ifPresent(result::add);
+                validateNoOverlap(components[i], components[j]).ifPresent(result::add);
+                validateSpacing(components[i], components[j]).ifPresent(result::add);
             }
         }
         for (Component c : model.getComponentMap().values()) {
@@ -104,6 +104,29 @@ public class LayoutValidator {
             return Optional.of(new ValidationIssue(c.getName(), null,
                     String.format("Component %s has subcomponents and applications but no AppArea",
                             c.getName())));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Check if an L1 component is big enough for all proxies needed.
+     * @param comp An L1 component.
+     * @return A validation issue if the number of proxies exceeds the space available around the component.
+     */
+    private Optional<ValidationIssue> validateProxySpace(Component comp) {
+        final int proxySpace = comp.getWidth()*2 + comp.getHeight()*2 + 4;
+        final int nbrProxies = comp.getCrossL1CompInformationFlows().stream()
+                .map(flow -> {
+                    if (flow.getSource().getComponent().getL1Component() == comp) return flow.getDestination();
+                    else return flow.getSource();
+                })
+                .collect(Collectors.toSet())
+                .size();
+        if (nbrProxies > proxySpace) {
+            return Optional.of(new ValidationIssue(comp.getName(), null,
+                    String.format("Component %s needs space for %d proxies and has only space for %d",
+                            comp.getName(), nbrProxies, proxySpace)));
         } else {
             return Optional.empty();
         }
