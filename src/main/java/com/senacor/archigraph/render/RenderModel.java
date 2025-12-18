@@ -1,12 +1,7 @@
 package com.senacor.archigraph.render;
 
-import com.senacor.archigraph.model.AppMatrix;
-import com.senacor.archigraph.model.Coordinate;
-import com.senacor.archigraph.model.ProxyBoxLayout;
-import com.senacor.archigraph.model.Application;
+import com.senacor.archigraph.model.*;
 import com.senacor.archigraph.model.Component;
-import com.senacor.archigraph.model.InformationFlow;
-import com.senacor.archigraph.model.Model;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -23,8 +18,6 @@ public class RenderModel {
     private static final Color BG_COLOR_COMP_HEAD = new Color(0, 0, 110);
     private static final Color FG_COLOR_COMP_HEAD = Color.WHITE;
     private static final Color BG_COLOR_COMP_BODY = Color.WHITE;
-    private static final Color BG_COLOR_APP = Color.WHITE;
-    private static final Color FG_COLOR_APP = Color.BLACK;
     private static final Color COLOR_LINE = Color.BLACK;
 
     /**
@@ -65,6 +58,11 @@ public class RenderModel {
      */
     static final int APP_HEIGHT = ROW_HEIGHT - SPACING * 2;
     public static final int APP_HEIGHT_HALF = APP_HEIGHT / 2;
+
+    /**
+     * Contains the rules to format an application, e.g. colors, fonts etc.
+     */
+    private AppFormatter appFormatter = new AppFormatter();
 
     enum Side {
         TOP, BOTTOM, LEFT, RIGHT
@@ -209,19 +207,15 @@ public class RenderModel {
      */
     void render(Application app, int level, int absCompRow, int absCompCol, Coordinate appCoord) {
         log.debug("Render app {} absCompRow {} absCompCol {} coord {}", app.getId(), absCompRow, absCompCol, appCoord);
-        add(Rectangle.builder()
+        var rect = Rectangle.builder()
                 .id(app.getId())
-                .text(app.getName())
-                .background(BG_COLOR_APP)
-                .bordercolor(FG_COLOR_APP)
-                .fontcolor(FG_COLOR_APP)
-                .fontSize(12)
-                .rounded(true)
                 .x(absCompCol * COL_WIDTH + appCoord.col() * COL_WIDTH + SPACING)
                 .y(absCompRow * ROW_HEIGHT + (level - 1) * ROW_HEIGHT + appCoord.row() * ROW_HEIGHT + SPACING)
                 .w(APP_WIDTH)
                 .h(APP_HEIGHT)
-                .build());
+                .build();
+        appFormatter.format(app, rect);
+        add(rect);
     }
 
     /**
@@ -355,18 +349,15 @@ public class RenderModel {
     private Rectangle renderApplicationProxy(Application app, Component parent, int origX, int origY,
                                              Coordinate proxyAppCoord) {
         log.debug("Render proxy for {} base pos x={} y={} coord = {}", app.getId(), origX, origY, proxyAppCoord);
-        return Rectangle.builder()
+        var rect = Rectangle.builder()
                 .id(getProxyAppId(parent.getName(), app.getId()))
-                .text(app.getName())
-                .fontSize(12)
-                .background(Color.WHITE)
-                .fontcolor(Color.BLACK)
-                .rounded(true)
                 .x(origX + proxyAppCoord.col() * COL_WIDTH + SPACING)
                 .y(origY + proxyAppCoord.row() * ROW_HEIGHT + SPACING)
                 .w(APP_WIDTH)
                 .h(APP_HEIGHT)
                 .build();
+        appFormatter.formatProxy(app, rect);
+        return rect;
     }
 
     /**

@@ -96,8 +96,8 @@ public class RenderModelTest {
                 .build();
         var c1 = new Component("COMP-1", 1, 0, 3, 3, 1);
         model.setL1Components(List.of(c1));
-        var a1 = new Application("App-1", "Application 1", "COMP-1", "", "", "");
-        var a2 = new Application("App-2", "Application 2", "COMP-1", "", "", "");
+        var a1 = new Application("App-1", "Application 1", "COMP-1");
+        var a2 = new Application("App-2", "Application 2", "COMP-1");
         model.setApplications(List.of(a1, a2));
         model.setInformationFlows(List.of());
         var fixture = new RenderModel();
@@ -266,8 +266,8 @@ public class RenderModelTest {
         var model = Model.builder()
                 .name("System 1")
                 .build();
-        var app1 = new Application("A1", "A1", "C1", "", "", "");
-        var app2 = new Application("A2", "A2", "C1", "", "", "");
+        var app1 = new Application("A1", "A1", "C1");
+        var app2 = new Application("A2", "A2", "C1");
         var comp1 = new Component("C1", 1, 0, 3, 3, 1);
         var if1 = new InformationFlow("IF12", "A1", "A2", "BO", Direction.ONE_WAY);
         model.setL1Components(List.of(comp1));
@@ -351,9 +351,9 @@ public class RenderModelTest {
         var model = Model.builder()
                 .name("System 1")
                 .build();
-        var app11 = new Application("A11", "A11", "C11", "", "", "");
-        var app12 = new Application("A12", "A12", "C11", "", "", "");
-        var app2 = new Application("A2", "A2", "C2", "", "", "");
+        var app11 = new Application("A11", "A11", "C11");
+        var app12 = new Application("A12", "A12", "C11");
+        var app2 = new Application("A2", "A2", "C2");
         var comp1 = new Component("C1", 1, 0, 3, 5, 1);
         var comp11 = new Component("C11", 0, 0, 1, 3, 2);
         var comp2 = new Component("C2", 9, 9, 3, 3, 1);

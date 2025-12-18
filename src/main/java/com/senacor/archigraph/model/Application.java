@@ -7,7 +7,12 @@ import java.util.Map;
 @Data
 public class Application {
 
-  private String id;
+    // Attribute names
+    public static final String MARKET = "Market";
+    public static final String TARGET = "Target";
+    public static final String REPLACE_TNR = "ReplaceTnr";
+
+    private String id;
 
   private String name;
 
@@ -21,7 +26,7 @@ public class Application {
     this.id = id;
     this.name = name;
     this.componentName = componentName;
-    attributes = Map.of("OS", attr1, "Cloud", attr2, "Expires", attr3);
+    attributes = Map.of(MARKET, attr1, TARGET, attr2, REPLACE_TNR, attr3);
   }
 
   public Application(String id, String name, String componentName) {
