@@ -20,12 +20,11 @@ public class ComponentLayoutTest {
     @Test
     void testAppPositionsInComponentWithOneApp() {
         var cl = new ComponentLayout(new Component("C1", 0, 0, 2, 3, 1));
-        assertEquals(
-                List.of(List.of(nc(0, 0)),
+        assertThat(cl.appPositionsInComponent(1))
+                .containsExactlyInAnyOrder(List.of(nc(0, 0)),
                         List.of(nc(0, 1)),
                         List.of(nc(1, 0)),
-                        List.of(nc(1, 1))),
-                cl.appPositionsInComponent(1));
+                        List.of(nc(1, 1)));
     }
 
     @Test
@@ -77,15 +76,6 @@ public class ComponentLayoutTest {
                         List.of(nc(1, 1), nc(0, 1), nc(1, 0)),
                         List.of(nc(1, 1), nc(1, 0), nc(0, 1))
                 ));
-    }
-
-    @Test
-    void testAppPositionsIllegalCall() {
-        var cl = new ComponentLayout(new Component("c1", 0, 0, 2, 2, 1));
-        var exception = assertThrows(IllegalArgumentException.class,
-                () -> cl.appPositionsInComponent(5));
-        assertEquals("Number of apps (5) exceeds grid size (1 x 2)",
-                exception.getMessage());
     }
 
     @Test
@@ -372,11 +362,11 @@ public class ComponentLayoutTest {
         // Fixture
         Component outerComp = new Component("Outer", 0, 0, 4, 5, 1);
         outerComp.setAppArea(new Area(1, 3, 1, 2));
-        Application app1 = new Application("A1", "App1", "Outer", "", "", "");
-        Application app2 = new Application("A2", "App2", "Outer", "", "", "");
+        Application app1 = new Application("A1", "App1", "Outer");
+        Application app2 = new Application("A2", "App2", "Outer");
         Component innerComp = new Component("Inner", 1, 1, 2, 2, 2);
-        Application app3 = new Application("A3", "App3", "Inner", "", "", "");
-        Application app4 = new Application("A4", "App4", "Inner", "", "", "");
+        Application app3 = new Application("A3", "App3", "Inner");
+        Application app4 = new Application("A4", "App4", "Inner");
         outerComp.setComponents(List.of(innerComp));
         Model model = new Model();
         model.setL1Components(List.of(outerComp));
@@ -391,6 +381,33 @@ public class ComponentLayoutTest {
         assertEquals(nc(3, 3), outerComp.getAppCoordinate(app2), "App2");
         assertEquals(nc(3, 1), outerComp.getAppCoordinate(app3), "App3");
         assertEquals(nc(3, 2), outerComp.getAppCoordinate(app4), "App4");
+    }
 
+    @Test
+    void testBigComponentWithFewApps() {
+        // Given
+        Model model = new Model();
+        Component comp = new Component("Big", 0, 0, 4, 7, 1);
+        Application app1 = new Application("A1", "App1", "Big");
+        Application app2 = new Application("A2", "App2", "Big");
+        Application app3 = new Application("A3", "App3", "Big");
+        Application app4 = new Application("A4", "App4", "Big");
+        InformationFlow if12 = new InformationFlow("IF12", "A1", "A2", "", Direction.ONE_WAY);
+        InformationFlow if23 = new InformationFlow("IF23", "A2", "A3", "", Direction.ONE_WAY);
+        InformationFlow if41 = new InformationFlow("IF41", "A4", "A1", "", Direction.ONE_WAY);
+        model.setL1Components(List.of(comp));
+        model.setApplications(List.of(app1, app2, app3, app4));
+        model.setInformationFlows(List.of(if12, if23, if41));
+        // when
+        long start = System.currentTimeMillis();
+        comp.layout();
+        long finish = System.currentTimeMillis();
+        // then
+        assertThat(finish - start)
+                .isLessThan(1000L * 1000L);
+        assertThat(comp.getAppMatrix().getAppCoordinate(app1)).isNotNull();
+        assertThat(comp.getAppMatrix().getAppCoordinate(app2)).isNotNull();
+        assertThat(comp.getAppMatrix().getAppCoordinate(app3)).isNotNull();
+        assertThat(comp.getAppMatrix().getAppCoordinate(app4)).isNotNull();
     }
 }

@@ -1,6 +1,7 @@
 package com.senacor.archigraph.model;
 
 import com.github.dakusui.combinatoradix.Combinator;
+import com.github.dakusui.combinatoradix.Enumerator;
 import com.github.dakusui.combinatoradix.Permutator;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
@@ -8,6 +9,7 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
 
 /**
@@ -25,27 +27,19 @@ public class ComponentLayout extends AbstractLayout {
     }
 
     /**
-     * Returns a list of all possible placements of apps inside a component. Apps are placed in a fixed grid.
-     *
-     * @param appCount Number of apps to be placed inside a component.
-     * @return The inner list is one possible combination of app positions inside the grid. The outer list
-     * collects all possible permutations.
+     * Computes all possible permutations of app positions inside the component and returns
+     * them as a stream of position list where each list is one possible placement.
+     * @param appCount Number of apps in this component.
+     * @return A stream of List with app coordinates.
      */
-    List<List<Coordinate>> appPositionsInComponent(final int appCount) {
+    Stream<List<Coordinate>> appPositionsInComponent(final int appCount) {
         final int rows = component.getAppHeight();
         final int columns = component.getAppWidth();
-        if (appCount > rows * columns)
-            throw new IllegalArgumentException("Number of apps (%d) exceeds grid size (%d x %d)"
-                    .formatted(appCount, rows, columns));
-        var indexes = IntStream.range(0, rows * columns).boxed().toList();
-        var result = new LinkedList<List<Coordinate>>();
-        for (List<Integer> each : new Permutator<>(indexes, appCount)) {
-            List<Coordinate> onePerm = each.stream()
-                    .map(i -> Coordinate.fromIndex(columns, i))
-                    .collect(Collectors.toList());
-            result.add(onePerm);
-        }
-        return result;
+        var indexes = IntStream.range(0, rows*columns).boxed().toList();
+        return new EnumeratorAdapter<>(new Permutator<>(indexes, appCount)).stream()
+                .map(onePerm -> onePerm.stream()
+                        .map(i -> Coordinate.fromIndex(columns, i))
+                        .toList());
     }
 
     /**
@@ -142,7 +136,7 @@ public class ComponentLayout extends AbstractLayout {
             quality = 0;
             layout = defaultLayout(component.getApplications());
         } else {
-            var best = appPositionsInComponent(component.getApplications().size()).stream()
+            var best = appPositionsInComponent(component.getApplications().size())
                     .map(l -> zipmapAppsAndCoordinates(component.getApplications(), l))
                     .map(layout -> layoutQuality(layout, flows))
                     .min(RatedLayout::compareTo)
@@ -172,6 +166,28 @@ public class ComponentLayout extends AbstractLayout {
             return Integer.compare(quality, o.quality);
         }
 
+    }
+
+    static class EnumeratorAdapter<E> extends AbstractList<List<E>> {
+        final Enumerator<E> enumerator;
+
+        public EnumeratorAdapter(Enumerator<E> enumerator) {
+            this.enumerator = enumerator;
+        }
+
+        @Override
+        public List<E> get(int index) {
+            return this.enumerator.get(index);
+        }
+
+        @Override
+        public int size() {
+            long result = this.enumerator.size();
+            if (result > Integer.MAX_VALUE) {
+                throw new IllegalStateException("Enum size is too large");
+            }
+            return (int) result;
+        }
     }
 
 }
