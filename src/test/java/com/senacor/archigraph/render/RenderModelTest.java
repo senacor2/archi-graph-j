@@ -142,8 +142,9 @@ public class RenderModelTest {
                                 .y(440)
                                 .w(240)
                                 .h(120)
-                                .background(Color.WHITE)
-                                .fontcolor(Color.BLACK)
+                                .background(new Color(55,140, 150))
+                                .bordercolor(Color.BLACK)
+                                .fontcolor(Color.WHITE)
                                 .fontSize(12)
                                 .build(),
                         Rectangle.builder()
@@ -154,8 +155,9 @@ public class RenderModelTest {
                                 .y(440)
                                 .w(240)
                                 .h(120)
-                                .background(Color.WHITE)
-                                .fontcolor(Color.BLACK)
+                                .background(new Color(55, 140, 150))
+                                .fontcolor(Color.WHITE)
+                                .bordercolor(Color.BLACK)
                                 .fontSize(12)
                                 .build()
                 );
@@ -237,8 +239,9 @@ public class RenderModelTest {
                                 .y(640)
                                 .w(240)
                                 .h(120)
-                                .background(Color.WHITE)
-                                .fontcolor(Color.BLACK)
+                                .background(new Color(55, 140, 150))
+                                .bordercolor(Color.BLACK)
+                                .fontcolor(Color.WHITE)
                                 .fontSize(12)
                                 .build(),
                         Rectangle.builder()
@@ -249,8 +252,9 @@ public class RenderModelTest {
                                 .y(640)
                                 .w(240)
                                 .h(120)
-                                .background(Color.WHITE)
-                                .fontcolor(Color.BLACK)
+                                .background(new Color(55, 140, 150))
+                                .bordercolor(Color.BLACK)
+                                .fontcolor(Color.WHITE)
                                 .fontSize(12)
                                 .build()
                 );
@@ -285,8 +289,9 @@ public class RenderModelTest {
                 .y(440)
                 .w(240)
                 .h(120)
-                .fontcolor(Color.BLACK)
-                .background(Color.WHITE)
+                .fontcolor(Color.WHITE)
+                .background(new Color(55, 140, 150))
+                .bordercolor(Color.BLACK)
                 .fontSize(12)
                 .build();
         var rectApp2 = Rectangle.builder()
@@ -297,8 +302,9 @@ public class RenderModelTest {
                 .y(440)
                 .w(240)
                 .h(120)
-                .fontcolor(Color.BLACK)
-                .background(Color.WHITE)
+                .fontcolor(Color.WHITE)
+                .background(new Color(55, 140, 150))
+                .bordercolor(Color.BLACK)
                 .fontSize(12)
                 .build();
         assertThat(result.getElements())
@@ -375,8 +381,9 @@ public class RenderModelTest {
                 .y(640)
                 .w(240)
                 .h(120)
-                .fontcolor(Color.BLACK)
-                .background(Color.WHITE)
+                .bordercolor(Color.BLACK)
+                .fontcolor(Color.WHITE)
+                .background(new Color(55, 140, 150))
                 .fontSize(12)
                 .build();
         var rectApp12 = Rectangle.builder()
@@ -387,8 +394,9 @@ public class RenderModelTest {
                 .y(840)
                 .w(240)
                 .h(120)
-                .fontcolor(Color.BLACK)
-                .background(Color.WHITE)
+                .bordercolor(Color.BLACK)
+                .fontcolor(Color.WHITE)
+                .background(new Color(55, 140, 150))
                 .fontSize(12)
                 .build();
         var rectApp2 = Rectangle.builder()
@@ -396,10 +404,11 @@ public class RenderModelTest {
                 .text("A2")
                 .rounded(true)
                 .x(-280)
-                .y(640)
+                .y(840)
                 .w(240)
                 .h(120)
                 .fontcolor(Color.BLACK)
+                .bordercolor(Color.BLACK)
                 .background(Color.WHITE)
                 .fontSize(12)
                 .build();
@@ -413,18 +422,18 @@ public class RenderModelTest {
                                 .text("BO")
                                 .start(rectApp11)
                                 .end(rectApp2)
-                                .anchors(new Point[0])
+                                .anchors(new Point[] {
+                                        new Point(160, 780),
+                                        new Point(-20, 780),
+                                        new Point(-20, 900)
+                                })
                                 .build(),
                         Line.builder()
                                 .id("IF122")
                                 .text("BO")
                                 .start(rectApp12)
                                 .end(rectApp2)
-                                .anchors(new Point[] {
-                                        new Point(160, 820),
-                                        new Point(-20, 820),
-                                        new Point(-20, 700)
-                                })
+                                .anchors(new Point[0])
                                 .build()
                 );
     }
