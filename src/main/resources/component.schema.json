@@ -1,0 +1,92 @@
+{
+  "$schema": "https://json-schema.org/draft-03/schema#",
+  "$id": "https://senacor.com/archi-graph/component.schema.json",
+  "title": "Component model",
+  "description": "The component model of the architecture graphing tool",
+  "types": {
+    "components": {
+      "type": "array",
+      "description": "all components at this level",
+      "items": {
+        "$ref": "#/types/one-component"
+      }
+    },
+    "column-pos": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Column position of the component relative to the parent component. 0 is to the left."
+    },
+    "row-pos": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Row position of the component relative to the parent component. 0 is at the top."
+    },
+    "width": {
+      "type": "integer",
+      "minimum": 0,
+      "description": "Width of the component in columns."
+    },
+    "height": {
+      "type": "integer",
+      "minimum": 1,
+      "description": "Height of the component in rows including one row for the heading."
+    },
+    "one-component": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "description": "Name of the component, exactly as referenced in the applications file."
+        },
+        "x": {
+          "$ref": "#/types/column-pos"
+        },
+        "y": {
+          "$ref": "#/types/row-pos"
+        },
+        "w": {
+          "$ref": "#/types/width"
+        },
+        "h": {
+          "$ref": "#/types/height"
+        },
+        "app-area": {
+          "description": "Where to place the apps in a component that has sub-components.",
+          "type": "object",
+          "properties": {
+            "x": {
+              "$ref": "#/types/column-pos"
+            },
+            "y": {
+              "$ref": "#/types/row-pos"
+            },
+            "w": {
+              "$ref": "#/types/width"
+            },
+            "h": {
+              "$ref": "#/types/height"
+            },
+            "required": ["x", "y", "w", "h"]
+          },
+          "components": {
+            "description": "Components nested inside this component.",
+            "$ref": "#/types/components"
+          }
+        }
+      },
+      "required": ["name", "x", "y", "w", "h"]
+    }
+  },
+  "type": "object",
+  "properties": {
+    "system": {
+      "type": "string",
+      "description": "Name of the overall system. It will be shown at the top of the diagram."
+    },
+    "components": {
+      "$ref": "#/types/components",
+      "description": "The top level components of the system."
+    }
+  },
+  "required": ["system", "components"]
+}
