@@ -31,6 +31,7 @@ public class LayoutValidator {
         for (int i = 0; i < components.length; i++) {
             result.addAll(validateContainment(components[i]));
             validateProxySpace(components[i]).ifPresent(result::add);
+            validateNesting(components[i]).ifPresent(result::add);
             for (int j = i+1; j < components.length; j++){
                 validateNoOverlap(components[i], components[j]).ifPresent(result::add);
                 validateSpacing(components[i], components[j]).ifPresent(result::add);
@@ -127,6 +128,21 @@ public class LayoutValidator {
             return Optional.of(new ValidationIssue(comp.getName(), null,
                     String.format("Component %s needs space for %d proxies and has only space for %d",
                             comp.getName(), nbrProxies, proxySpace)));
+        } else {
+            return Optional.empty();
+        }
+    }
+
+    /**
+     * Check if the component nesting is not more than 4.
+     * Higher nestings will break the indentation of components relative to the parent.
+     * @param comp a component to validate
+     * @return A validation issue if the nesting is too deep.
+     */
+    private Optional<ValidationIssue> validateNesting(Component comp) {
+        if (comp.getLevel() > 4) {
+            return Optional.of(new ValidationIssue(comp.getName(), null,
+                    String.format("Component %s is nested by more than 4 levels (%d)", comp.getName(), comp.getLevel())));
         } else {
             return Optional.empty();
         }
