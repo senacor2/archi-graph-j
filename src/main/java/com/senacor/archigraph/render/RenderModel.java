@@ -13,11 +13,6 @@ import java.util.List;
 @Slf4j
 public class RenderModel {
 
-    private static final Color BG_COLOR_MODEL = new Color(0, 0, 156);
-    private static final Color FG_COLOR_MODEL = Color.WHITE;
-    private static final Color BG_COLOR_COMP_HEAD = new Color(0, 0, 110);
-    private static final Color FG_COLOR_COMP_HEAD = Color.WHITE;
-    private static final Color BG_COLOR_COMP_BODY = Color.WHITE;
     private static final Color COLOR_LINE = Color.BLACK;
 
     /**
@@ -64,6 +59,16 @@ public class RenderModel {
      */
     private AppFormatter appFormatter = new AppFormatter();
 
+    /**
+     * Contains rules to format a component.
+     */
+    private ComponentFormatter compFormatter = new ComponentFormatter();
+
+    /**
+     * Contains rules to format the model.
+     */
+    private ModelFormatter modelFormatter = new ModelFormatter();
+
     enum Side {
         TOP, BOTTOM, LEFT, RIGHT
     }
@@ -89,12 +94,9 @@ public class RenderModel {
      * @return the populated render model.
      */
     public RenderModel render(Model model) {
-        add(Rectangle.builder()
+        Rectangle modelRect = Rectangle.builder()
                 .id("ROOT")
                 .text(model.getName())
-                .background(BG_COLOR_MODEL)
-                .fontcolor(FG_COLOR_MODEL)
-                .fontSize(48)
                 .x(0)
                 .y(0)
                 .w(model.getL1Components().stream()
@@ -102,7 +104,9 @@ public class RenderModel {
                         .max(Integer::compareTo)
                         .orElse(0) * COL_WIDTH + COL_WIDTH)
                 .h(ROW_HEIGHT_HALF)
-                .build());
+                .build();
+        modelFormatter.formatHead(model, modelRect);
+        add(modelRect);
         for (var c : model.getL1Components()) {
             render(c);
         }
@@ -121,34 +125,27 @@ public class RenderModel {
         log.debug("Render comp {} orig {}/{}", comp, x, y);
 
         // Heading rectangle
-        add(Rectangle.builder()
+        var compHeadRect = Rectangle.builder()
                 .id(comp.getName().replace(" ", "_") + "_head")
                 .text(comp.getName())
-                .background(headerBgColor(comp.getLevel()))
-                .fontcolor(FG_COLOR_COMP_HEAD)
-                .fontSize(switch (comp.getLevel()) {
-                    case 1 -> 48;
-                    case 2 -> 40;
-                    case 3 -> 32;
-                    default -> 24;
-                })
                 .x(x)
                 .y(y)
                 .w(w)
                 .h(ROW_HEIGHT)
-                .build()
-        );
+                .build();
+        compFormatter.formatHead(comp, compHeadRect);
+        add(compHeadRect);
         y += ROW_HEIGHT;
         // Body rectangle
-        add(Rectangle.builder()
+        var compBodyRect = Rectangle.builder()
                 .id(comp.getName().replace(" ", "_") + "_body")
-                .background(BG_COLOR_COMP_BODY)
                 .x(x)
                 .y(y)
                 .w(w)
                 .h((comp.getHeight() - 1) * ROW_HEIGHT - indent(comp) * 2)
-                .build()
-        );
+                .build();
+        compFormatter.formatBody(comp, compBodyRect);
+        add(compBodyRect);
         renderApplications(comp);
         renderLocalFlows(comp);
         for (var c : comp.getComponents()) {
@@ -163,19 +160,6 @@ public class RenderModel {
                     comp.getParentComponent().getAppMatrix().dump());
 
         }
-    }
-
-    /**
-     * Returns the color of the component header which is brighter with each level.
-     * @param level Level of the component
-     * @return Background color for the component header.
-     */
-    private static Color headerBgColor(int level) {
-        Color result = BG_COLOR_COMP_HEAD;
-        for (int i = level; i > 1; i--){
-            result = result.brighter();
-        }
-        return result;
     }
 
     private static int indent(Component comp) {
