@@ -21,7 +21,7 @@ Leave one empty cell on each side of a top level components because the proxy ap
 information flows will be placed here. It may be necessary to enlarge the top level components in order to provide
 enough room for the proxy applications.
 
-# Creating the application list
+# How to create the application list
 
 The application is read from a CSV file:
 
@@ -43,7 +43,7 @@ Suggested cleanup activities are:
 3. Determine how many apps are in each component in order to size the components correctly.
 4. Harmonize spelling if necessary. Remove leading and trailing whitespace from names.
 
-# Creating the information flow list
+# How to create the information flow list
 
 The information flow list is another CSV file:
 

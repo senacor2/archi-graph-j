@@ -17,6 +17,8 @@ actual creative work.
 
 The output is in Draw.IO-Format.
 
+See [The How-To document](docs/howto.md) for details about the file formats and how to prepare the input files.
+
 ## Command line Syntax
 
 ```
@@ -24,6 +26,7 @@ archi-graph-j options -c component-model -a applications.csv -i informationflows
 ```
 
 Options are:
+
 - `-d` or `--debug` Turn on debug logging.
 - `-t` or `--trace` Turn on tracing (more details than debug)
 - `-lc` or `--lenient-comp` Applications that reference a component that is not in the component model are ignored.
