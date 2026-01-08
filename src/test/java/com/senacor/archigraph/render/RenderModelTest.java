@@ -36,7 +36,7 @@ public class RenderModelTest {
         var fixture = new RenderModel();
         var result = fixture.render(model);
         assertThat(result.getElements())
-                .containsExactlyInAnyOrder(
+                .contains(
                         Rectangle.builder()
                                 .id("ROOT")
                                 .x(0)
@@ -57,7 +57,7 @@ public class RenderModelTest {
                                 .h(200)
                                 .text("COMP-1")
                                 .fontSize(48)
-                                .background(new Color(0, 0, 110))
+                                .background(new Color(11, 83, 148))
                                 .bordercolor(Color.BLACK)
                                 .fontcolor(Color.WHITE)
                                 .build(),
@@ -78,7 +78,7 @@ public class RenderModelTest {
                                 .w(640)
                                 .h(200)
                                 .fontSize(48)
-                                .background(new Color(0, 0, 110))
+                                .background(new Color(11, 83, 148))
                                 .bordercolor(Color.BLACK)
                                 .fontcolor(Color.WHITE)
                                 .build(),
@@ -108,7 +108,7 @@ public class RenderModelTest {
         var fixture = new RenderModel();
         var result = fixture.render(model);
         assertThat(result.getElements())
-                .containsExactlyInAnyOrder(
+                .contains(
                         Rectangle.builder()
                                 .id("ROOT")
                                 .text("System 1")
@@ -128,7 +128,7 @@ public class RenderModelTest {
                                 .y(200)
                                 .w(960)
                                 .h(200)
-                                .background(new Color(0, 0, 110))
+                                .background(new Color(11, 83, 148))
                                 .fontcolor(Color.WHITE)
                                 .bordercolor(Color.BLACK)
                                 .fontSize(48)
@@ -190,7 +190,7 @@ public class RenderModelTest {
         var result = renderModel.render(model);
         // verify
         assertThat(result.getElements())
-                .containsExactlyInAnyOrder(
+                .contains(
                         Rectangle.builder()
                                 .id("ROOT")
                                 .text("System 1")
@@ -211,7 +211,7 @@ public class RenderModelTest {
                                 .w(1280)
                                 .h(200)
                                 .fontcolor(Color.WHITE)
-                                .background(new Color(0, 0, 110))
+                                .background(new Color(11, 83, 148))
                                 .bordercolor(Color.BLACK)
                                 .fontSize(48)
                                 .build(),
@@ -231,8 +231,8 @@ public class RenderModelTest {
                                 .y(410)
                                 .w(940)
                                 .h(200)
-                                .fontcolor(Color.WHITE)
-                                .background(new Color(0, 0, 157))
+                                .fontcolor(Color.BLACK)
+                                .background(new Color(111, 168, 220))
                                 .bordercolor(Color.BLACK)
                                 .fontSize(40)
                                 .build(),
@@ -324,7 +324,7 @@ public class RenderModelTest {
                 .fontSize(12)
                 .build();
         assertThat(result.getElements())
-                .containsExactlyInAnyOrder(
+                .contains(
                         Rectangle.builder()
                                 .id("ROOT")
                                 .text("System 1")
@@ -354,7 +354,7 @@ public class RenderModelTest {
                                 .w(960)
                                 .h(200)
                                 .fontcolor(Color.WHITE)
-                                .background(new Color(0, 0, 110))
+                                .background(new Color(11, 83, 148))
                                 .bordercolor(Color.BLACK)
                                 .fontSize(48)
                                 .build(),

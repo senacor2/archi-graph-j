@@ -1,0 +1,9 @@
+app-1,app-2,if-12,Business object 1,oneway
+app-1,app-3,if-13,Business object 2,oneway
+app-2,app-4,if-24,Business object 3,oneway
+app-2,app-5,if-25,Business object 4,oneway
+app-3,app-4,if-34,Business object 6,oneway
+app-4,app-1,if-41,Business object 7,oneway
+app-5,app-6,if-56,Business object 8,oneway
+app-1,app-8,if-18,Business object 10,oneway
+app-6,app-7,if-67,Business object 11,oneway

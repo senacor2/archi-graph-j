@@ -110,6 +110,7 @@ public class RenderModel {
         for (var c : model.getL1Components()) {
             render(c);
         }
+        renderLegend(model);
         return this;
     }
 
@@ -427,5 +428,48 @@ public class RenderModel {
             case LEFT -> new Point(rect.getX(), rect.getY() + APP_HEIGHT_HALF);
             case RIGHT -> new Point(rect.getX() + APP_WIDTH, rect.getY() + APP_HEIGHT_HALF);
         };
+    }
+
+    void renderLegend(Model model) {
+        var appRects = appFormatter.getSamplesForLegend();
+        var compRects = compFormatter.getSamplesForLegend();
+        final int legendX = model.getL1Components().stream()
+                .map(c -> c.getCol() + c.getWidth())
+                .max(Integer::compareTo)
+                .orElse(0) * COL_WIDTH + COL_WIDTH;
+        final int maxY = model.getL1Components().stream()
+                .map(c -> c.getRow() + c.getHeight())
+                .max(Integer::compareTo)
+                .orElse(0) * ROW_HEIGHT + ROW_HEIGHT;
+        final int width = 2 * COL_WIDTH;
+        final int height = Math.max(appRects.length, compRects.length) * ROW_HEIGHT;
+        add(Rectangle.builder()
+                .background(Color.WHITE)
+                .bordercolor(Color.BLACK)
+                .x(legendX)
+                .y(maxY - height)
+                .w(width)
+                .h(height)
+                .build());
+        int x = legendX + SPACING;
+        int y = maxY - height + SPACING;
+        for (var rect : compRects) {
+            rect.setX(x);
+            rect.setY(y);
+            rect.setW(APP_WIDTH);
+            rect.setH(APP_HEIGHT);
+            add(rect);
+            y += APP_HEIGHT + SPACING * 2;
+        }
+        x = legendX + COL_WIDTH + SPACING;
+        y = maxY - height + SPACING;
+        for (var rect: appRects) {
+            rect.setX(x);
+            rect.setY(y);
+            rect.setW(APP_WIDTH);
+            rect.setH(APP_HEIGHT);
+            add(rect);
+            y += APP_HEIGHT + SPACING * 2;
+        }
     }
 }
