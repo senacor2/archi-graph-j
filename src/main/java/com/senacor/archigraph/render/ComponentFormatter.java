@@ -40,6 +40,6 @@ public class ComponentFormatter {
 
     public void formatBody(Component comp, Rectangle rect) {
         rect.setBackground(BG_COLOR_COMP_BODY);
-        rect.setBordercolor(Color.BLACK);
+        rect.setBordercolor(FG_COLOR_COMP_BODY);
     }
 }
