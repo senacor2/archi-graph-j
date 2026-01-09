@@ -7,6 +7,9 @@ import org.apache.commons.csv.CSVRecord;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
+
+import static java.util.stream.Collectors.toMap;
 
 /**
  * A rule base is a sequence of rules and can be loaded from a CSV file.
@@ -73,5 +76,17 @@ public class RuleBase {
             if (result.isPresent()) return result;
         }
         return Optional.empty();
+    }
+
+    /**
+     * Returns a Map keyed by rule name with the result map of the rule as the value.
+     * When there are multiple rules with the same name (which makes sense when you want to <i>or</i> rules)
+     * then only the results of the first map are returned. In this case however it would be wise if all rules
+     * with the same name should have the same result.
+     * @return A map keyed by rule name with the result map as the value.
+     */
+    Map<String, Map<String, String>> getNamedResultMap() {
+        return rules.stream()
+                .collect(toMap(Rule::getName, Rule::getResults, (first, second) -> first));
     }
 }

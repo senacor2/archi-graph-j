@@ -1,5 +1,7 @@
 package com.senacor.archigraph.rules;
 
+import lombok.Getter;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -9,6 +11,7 @@ public class Rule {
     /**
      * Name of the rule.
      */
+    @Getter
     private final String name;
 
     /**
@@ -19,6 +22,7 @@ public class Rule {
     /**
      * A key value map of results returned by the rule when all conditions evaluate to true.
      */
+    @Getter
     private final Map<String, String> results;
 
     public Rule(String name, List<Condition> conditions, Map<String, String> results) {
