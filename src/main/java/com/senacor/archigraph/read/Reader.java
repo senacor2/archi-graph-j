@@ -80,8 +80,9 @@ public class Reader {
         log.debug("Reading applications from {}", appsFile);
         var result = new LinkedList<Application>();
         try (java.io.Reader in = new FileReader(appsFile)) {
-            var csvFormat = CSVFormat.DEFAULT;
-            Iterable<CSVRecord> records = csvFormat.parse(in);
+            Iterable<CSVRecord> records = CSVFormat.DEFAULT.builder()
+                    .get()
+                    .parse(in);
             for (CSVRecord record : records) {
                 var id = record.get(0);
                 var name = record.get(1);
