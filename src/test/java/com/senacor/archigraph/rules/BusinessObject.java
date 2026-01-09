@@ -1,6 +1,6 @@
 package com.senacor.archigraph.rules;
 
-public class BusinessObject {
+public class BusinessObject implements ObjectWithAttributes{
 
     private final String characterName;
 
@@ -13,5 +13,10 @@ public class BusinessObject {
 
     public String getCharacterName() {
         return characterName;
+    }
+
+    public String getAttribute(final String attributeName) {
+        if ("characterName".equals(attributeName)) return characterName;
+        else throw new IllegalArgumentException("Unknown attribute: " + attributeName);
     }
 }

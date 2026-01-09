@@ -7,7 +7,6 @@ import org.apache.commons.csv.CSVRecord;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.toMap;
 
@@ -70,7 +69,7 @@ public class RuleBase {
      * @param o Business object to evaluate against the rule base.
      * @return A map of key/value pairs with the results. The optional is empty when no rule matches.
      */
-    public Optional<Map<String, String>> evaluate(Object o) {
+    public Optional<Map<String, String>> evaluate(ObjectWithAttributes o) {
         for (var r : rules) {
             var result = r.evaluate(o);
             if (result.isPresent()) return result;
@@ -87,6 +86,6 @@ public class RuleBase {
      */
     Map<String, Map<String, String>> getNamedResultMap() {
         return rules.stream()
-                .collect(toMap(Rule::getName, Rule::getResults, (first, second) -> first));
+                .collect(toMap(Rule::getName, Rule::getResults, (first, _) -> first));
     }
 }

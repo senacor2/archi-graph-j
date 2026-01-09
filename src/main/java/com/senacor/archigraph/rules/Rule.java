@@ -31,7 +31,7 @@ public class Rule {
         this.results = results;
     }
 
-    Optional<Map<String, String>> evaluate(Object o) {
+    Optional<Map<String, String>> evaluate(ObjectWithAttributes o) {
         for (var c : conditions) {
             if (!c.match(o)) return Optional.empty();
         }
