@@ -1,12 +1,13 @@
 package com.senacor.archigraph.model;
 
+import com.senacor.archigraph.rules.ObjectWithAttributes;
 import lombok.Data;
 
 import java.util.HashMap;
 import java.util.Map;
 
 @Data
-public class Application {
+public class Application implements ObjectWithAttributes {
 
     private String id;
 

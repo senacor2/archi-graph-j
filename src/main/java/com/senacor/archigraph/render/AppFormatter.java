@@ -1,8 +1,11 @@
 package com.senacor.archigraph.render;
 
 import com.senacor.archigraph.model.Application;
+import com.senacor.archigraph.rules.RuleBase;
 
 import java.awt.*;
+import java.io.IOException;
+import java.util.Map;
 
 class AppFormatter {
 
@@ -10,25 +13,23 @@ class AppFormatter {
     static final Color LAWN_GREEN = Color.decode("#38761D");
     static final Color PINK = Color.decode("#EA9999");
     static final int FONT_SIZE = 12;
+    static final Map<String, String> DEFAULT_COLORS = Map.of("backgroundColor", "#000000",
+            "fontColor", "#FFFFFF", "borderColor", "#000000");
+
+    private final RuleBase ruleBase = new RuleBase();
+
+    public void loadRules(String ruleFileName) throws IOException {
+        ruleBase.load(ruleFileName);
+    }
 
     void format(Application app, Rectangle rect) {
-        if ("Yes".equals(app.getAttribute("replacedByTnr"))) {
-            rect.setBackground(PINK);
-            rect.setFontcolor(Color.BLACK);
-        } else if (!"central".equals(app.getAttribute("market"))) {
-            // Local application
-            rect.setBackground(SEA_GREEN);
-            rect.setFontcolor(Color.WHITE);
-        } else if ("2026".equals(app.getAttribute("status"))) {
-            // New application
-            rect.setBackground(LAWN_GREEN);
-            rect.setFontcolor(Color.WHITE);
-        } else {
-            // existing application
-            rect.setBackground(Color.BLACK);
-            rect.setFontcolor(Color.WHITE);
-        }
-        rect.setBordercolor(Color.BLACK);
+        var result = ruleBase.evaluate(app).orElse(DEFAULT_COLORS);
+        var bgColor = Color.decode(result.get("backgroundColor"));
+        var fontColor = Color.decode(result.get("fontColor"));
+        var borderColor = Color.decode(result.get("borderColor"));
+        rect.setBackground(bgColor);
+        rect.setFontcolor(fontColor);
+        rect.setBordercolor(borderColor);
         rect.setFontSize(FONT_SIZE);
         rect.setText(app.getName());
         rect.setRounded(true);
@@ -44,7 +45,7 @@ class AppFormatter {
     }
 
     Rectangle[] getSamplesForLegend() {
-        return new Rectangle[] {
+        return new Rectangle[]{
                 Rectangle.builder()
                         .background(PINK)
                         .fontcolor(Color.BLACK)

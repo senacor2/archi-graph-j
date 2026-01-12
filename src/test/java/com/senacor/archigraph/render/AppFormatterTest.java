@@ -1,15 +1,23 @@
 package com.senacor.archigraph.render;
 
 import com.senacor.archigraph.model.Application;
+import com.senacor.archigraph.rules.RuleBase;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;
+import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AppFormatterTest {
 
-    private final AppFormatter fixture = new AppFormatter();
+    private static final AppFormatter fixture = new AppFormatter();
+
+    @BeforeAll
+    static void setup() throws IOException {
+        fixture.loadRules("data/rules.csv");
+    }
 
     @Test
     void testFormatProxy() {
@@ -47,7 +55,7 @@ public class AppFormatterTest {
         // given
         var app = new Application("ID1", "App-1", "Comp-1");
         app.setAttribute("market", "central");
-        app.setAttribute("status", "2026");
+        app.setAttribute("target", "2026");
         var rect = Rectangle.builder()
                 .id(app.getId())
                 .build();
