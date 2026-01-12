@@ -9,7 +9,7 @@ public class AppMatrixTest {
     @Test
     void testPutAndGet() {
         var fixture = new AppMatrix(3, 3);
-        var app = new Application("A1", "App1", "Comp1", "", "", "");
+        var app = new Application("A1", "App1", "Comp1");
         fixture.put(2, 2, app);
         assertEquals(app, fixture.get(2, 2));
         assertEquals(new Coordinate(2, 2), fixture.getAppCoordinate(app));
@@ -19,14 +19,14 @@ public class AppMatrixTest {
     void testMerge() {
         // fixture
         var inner = new AppMatrix(3, 3);
-        Application app1 = new Application("A1", "App1", "C1", "", "", "");
+        Application app1 = new Application("A1", "App1", "C1");
         inner.put(1, 0, app1);
-        Application app2 = new Application("A2", "App2", "C1", "", "", "");
+        Application app2 = new Application("A2", "App2", "C1");
         inner.put(2, 2, app2);
         var outer = new AppMatrix(6, 6);
-        Application app3 = new Application("A3", "App3", "C2", "", "", "");
+        Application app3 = new Application("A3", "App3", "C2");
         outer.put(1, 0, app3);
-        Application app4 = new Application("A4", "App4", "C2", "", "", "");
+        Application app4 = new Application("A4", "App4", "C2");
         outer.put(1, 2, app4);
         // test
         outer.merge(inner, 3, 0);
@@ -47,9 +47,9 @@ public class AppMatrixTest {
                 new Coordinate(1, 2),
                 new Coordinate(2, 3)
         };
-        fixture.put(coord[0], new Application("A1", "App1", "C1", "", "", ""));
-        fixture.put(coord[1], new Application("A2", "App2", "C1", "", "", ""));
-        fixture.put(coord[2], new Application("A3", "App3", "C1", "", "", ""));
+        fixture.put(coord[0], new Application("A1", "App1", "C1"));
+        fixture.put(coord[1], new Application("A2", "App2", "C1"));
+        fixture.put(coord[2], new Application("A3", "App3", "C1"));
         // verify
         int i = 0;
         for (var c : fixture.usedCoordinates()) {

@@ -22,9 +22,9 @@ public class ReaderTest {
     void testReadApplications() throws IOException {
         var apps = reader.readApplications();
         assertEquals(9, apps.size());
-        assertEquals(new Application("app-1", "Application 1", "Component 1", "Linux", "AWS", "2020"),
+        assertEquals(new Application("app-1", "Application 1", "Component 1"),
                 apps.getFirst());
-        assertEquals(new Application("app-9", "Application 9", "Component 2", "Linux", "Azure", "2021"),
+        assertEquals(new Application("app-9", "Application 9", "Component 2"),
                 apps.getLast());
     }
 

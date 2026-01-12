@@ -29,7 +29,8 @@ public class AppFormatterTest {
     @Test
     void testFormatExistingApp() {
         // given
-        var app = new Application("ID1", "App-1", "Comp-1", "central", "", "");
+        var app = new Application("ID1", "App-1", "Comp-1");
+        app.setAttribute("market", "central");
         var rect = Rectangle.builder()
                 .id(app.getId())
                 .build();
@@ -44,7 +45,9 @@ public class AppFormatterTest {
     @Test
     void testFormatNewApp() {
         // given
-        var app = new Application("ID1", "App-1", "Comp-1", "central", "2026", "");
+        var app = new Application("ID1", "App-1", "Comp-1");
+        app.setAttribute("market", "central");
+        app.setAttribute("status", "2026");
         var rect = Rectangle.builder()
                 .id(app.getId())
                 .build();
@@ -59,7 +62,9 @@ public class AppFormatterTest {
     @Test
     void testFormatRetiredApp() {
         // given
-        var app = new Application("ID1", "App-1", "Comp-1", "central", "", "Yes");
+        var app = new Application("ID1", "App-1", "Comp-1");
+        app.setAttribute("market", "central");
+        app.setAttribute("replacedByTnr", "Yes");
         var rect = Rectangle.builder()
                 .id(app.getId())
                 .build();
@@ -73,7 +78,8 @@ public class AppFormatterTest {
 
     @Test
     void testFormatLocalApp() {
-        var app = new Application("ID1", "App-1", "Comp-1", "DE", "", "");
+        var app = new Application("ID1", "App-1", "Comp-1");
+        app.setAttribute("market", "DE");
         var rect = Rectangle.builder()
                 .id(app.getId())
                 .build();

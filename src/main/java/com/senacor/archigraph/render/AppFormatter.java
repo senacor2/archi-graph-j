@@ -12,14 +12,14 @@ class AppFormatter {
     static final int FONT_SIZE = 12;
 
     void format(Application app, Rectangle rect) {
-        if (app.getAttribute("replacedByTnr").equals("Yes")) {
+        if ("Yes".equals(app.getAttribute("replacedByTnr"))) {
             rect.setBackground(PINK);
             rect.setFontcolor(Color.BLACK);
-        } else if (!app.getAttribute("market").equals("central")) {
+        } else if (!"central".equals(app.getAttribute("market"))) {
             // Local application
             rect.setBackground(SEA_GREEN);
             rect.setFontcolor(Color.WHITE);
-        } else if (app.getAttribute("status").equals("2026")) {
+        } else if ("2026".equals(app.getAttribute("status"))) {
             // New application
             rect.setBackground(LAWN_GREEN);
             rect.setFontcolor(Color.WHITE);

@@ -18,15 +18,11 @@ public class Application {
 
     private Map<String, String> attributes;
 
-    public Application(String id, String name, String componentName, String attr1, String attr2, String attr3) {
+    public Application(String id, String name, String componentName) {
         this.id = id;
         this.name = name;
         this.componentName = componentName;
         attributes = new HashMap<>(4);
-    }
-
-    public Application(String id, String name, String componentName) {
-        this(id, name, componentName, "", "", "");
     }
 
     public String getAttribute(String key) {
