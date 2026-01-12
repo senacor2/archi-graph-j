@@ -117,10 +117,10 @@ public class ComponentLayoutTest {
     @Test
     void testLayoutQualityNoIntersections() {
         var cl = new ComponentLayout(new Component("Comp 1", 0, 0, 2, 2, 1));
-        var appA = new Application("A", "A", "C", "", "", "");
-        var appB = new Application("B", "B", "C", "", "", "");
-        var appC = new Application("C", "C", "C", "", "", "");
-        var appD = new Application("D", "D", "C", "", "", "");
+        var appA = new Application("A", "A", "C");
+        var appB = new Application("B", "B", "C");
+        var appC = new Application("C", "C", "C");
+        var appD = new Application("D", "D", "C");
         var ifAB = new InformationFlow("IFAB", "A", "B", "BO", Direction.ONE_WAY);
         var ifCD = new InformationFlow("IFCD", "C", "D", "BO", Direction.ONE_WAY);
         ifAB.setSource(appA);
@@ -138,10 +138,10 @@ public class ComponentLayoutTest {
     @Test
     void testLayoutQualityDiagonalIntersections() {
         var cl = new ComponentLayout(new Component("Comp1", 0, 0, 2, 2, 1));
-        var appA = new Application("A", "A", "C", "", "", "");
-        var appB = new Application("B", "B", "C", "", "", "");
-        var appC = new Application("C", "C", "C", "", "", "");
-        var appD = new Application("D", "D", "C", "", "", "");
+        var appA = new Application("A", "A", "C");
+        var appB = new Application("B", "B", "C");
+        var appC = new Application("C", "C", "C");
+        var appD = new Application("D", "D", "C");
         var ifAD = new InformationFlow("IFAD", "A", "D", "BO", Direction.ONE_WAY);
         var IFBC = new InformationFlow("IFBC", "B", "C", "BO", Direction.ONE_WAY);
         ifAD.setSource(appA);
@@ -159,9 +159,9 @@ public class ComponentLayoutTest {
     @Test
     void testLayoutQualitySameEndpoint() {
         var cl = new ComponentLayout(new Component("Comp1", 0, 0, 2, 2, 1));
-        var appA = new Application("A", "A", "C", "", "", "");
-        var appB = new Application("B", "B", "C", "", "", "");
-        var appC = new Application("C", "C", "C", "", "", "");
+        var appA = new Application("A", "A", "C");
+        var appB = new Application("B", "B", "C");
+        var appC = new Application("C", "C", "C");
         var ifAB = new InformationFlow("IFAB", "A", "B", "BO", Direction.ONE_WAY);
         var IFCB = new InformationFlow("IFCB", "C", "B", "BO", Direction.ONE_WAY);
         ifAB.setSource(appA);
@@ -178,12 +178,12 @@ public class ComponentLayoutTest {
     @Test
     void TestLayoutQualityThreeFlows() {
         var cl = new ComponentLayout(new Component("Comp1", 0, 0, 3, 3, 1));
-        var appA = new Application("A", "A", "C", "", "", "");
-        var appB = new Application("B", "B", "C", "", "", "");
-        var appC = new Application("C", "C", "C", "", "", "");
-        var appD = new Application("D", "D", "C", "", "", "");
-        var appE = new Application("E", "E", "C", "", "", "");
-        var appF = new Application("F", "F", "C", "", "", "");
+        var appA = new Application("A", "A", "C");
+        var appB = new Application("B", "B", "C");
+        var appC = new Application("C", "C", "C");
+        var appD = new Application("D", "D", "C");
+        var appE = new Application("E", "E", "C");
+        var appF = new Application("F", "F", "C");
         var ifAB = new InformationFlow("IFAB", "A", "B", "BO", Direction.ONE_WAY);
         var ifCD = new InformationFlow("IFCD", "C", "D", "BO", Direction.ONE_WAY);
         var ifEF = new InformationFlow("IFEF", "E", "F", "BO", Direction.ONE_WAY);
@@ -215,10 +215,10 @@ public class ComponentLayoutTest {
     void testFindAppPositionsWithoutFlows() {
         // fixture
         var comp = new Component("COMP-1", 0, 0, 2, 2, 1);
-        var appA = new Application("APP-A", "A1", "COMP-1", "", "", "");
-        var appB = new Application("APP-B", "A2", "COMP-1", "", "", "");
-        var appC = new Application("APP-C", "A3", "COMP-1", "", "", "");
-        var appD = new Application("APP-D", "A4", "COMP-1", "", "", "");
+        var appA = new Application("APP-A", "A1", "COMP-1");
+        var appB = new Application("APP-B", "A2", "COMP-1");
+        var appC = new Application("APP-C", "A3", "COMP-1");
+        var appD = new Application("APP-D", "A4", "COMP-1");
         var model = new Model();
         model.setL1Components(List.of(comp));
         model.setApplications(List.of(appA, appB, appC, appD));
@@ -238,10 +238,10 @@ public class ComponentLayoutTest {
         // fixture
         var model = new Model();
         var comp = new Component("COMP-1", 0, 0, 2, 3, 1);
-        var appA = new Application("APP-A", "A1", "COMP-1", "", "", "");
-        var appB = new Application("APP-B", "A2", "COMP-1", "", "", "");
-        var appC = new Application("APP-C", "A3", "COMP-1", "", "", "");
-        var appD = new Application("APP-D", "A4", "COMP-1", "", "", "");
+        var appA = new Application("APP-A", "A1", "COMP-1");
+        var appB = new Application("APP-B", "A2", "COMP-1");
+        var appC = new Application("APP-C", "A3", "COMP-1");
+        var appD = new Application("APP-D", "A4", "COMP-1");
         var ifAC = new InformationFlow("IF-AC", "APP-A", "APP-C", "BO", Direction.ONE_WAY);
         var ifBD = new InformationFlow("IF-BD", "APP-B", "APP-D", "BO", Direction.ONE_WAY);
         model.setL1Components(List.of(comp));
@@ -262,12 +262,12 @@ public class ComponentLayoutTest {
     void testFindAppPositions6in3x3() {
         // fixture
         var comp = new Component("COMP-1", 0, 0, 3, 3, 1);
-        var appA = new Application("APP-A", "A1", "COMP-1", "", "", "");
-        var appB = new Application("APP-B", "A2", "COMP-1", "", "", "");
-        var appC = new Application("APP-C", "A3", "COMP-1", "", "", "");
-        var appD = new Application("APP-D", "A4", "COMP-1", "", "", "");
-        var appE = new Application("APP-E", "A5", "COMP-1", "", "", "");
-        var appF = new Application("APP-F", "A6", "COMP-1", "", "", "");
+        var appA = new Application("APP-A", "A1", "COMP-1");
+        var appB = new Application("APP-B", "A2", "COMP-1");
+        var appC = new Application("APP-C", "A3", "COMP-1");
+        var appD = new Application("APP-D", "A4", "COMP-1");
+        var appE = new Application("APP-E", "A5", "COMP-1");
+        var appF = new Application("APP-F", "A6", "COMP-1");
         var ifAB = new InformationFlow("IF-AB", "APP-A", "APP-B", "BO", Direction.ONE_WAY);
         var ifCD = new InformationFlow("IF-CD", "APP-C", "APP-D", "BO", Direction.ONE_WAY);
         var ifEF = new InformationFlow("IF-EF", "APP-E", "APP-F", "BO", Direction.ONE_WAY);
@@ -292,12 +292,12 @@ public class ComponentLayoutTest {
     void testFindAppPositions6in3x3WithMoreFlows() {
         // fixture
         var comp = new Component("COMP-1", 0, 0, 3, 3, 1);
-        var appA = new Application("APP-A", "A1", "COMP-1", "", "", "");
-        var appB = new Application("APP-B", "A2", "COMP-1", "", "", "");
-        var appC = new Application("APP-C", "A3", "COMP-1", "", "", "");
-        var appD = new Application("APP-D", "A4", "COMP-1", "", "", "");
-        var appE = new Application("APP-E", "A5", "COMP-1", "", "", "");
-        var appF = new Application("APP-F", "A6", "COMP-1", "", "", "");
+        var appA = new Application("APP-A", "A1", "COMP-1");
+        var appB = new Application("APP-B", "A2", "COMP-1");
+        var appC = new Application("APP-C", "A3", "COMP-1");
+        var appD = new Application("APP-D", "A4", "COMP-1");
+        var appE = new Application("APP-E", "A5", "COMP-1");
+        var appF = new Application("APP-F", "A6", "COMP-1");
 
         var ifAB = new InformationFlow("IF-AB", "APP-A", "APP-B", "BO", Direction.ONE_WAY);
         var ifAC = new InformationFlow("IF-AC", "APP-A", "APP-C", "BO", Direction.ONE_WAY);
@@ -336,11 +336,11 @@ public class ComponentLayoutTest {
     void testAddLayouts() {
         // Fixture
         Component outerComp = new Component("Outer", 0, 0, 4, 5, 1);
-        Application app1 = new Application("A1", "App1", "Outer", "", "", "");
-        Application app2 = new Application("A2", "App2", "Outer", "", "", "");
+        Application app1 = new Application("A1", "App1", "Outer");
+        Application app2 = new Application("A2", "App2", "Outer");
         Component innerComp = new Component("Inner", 2, 2, 2, 2, 2);
-        Application app3 = new Application("A3", "App3", "Inner", "", "", "");
-        Application app4 = new Application("A4", "App4", "Inner", "", "", "");
+        Application app3 = new Application("A3", "App3", "Inner");
+        Application app4 = new Application("A4", "App4", "Inner");
         outerComp.setComponents(List.of(innerComp));
         Model model = new Model();
         model.setL1Components(List.of(outerComp));

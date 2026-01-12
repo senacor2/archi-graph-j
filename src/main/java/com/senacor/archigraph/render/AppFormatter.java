@@ -1,8 +1,13 @@
 package com.senacor.archigraph.render;
 
 import com.senacor.archigraph.model.Application;
+import com.senacor.archigraph.rules.RuleBase;
+import lombok.Setter;
 
 import java.awt.*;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 class AppFormatter {
 
@@ -10,25 +15,24 @@ class AppFormatter {
     static final Color LAWN_GREEN = Color.decode("#38761D");
     static final Color PINK = Color.decode("#EA9999");
     static final int FONT_SIZE = 12;
+    static final Map<String, String> DEFAULT_COLORS = Map.of("backgroundColor", "#000000",
+            "fontColor", "#FFFFFF", "borderColor", "#000000", "fillStyle", "solid");
+    static final RuleBase DEFAULT_RULEBASE = new RuleBase(List.of("id", "market", "target", "replacedByTnr",
+            "connectItStatus"), DEFAULT_COLORS);
+
+    @Setter
+    private RuleBase ruleBase = DEFAULT_RULEBASE;
 
     void format(Application app, Rectangle rect) {
-        if (app.getAttribute(Application.REPLACE_TNR).equals("Yes")) {
-            rect.setBackground(PINK);
-            rect.setFontcolor(Color.BLACK);
-        } else if (!app.getAttribute(Application.MARKET).equals("central")) {
-            // Local application
-            rect.setBackground(SEA_GREEN);
-            rect.setFontcolor(Color.WHITE);
-        } else if (app.getAttribute(Application.TARGET).equals("2026")) {
-            // New application
-            rect.setBackground(LAWN_GREEN);
-            rect.setFontcolor(Color.WHITE);
-        } else {
-            // existing application
-            rect.setBackground(Color.BLACK);
-            rect.setFontcolor(Color.WHITE);
-        }
-        rect.setBordercolor(Color.BLACK);
+        var result = ruleBase.evaluate(app).orElse(DEFAULT_COLORS);
+        var bgColor = Color.decode(result.get("backgroundColor"));
+        var fontColor = Color.decode(result.get("fontColor"));
+        var borderColor = Color.decode(result.get("borderColor"));
+        var fillStyle = result.get("fillStyle");
+        rect.setBackground(bgColor);
+        rect.setFillStyle(fillStyle);
+        rect.setFontcolor(fontColor);
+        rect.setBordercolor(borderColor);
         rect.setFontSize(FONT_SIZE);
         rect.setText(app.getName());
         rect.setRounded(true);
@@ -40,46 +44,31 @@ class AppFormatter {
         rect.setBackground(Color.WHITE);
         rect.setFontcolor(Color.BLACK);
         rect.setBordercolor(Color.BLACK);
+        rect.setFontSize(FONT_SIZE);
         rect.setRounded(true);
     }
 
-    Rectangle[] getSamplesForLegend() {
-        return new Rectangle[] {
-                Rectangle.builder()
-                        .background(PINK)
-                        .fontcolor(Color.BLACK)
+    List<Rectangle> getSamplesForLegend() {
+        List<Rectangle> result = new LinkedList<>();
+        ruleBase.getNamedResultMap().forEach((k, v) ->
+                result.add(Rectangle.builder()
+                        .background(Color.decode(v.get("backgroundColor")))
+                        .fontcolor(Color.decode(v.get("fontColor")))
+                        .bordercolor(Color.decode(v.get("borderColor")))
+                        .fillStyle(v.get("fillStyle"))
                         .fontSize(FONT_SIZE)
                         .rounded(true)
-                        .text("Retired by TNR")
-                        .build(),
-                Rectangle.builder()
-                        .background(SEA_GREEN)
-                        .fontcolor(Color.WHITE)
-                        .fontSize(FONT_SIZE)
-                        .rounded(true)
-                        .text("Local application")
-                        .build(),
-                Rectangle.builder()
-                        .background(LAWN_GREEN)
-                        .fontcolor(Color.WHITE)
-                        .fontSize(FONT_SIZE)
-                        .rounded(true)
-                        .text("New central application")
-                        .build(),
-                Rectangle.builder()
-                        .background(Color.BLACK)
-                        .fontcolor(Color.WHITE)
-                        .fontSize(FONT_SIZE)
-                        .rounded(true)
-                        .text("Existing central application")
-                        .build(),
-                Rectangle.builder()
-                        .background(Color.WHITE)
-                        .fontcolor(Color.BLACK)
-                        .fontSize(FONT_SIZE)
-                        .rounded(true)
-                        .text("Integration across domains")
-                        .build()
-        };
+                        .text(k)
+                        .build()));
+        result.add(Rectangle.builder()
+                .background(Color.WHITE)
+                .fontcolor(Color.BLACK)
+                .bordercolor(Color.BLACK)
+                .fontSize(FONT_SIZE)
+                .rounded(true)
+                .text("Integration across domains")
+                .build());
+        return result;
     }
 }
+

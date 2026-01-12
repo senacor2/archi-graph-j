@@ -33,15 +33,21 @@ The application is read from a CSV file:
 | Attribut 1 | 4 | 1st custom information about the App. Used to control formatting of the apps in the diagram |
 | Attribute 2 | No | 2nd custom information |
 | Attribute 3 | 2028 | 3rd custom information |
+| Attribute 4 | No | 4th custom information |
 
 The data should be extracted from an EAM system and the process of extracting, cleaning and formatting should be
 automated to be repeatable.
 
+The data file **must** contain a header line which is used to determine the field names of the attributes.
+
 Suggested cleanup activities are:
+
 1. Remove all apps which are not relevant for the diagram.
 2. Make sure that all apps are assigned a component.
 3. Determine how many apps are in each component in order to size the components correctly.
 4. Harmonize spelling if necessary. Remove leading and trailing whitespace from names.
+5. It may be necessary to consolidate multiple apps into one for the purpose of the diagram. This may be necessary 
+   for centrally maintained application templates which are rolled out to various markets.
 
 # How to create the information flow list
 
@@ -72,3 +78,90 @@ the applications. Use the `app-area` element of the component to define where th
 The `app-area` must not overlap any sub-components.
 
 In the current design the algorithm is restricted to four levels of nested components.
+
+# How to create the Rules file
+
+The appearance of applications in the diagram is driven by a rules file. If omitted, all applications will have black
+and white text.
+
+Rules are defined in a tabular format: Each line is a rule with conditions and results. The rule engine evaluates each
+rule in the order they are defined. If all conditions match, the result in this line is returned. Otherwise, the next
+line is evaluated until the end of the file. If no rule matches, the default format will be used (white text, black
+background).
+
+Because rules are evaluated sequentially you must define the most specific rules first and less specific towards the
+end of the file. A rule with all wildcard matches must be at the end of the file, or it will obscure all lines that
+follow.
+
+The rules file is a CSV file, and it must include a heading line. The heading line names the attributes checked by the
+rule engine and the results returned by the rules. The attribute names must be equal to the additional attribute fields
+defined in the heading of the applications file. In addition, the `id` attribute is supported which references the
+_AppID_.
+
+## Rule name
+
+Each rule has a name. Rule names are used when the legend is painted, so make them descriptive. Otherwise, the legend
+will be of limited usefulness.
+
+Multiple rules can have the same name. This is useful when you want to define _OR_ conditions. While all condition fields
+in a rule are connected by _AND_, rules are connected by _OR_. When two rules have the same name, they should have the
+same result. While this appears to be redundant, tabular rules are easiest to understand and to learn and a little bit
+of redundancy seems to be acceptable.
+
+## Conditions
+
+The rule engine supports three condition types:
+
+1. When the column contains a value, this value must be equal to the corresponding value of the additional attribute 
+   of the application. When the value contains one or more asterisks `*`, it is interpreted as a regular expression 
+   and matching is performed.
+2. When the value is preceded by an `!`, this value must **not** be equal to the corresponding value of the 
+   additional attribute of the application. When the value contains one or more asterisks `*`, it is interpreted as 
+   a regular expression and matching is performed.
+3. When the column contains a single asterisk `*` this is the wildcard expression which matches any value in the 
+   additional application attributes.
+
+## Results
+
+Results define the value returned by the rules. A rule can return one or more values as key/value pairs. Currently,
+the following keys are supported:
+
+- `backgroundColor` - the background color of the application rectangle.
+- `borderColor` - the color of the rectangle's border.
+- `fontColor` - the color used to print the text (i.e. the application name).
+- `fillStyle` - How the background color is used. DrawIO supports these styles: `solid` to entirely fill the rectangle
+  with the background color, `hatch` paints the background with diagonal lines and `dots` paints a spotted background.
+
+The result names must be preceded by `result.` identifying them as results.
+
+## Example Rules File
+
+```
+"Name","id","market","target","replacedByAbc","eamStatus","result.backgroundColor","result.fontColor","result.
+borderColor","result.fillStyle"
+"Replaced by ABC","*","*","*","Yes","*","#EA9999","#000000","#000000","solid"
+"Local application","*","!central","*","*","*","#378C96","#FFFFFF","#000000","solid"
+"New central application","*","*","2026","*","*","#38761D","#FFFFFF","#000000","solid"
+"Existing central application","*","*","*","*","*","#000000","#FFFFFF","#000000","solid"
+```
+
+The first line contains the headers. _Name_ is a predefined column where the rule name must be defined. _id_ is also
+predefined and refers to the AppID of an application. Use this column for app-specific appearence.
+
+_market_, _target_, _replacedByAbc_ and _eamStatus_ are attributes that would also appear in the applications file.
+Make sure that they are spelled equally.
+
+The remainder of the header are the result columns, each identified by the `result.`-Prefix.
+
+The example above contains four rules.
+
+The first rule, named _Replaced by ABC_ returns a result, when the _replacedByAbc_ column contains _Yes_. It returns
+a solid pink background, a black border and text.
+
+The second rule, named _Local Application_ returns a result, when the _market_ column is not _central_. It returns a
+blueish solid background, white text and a black border.
+
+The third rule, named _New central application_ returns a result, when the _target_ column is equal to _2026_. It 
+returns a solid dark green background, white text and a black border.
+
+The final rule, named _Existing central application" always returns a result because all conditions are wildcards.

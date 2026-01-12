@@ -4,6 +4,7 @@ import ch.qos.logback.classic.Level;
 import com.senacor.archigraph.draw.DrawModelDrawIO;
 import com.senacor.archigraph.model.Model;
 import com.senacor.archigraph.render.RenderModel;
+import com.senacor.archigraph.rules.RuleBase;
 import com.senacor.archigraph.validate.LayoutValidator;
 import com.senacor.archigraph.validate.SemanticValidator;
 import lombok.extern.slf4j.Slf4j;
@@ -32,6 +33,7 @@ public class Main {
         options.addOption("t", "trace", false, "Turn on trace output");
         options.addOption("a", "apps", true, "The applications file");
         options.addOption("f", "flows", true, "The information flows file");
+        options.addOption("r", "rules", true, "The formatting rules file");
         options.addOption("o", "output", true, "Output file name.");
         options.addOption("h", "help", false, "Show help");
         options.addOption("lc", "lenient-comp", false, "Missing components do not cause failure.");
@@ -62,6 +64,7 @@ public class Main {
             var appsFile = cmdLine.getOptionValue("a");
             var flowsFile = cmdLine.getOptionValue("f");
             var outputFile = cmdLine.getOptionValue("o");
+            var rulesFile = cmdLine.getOptionValue("r");
             var lenientComp = cmdLine.hasOption("lenient-comp");
             var lenientFlow = cmdLine.hasOption("lenient-flow");
             var exitAfterValidate = cmdLine.hasOption("x");
@@ -81,8 +84,12 @@ public class Main {
                 outputFile = buildOutputFileName(compFile);
             }
             var model = reader.readModels();
+            var ruleBase = new RuleBase();
+            ruleBase.load(rulesFile);
             validate(lenientComp, lenientFlow, exitAfterValidate, exitAfterFailure, model);
-            var renderModel = new RenderModel().render(model);
+            var renderModel = new RenderModel();
+            renderModel.setRuleBase(ruleBase);
+            renderModel.render(model);
             new DrawModelDrawIO().draw(renderModel).write(outputFile);
         } catch (ParseException pe) {
             System.err.println("Could not parse command line: " + pe.getMessage());

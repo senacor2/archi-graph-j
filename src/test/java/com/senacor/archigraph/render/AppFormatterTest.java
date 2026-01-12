@@ -1,15 +1,25 @@
 package com.senacor.archigraph.render;
 
 import com.senacor.archigraph.model.Application;
+import com.senacor.archigraph.rules.RuleBase;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.awt.*;
+import java.io.IOException;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class AppFormatterTest {
 
-    private final AppFormatter fixture = new AppFormatter();
+    private static final AppFormatter fixture = new AppFormatter();
+
+    @BeforeAll
+    static void setup() throws IOException {
+        RuleBase ruleBase = new RuleBase();
+        ruleBase.load("data/rules.csv");
+        fixture.setRuleBase(ruleBase);
+    }
 
     @Test
     void testFormatProxy() {
@@ -29,7 +39,8 @@ public class AppFormatterTest {
     @Test
     void testFormatExistingApp() {
         // given
-        var app = new Application("ID1", "App-1", "Comp-1", "central", "", "");
+        var app = new Application("ID1", "App-1", "Comp-1");
+        app.setAttribute("market", "central");
         var rect = Rectangle.builder()
                 .id(app.getId())
                 .build();
@@ -44,7 +55,9 @@ public class AppFormatterTest {
     @Test
     void testFormatNewApp() {
         // given
-        var app = new Application("ID1", "App-1", "Comp-1", "central", "2026", "");
+        var app = new Application("ID1", "App-1", "Comp-1");
+        app.setAttribute("market", "central");
+        app.setAttribute("target", "2026");
         var rect = Rectangle.builder()
                 .id(app.getId())
                 .build();
@@ -59,7 +72,9 @@ public class AppFormatterTest {
     @Test
     void testFormatRetiredApp() {
         // given
-        var app = new Application("ID1", "App-1", "Comp-1", "central", "", "Yes");
+        var app = new Application("ID1", "App-1", "Comp-1");
+        app.setAttribute("market", "central");
+        app.setAttribute("replacedByTnr", "Yes");
         var rect = Rectangle.builder()
                 .id(app.getId())
                 .build();
@@ -73,7 +88,8 @@ public class AppFormatterTest {
 
     @Test
     void testFormatLocalApp() {
-        var app = new Application("ID1", "App-1", "Comp-1", "DE", "", "");
+        var app = new Application("ID1", "App-1", "Comp-1");
+        app.setAttribute("market", "DE");
         var rect = Rectangle.builder()
                 .id(app.getId())
                 .build();
@@ -87,7 +103,7 @@ public class AppFormatterTest {
 
     @Test
     void testGetLegend() {
-        assertEquals(5, fixture.getSamplesForLegend().length);
+        assertEquals(5, fixture.getSamplesForLegend().size());
     }
 
 

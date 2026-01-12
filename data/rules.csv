@@ -1,0 +1,5 @@
+"Name","id","market","target","replacedByTnr","connectItStatus","result.backgroundColor","result.fontColor","result.borderColor"
+"Retired by TNR","*","*","*","Yes","*","#EA9999","#000000","#000000"
+"Local application","*","!central","*","*","*","#378C96","#FFFFFF","#000000"
+"New central application","*","*","2026","*","*","#38761D","#FFFFFF","#000000"
+"Existing central application","*","*","*","*","*","#000000","#FFFFFF","#000000"
