@@ -24,6 +24,24 @@ public class RuleBase {
     private final List<Rule> rules = new LinkedList<>();
 
     /**
+     * Creates an empty rule base which must be loaded subsequently.
+     */
+    public RuleBase() {}
+
+    /**
+     * Creates a rulebase with exactly one rule. This constructor is used to create default rules.
+     * The rulebase has "all wildcards" conditions and exactly one result set.
+     * @param attributeNames a list of attribute names the rule base shall match against wildcards
+     * @param results The result map of the rule base.
+     */
+    public RuleBase(List<String> attributeNames, Map<String, String> results) {
+        rules.add(new Rule("catch all",
+                attributeNames.stream()
+                        .map(an -> new Condition(an, "*"))
+                        .toList(),
+                results));
+    }
+    /**
      * Loads a rule base from a CSV file.
      * @param filename Name of the rule base file.
      * @throws java.io.IOException when the file could not be read.
@@ -84,7 +102,7 @@ public class RuleBase {
      * with the same name should have the same result.
      * @return A map keyed by rule name with the result map as the value.
      */
-    Map<String, Map<String, String>> getNamedResultMap() {
+    public Map<String, Map<String, String>> getNamedResultMap() {
         return rules.stream()
                 .collect(toMap(Rule::getName, Rule::getResults, (first, _) -> first));
     }

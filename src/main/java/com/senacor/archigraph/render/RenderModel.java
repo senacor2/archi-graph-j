@@ -2,6 +2,7 @@ package com.senacor.archigraph.render;
 
 import com.senacor.archigraph.model.*;
 import com.senacor.archigraph.model.Component;
+import com.senacor.archigraph.rules.RuleBase;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 
@@ -87,6 +88,13 @@ public class RenderModel {
         elementsById.put(element.getId(), element);
     }
 
+    /**
+     * Set the rule bases required to format the applications.
+     * @param ruleBase a loaded rule base.
+     */
+    public void setRuleBase(RuleBase ruleBase) {
+        appFormatter.setRuleBase(ruleBase);
+    }
     /**
      * Populates the RenderModel with logical drawing components like rectangles and lines.
      *
@@ -442,7 +450,7 @@ public class RenderModel {
                 .max(Integer::compareTo)
                 .orElse(0) * ROW_HEIGHT + ROW_HEIGHT;
         final int width = 2 * COL_WIDTH;
-        final int height = Math.max(appRects.length, compRects.length) * ROW_HEIGHT;
+        final int height = Math.max(appRects.size(), compRects.length) * ROW_HEIGHT;
         add(Rectangle.builder()
                 .background(Color.WHITE)
                 .bordercolor(Color.BLACK)

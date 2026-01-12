@@ -151,6 +151,7 @@ public class RenderModelTest {
                                 .w(240)
                                 .h(120)
                                 .background(Color.BLACK)
+                                .fillStyle("solid")
                                 .fontcolor(Color.WHITE)
                                 .bordercolor(Color.BLACK)
                                 .fontSize(12)
@@ -164,6 +165,7 @@ public class RenderModelTest {
                                 .w(240)
                                 .h(120)
                                 .background(Color.BLACK)
+                                .fillStyle("solid")
                                 .fontcolor(Color.WHITE)
                                 .bordercolor(Color.BLACK)
                                 .fontSize(12)
@@ -253,6 +255,7 @@ public class RenderModelTest {
                                 .w(240)
                                 .h(120)
                                 .background(Color.BLACK)
+                                .fillStyle("solid")
                                 .fontcolor(Color.WHITE)
                                 .bordercolor(Color.BLACK)
                                 .fontSize(12)
@@ -266,6 +269,7 @@ public class RenderModelTest {
                                 .w(240)
                                 .h(120)
                                 .background(Color.BLACK)
+                                .fillStyle("solid")
                                 .fontcolor(Color.WHITE)
                                 .bordercolor(Color.BLACK)
                                 .fontSize(12)
@@ -304,6 +308,7 @@ public class RenderModelTest {
                 .h(120)
                 .fontcolor(Color.WHITE)
                 .background(Color.BLACK)
+                .fillStyle("solid")
                 .bordercolor(Color.BLACK)
                 .fontSize(12)
                 .build();
@@ -317,6 +322,7 @@ public class RenderModelTest {
                 .h(120)
                 .fontcolor(Color.WHITE)
                 .background(Color.BLACK)
+                .fillStyle("solid")
                 .bordercolor(Color.BLACK)
                 .fontSize(12)
                 .build();
@@ -400,6 +406,7 @@ public class RenderModelTest {
                 .bordercolor(Color.BLACK)
                 .fontcolor(Color.WHITE)
                 .background(Color.BLACK)
+                .fillStyle("solid")
                 .fontSize(12)
                 .build();
         var rectApp12 = Rectangle.builder()
@@ -413,6 +420,7 @@ public class RenderModelTest {
                 .bordercolor(Color.BLACK)
                 .fontcolor(Color.WHITE)
                 .background(Color.BLACK)
+                .fillStyle("solid")
                 .fontSize(12)
                 .build();
         var rectApp2 = Rectangle.builder()

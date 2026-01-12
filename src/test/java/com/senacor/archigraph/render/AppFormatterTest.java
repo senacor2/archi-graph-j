@@ -16,7 +16,9 @@ public class AppFormatterTest {
 
     @BeforeAll
     static void setup() throws IOException {
-        fixture.loadRules("data/rules.csv");
+        RuleBase ruleBase = new RuleBase();
+        ruleBase.load("data/rules.csv");
+        fixture.setRuleBase(ruleBase);
     }
 
     @Test
@@ -101,7 +103,7 @@ public class AppFormatterTest {
 
     @Test
     void testGetLegend() {
-        assertEquals(5, fixture.getSamplesForLegend().length);
+        assertEquals(5, fixture.getSamplesForLegend().size());
     }
 
 

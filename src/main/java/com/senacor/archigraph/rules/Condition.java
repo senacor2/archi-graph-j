@@ -50,9 +50,17 @@ public class Condition {
         if (operator == Operator.WILDCARD) return true;
         String propertyValue = o.getAttribute(attributeName);
         if (operator == Operator.EQUAL) {
-            return value.equals(propertyValue);
+            return match(value, propertyValue);
         } else {
-            return !value.equals(propertyValue);
+            return !match(value, propertyValue);
+        }
+    }
+
+    private static boolean match(String conditionValue, String propertyValue) {
+        if (conditionValue.contains("*")) {
+            return propertyValue.matches(conditionValue.replace("*", ".*"));
+        } else {
+            return conditionValue.equals(propertyValue);
         }
     }
 }

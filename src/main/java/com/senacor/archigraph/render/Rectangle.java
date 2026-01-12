@@ -20,6 +20,7 @@ public class Rectangle extends RenderModelElement {
     private Color background;
     private Color fontcolor;
     private Color bordercolor;
+    private String fillStyle;
 
     private int fontSize;
 

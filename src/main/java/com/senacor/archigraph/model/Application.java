@@ -27,7 +27,8 @@ public class Application implements ObjectWithAttributes {
     }
 
     public String getAttribute(String key) {
-        return attributes.get(key);
+        if ("id".equals(key)) return id;
+        else return attributes.get(key);
     }
 
     public void setAttribute(String key, String value) {
