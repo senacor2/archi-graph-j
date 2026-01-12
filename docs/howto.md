@@ -33,15 +33,21 @@ The application is read from a CSV file:
 | Attribut 1 | 4 | 1st custom information about the App. Used to control formatting of the apps in the diagram |
 | Attribute 2 | No | 2nd custom information |
 | Attribute 3 | 2028 | 3rd custom information |
+| Attribute 4 | No | 4th custom information |
 
 The data should be extracted from an EAM system and the process of extracting, cleaning and formatting should be
 automated to be repeatable.
 
+The data file **must** contain a header line which is used to determine the field names of the attributes.
+
 Suggested cleanup activities are:
+
 1. Remove all apps which are not relevant for the diagram.
 2. Make sure that all apps are assigned a component.
 3. Determine how many apps are in each component in order to size the components correctly.
 4. Harmonize spelling if necessary. Remove leading and trailing whitespace from names.
+5. It may be necessary to consolidate multiple apps into one for the purpose of the diagram. This may be necessary 
+   for centrally maintained application templates which are rolled out to various markets.
 
 # How to create the information flow list
 

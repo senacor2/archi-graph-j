@@ -81,16 +81,20 @@ public class Reader {
         var result = new LinkedList<Application>();
         try (java.io.Reader in = new FileReader(appsFile)) {
             Iterable<CSVRecord> records = CSVFormat.DEFAULT.builder()
+                    .setHeader()
+                    .setSkipHeaderRecord(true)
                     .get()
                     .parse(in);
             for (CSVRecord record : records) {
                 var id = record.get(0);
                 var name = record.get(1);
                 var compName = record.get(2);
-                var attr1 = record.get(3);
-                var attr2 = record.get(4);
-                var attr3 = record.get(5);
-                result.add(new Application(id, name, compName, attr1, attr2, attr3));
+                var headers = record.getParser().getHeaderNames();
+                var app = new Application(id, name, compName);
+                for (int i = 3; i < 7; i++) {
+                    app.setAttribute(headers.get(i), record.get(i));
+                }
+                result.add(app);
             }
         }
         log.debug("Reading applications: {} apps read", result.size());
