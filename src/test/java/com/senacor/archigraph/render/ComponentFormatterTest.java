@@ -5,7 +5,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;
 
-import java.awt.*;
+import java.awt.Color;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -37,6 +38,6 @@ public class ComponentFormatterTest {
 
     @Test
     void testGetLegend() {
-        assertEquals(3, fixture.getSamplesForLegend().length);
+        assertEquals(3, fixture.getSamplesForLegend(List.of("Domain", "Product", "Subproduct")).length);
     }
 }

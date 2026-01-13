@@ -1,5 +1,6 @@
 {
   "system": "System 1",
+  "component-names": ["Level 1"],
   "components": [
     {
       "name": "Component 1",

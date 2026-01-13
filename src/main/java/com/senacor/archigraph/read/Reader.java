@@ -67,12 +67,21 @@ public class Reader {
         return result;
     }
 
+    private List<String> mapComponentNames(JsonNode node) {
+        var result = new LinkedList<String>();
+        for (JsonNode n : node.get("component-names")) {
+            result.add(n.textValue());
+        }
+        return result;
+    }
+
     void readComponentModel(Model model) throws IOException {
         log.debug("Reading components from {}", compFile);
         var mapper = new ObjectMapper();
         var jsonModel = mapper.readTree(new File(compFile));
         model.setL1Components(mapComponents(jsonModel, 1));
         model.setName(jsonModel.get(SYSTEM).textValue());
+        model.setComponentNames(mapComponentNames(jsonModel));
         log.debug("Reading components: Model {} read", model.getName());
     }
 

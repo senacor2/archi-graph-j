@@ -2,7 +2,8 @@ package com.senacor.archigraph.render;
 
 import com.senacor.archigraph.model.Component;
 
-import java.awt.*;
+import java.util.List;
+import java.awt.Color;
 
 public class ComponentFormatter {
 
@@ -43,26 +44,16 @@ public class ComponentFormatter {
         rect.setBordercolor(FG_COLOR_COMP_BODY);
     }
 
-    public Rectangle[] getSamplesForLegend() {
-        return new Rectangle[] {
-                Rectangle.builder()
-                        .background(BG_COLOR_COMP_HEAD[0])
-                        .fontcolor(FONT_COLOR_COMP_HEAD[0])
-                        .fontSize(getFontSize(1))
-                        .text("Domain")
-                        .build(),
-                Rectangle.builder()
-                        .background(BG_COLOR_COMP_HEAD[1])
-                        .fontcolor(FONT_COLOR_COMP_HEAD[1])
-                        .fontSize(getFontSize(2))
-                        .text("Product")
-                        .build(),
-                Rectangle.builder()
-                        .background(BG_COLOR_COMP_HEAD[2])
-                        .fontcolor(FONT_COLOR_COMP_HEAD[2])
-                        .fontSize(getFontSize(3))
-                        .text("Subproduct")
-                        .build()
+    public Rectangle[] getSamplesForLegend(List<String> componentNames) {
+        var result = new Rectangle[componentNames.size()];
+        for (int i = 0; i < componentNames.size(); i++) {
+            result[i] = Rectangle.builder()
+                    .background(BG_COLOR_COMP_HEAD[i])
+                    .fontcolor(FONT_COLOR_COMP_HEAD[i])
+                    .fontSize(getFontSize(i+1))
+                    .text(componentNames.get(i))
+                    .build();
         };
+        return result;
     }
 }

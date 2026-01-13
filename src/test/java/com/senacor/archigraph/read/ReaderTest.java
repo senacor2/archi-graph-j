@@ -46,6 +46,7 @@ public class ReaderTest {
         assertThat(comps).containsExactlyInAnyOrder(
                 new Component("Component 1", 1, 1, 3, 2, 1),
                 new Component("Component 2", 1, 5, 2, 2, 1));
+        assertThat(model.getComponentNames()).containsExactly("Level 1");
     }
 
     @Test
@@ -58,5 +59,6 @@ public class ReaderTest {
                 "Component 1", "Component 1-1", "Component 1-1-1", "Component 1-1-1-1", "Component 1-2"
         );
         assertThat(componentMap.get("Component 1").getAppArea()).isEqualTo(new Area(1, 2, 2, 4));
+        assertThat(model.getComponentNames()).containsExactly("Level 1", "Level 2", "Level 3", "Level 4");
     }
 }

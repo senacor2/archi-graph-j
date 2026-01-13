@@ -83,10 +83,19 @@
       "type": "string",
       "description": "Name of the overall system. It will be shown at the top of the diagram."
     },
+    "component-names": {
+      "type": "array",
+      "description": "Names the components (used in the legend)",
+      "items": {
+        "type": "string",
+        "description": "Name of the component"
+      },
+      "maxItems": 4
+    },
     "components": {
       "$ref": "#/types/components",
       "description": "The top level components of the system."
     }
   },
-  "required": ["system", "components"]
+  "required": ["system", "components", "component-names"]
 }

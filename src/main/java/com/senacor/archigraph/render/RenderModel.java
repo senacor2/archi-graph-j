@@ -111,7 +111,7 @@ public class RenderModel {
                         .map(c -> c.getCol() + c.getWidth())
                         .max(Integer::compareTo)
                         .orElse(0) * COL_WIDTH + COL_WIDTH)
-                .h(ROW_HEIGHT_HALF)
+                .h(ROW_HEIGHT)
                 .build();
         modelFormatter.formatHead(model, modelRect);
         add(modelRect);
@@ -440,7 +440,7 @@ public class RenderModel {
 
     void renderLegend(Model model) {
         var appRects = appFormatter.getSamplesForLegend();
-        var compRects = compFormatter.getSamplesForLegend();
+        var compRects = compFormatter.getSamplesForLegend(model.getComponentNames());
         final int legendX = model.getL1Components().stream()
                 .map(c -> c.getCol() + c.getWidth())
                 .max(Integer::compareTo)

@@ -28,10 +28,14 @@ public class LayoutValidator {
         List<ValidationIssue> result = new LinkedList<>();
         Component[] components = new Component[model.getL1Components().size()];
         model.getL1Components().toArray(components);
+        if (model.getComponentNames().size() > 4) {
+            result.add(new ValidationIssue(null, null,
+                    String.format("Maximum component nesting is 4 but is actually %d", model.getComponentNames().size())));
+        }
         for (int i = 0; i < components.length; i++) {
             result.addAll(validateContainment(components[i]));
             validateProxySpace(components[i]).ifPresent(result::add);
-            validateNesting(components[i]).ifPresent(result::add);
+            validateNesting(components[i], model.getComponentNames().size()).ifPresent(result::add);
             for (int j = i+1; j < components.length; j++){
                 validateNoOverlap(components[i], components[j]).ifPresent(result::add);
                 validateSpacing(components[i], components[j]).ifPresent(result::add);
@@ -139,10 +143,11 @@ public class LayoutValidator {
      * @param comp a component to validate
      * @return A validation issue if the nesting is too deep.
      */
-    private Optional<ValidationIssue> validateNesting(Component comp) {
-        if (comp.getLevel() > 4) {
+    private Optional<ValidationIssue> validateNesting(final Component comp, final int maxNesting) {
+        if (comp.getLevel() > maxNesting) {
             return Optional.of(new ValidationIssue(comp.getName(), null,
-                    String.format("Component %s is nested by more than 4 levels (%d)", comp.getName(), comp.getLevel())));
+                    String.format("Component %s is nested by more than %d levels (%d)", comp.getName(), maxNesting,
+                            comp.getLevel())));
         } else {
             return Optional.empty();
         }

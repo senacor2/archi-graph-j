@@ -1,5 +1,11 @@
 {
   "system": "System 2",
+  "component-names": [
+    "Level 1",
+    "Level 2",
+    "Level 3",
+    "Level 4"
+  ],
   "components": [
     {
       "name": "Component 1",

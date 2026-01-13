@@ -19,6 +19,8 @@ public class Model {
 
     @Setter
     private String name;
+    @Setter
+    private List<String> componentNames;
     private Map<String, Component> componentMap;
     private Map<String, Application> applicationMap;
     private Map<String, InformationFlow> informationFlowMap;

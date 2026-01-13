@@ -27,6 +27,7 @@ public class RenderModelTest {
     void testSimpleModel() {
         var model = Model.builder()
                 .name("System 1")
+                .componentNames(List.of("Level 1"))
                 .build();
         var c1 = new Component("COMP-1", 1, 0, 3, 3, 1);
         var c2 = new Component("COMP-2", 1, 4, 2, 3, 1);
@@ -42,9 +43,9 @@ public class RenderModelTest {
                                 .x(0)
                                 .y(0)
                                 .w(2240)
-                                .h(100)
+                                .h(200)
                                 .text("System 1")
-                                .fontSize(48)
+                                .fontSize(96)
                                 .background(new Color(0, 0, 156))
                                 .fontcolor(Color.WHITE)
                                 .bordercolor(Color.BLACK)
@@ -98,6 +99,7 @@ public class RenderModelTest {
     void testModelWithApps() {
         var model = Model.builder()
                 .name("System 1")
+                .componentNames(List.of("Level 1"))
                 .build();
         var c1 = new Component("COMP-1", 1, 0, 3, 3, 1);
         model.setL1Components(List.of(c1));
@@ -115,11 +117,11 @@ public class RenderModelTest {
                                 .x(0)
                                 .y(0)
                                 .w(1280)
-                                .h(100)
+                                .h(200)
                                 .background(new Color(0, 0, 156))
                                 .fontcolor(Color.WHITE)
                                 .bordercolor(Color.BLACK)
-                                .fontSize(48)
+                                .fontSize(96)
                                 .build(),
                         Rectangle.builder()
                                 .id("COMP-1_head")
@@ -183,7 +185,7 @@ public class RenderModelTest {
         var app1 = new Application("A1", "App-1", "COMP-11");
         var app2 = new Application("A2", "App-2", "COMP-11");
         comp1.setComponents(List.of(comp2));
-        var model = Model.builder().name("System 1").build();
+        var model = Model.builder().name("System 1").componentNames(List.of("Level 1", "Level 2")).build();
         model.setL1Components(List.of(comp1));
         model.setApplications(List.of(app1, app2));
         // test
@@ -198,11 +200,11 @@ public class RenderModelTest {
                                 .x(0)
                                 .y(0)
                                 .w(1600)
-                                .h(100)
+                                .h(200)
                                 .fontcolor(Color.WHITE)
                                 .background(new Color(0, 0, 156))
                                 .bordercolor(Color.BLACK)
-                                .fontSize(48)
+                                .fontSize(96)
                                 .build(),
                         Rectangle.builder()
                                 .id("COMP-1_head")
@@ -286,6 +288,7 @@ public class RenderModelTest {
         // fixture
         var model = Model.builder()
                 .name("System 1")
+                .componentNames(List.of("Level 1"))
                 .build();
         var app1 = new Application("A1", "A1", "C1");
         var app2 = new Application("A2", "A2", "C1");
@@ -334,11 +337,11 @@ public class RenderModelTest {
                                 .x(0)
                                 .y(0)
                                 .w(1280)
-                                .h(100)
+                                .h(200)
                                 .fontcolor(Color.WHITE)
                                 .background(new Color(0, 0, 156))
                                 .bordercolor(Color.BLACK)
-                                .fontSize(48)
+                                .fontSize(96)
                                 .build(),
                         Rectangle.builder()
                                 .id("C1_body")
@@ -378,6 +381,7 @@ public class RenderModelTest {
         // given
         var model = Model.builder()
                 .name("System 1")
+                .componentNames(List.of("Level 1", "Level 2"))
                 .build();
         var app11 = new Application("A11", "A11", "C11");
         var app12 = new Application("A12", "A12", "C11");
