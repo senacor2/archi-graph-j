@@ -53,7 +53,7 @@ public class ComponentFormatter {
                     .fontSize(getFontSize(i+1))
                     .text(componentNames.get(i))
                     .build();
-        };
+        }
         return result;
     }
 }
