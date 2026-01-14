@@ -81,7 +81,7 @@
   "properties": {
     "system": {
       "type": "string",
-      "description": "Name of the overall system. It will be shown at the top of the diagram."
+      "description": "Name of the system. It will be shown at the top of the diagram."
     },
     "component-names": {
       "type": "array",
@@ -90,6 +90,7 @@
         "type": "string",
         "description": "Name of the component"
       },
+      "minItems": 1,
       "maxItems": 4
     },
     "components": {
