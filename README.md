@@ -7,13 +7,15 @@ A program to render high level architecture diagrams with an automatic layout.
 The purpose is to render enterprise level or domain level architecture diagrams with applications, information flows
 between applications and components that group applications. Components may be nested up to 4 levels.
 
-The program consumes 3 input files of which 2 can be exported from EAM databases if available:
+The program consumes 4 input files of which 2 can be exported from EAM databases if available:
 
 1. Application list with references to the enclosing components.
 2. Information flows with references to applications.
 
 The third file describes the layout of the components. This file needs to be created manually and this is the
 actual creative work.
+
+The fourth file contains rules controlling how apps are painted in the diagram based on the application's attributes.
 
 The output is in Draw.IO-Format.
 
@@ -22,11 +24,18 @@ See [The How-To document](docs/howto.md) for details about the file formats and 
 ## Command line Syntax
 
 ```
-archi-graph-j options -c component-model -a applications.csv -i informationflows.csv 
+archi-graph-j options component-model -a applications.csv -f informationflows.csv -r rulebase.csv
 ```
+
+`component-model` is the name of the JSON file that describes the component layout.
 
 Options are:
 
+- `-h` or `--help` shows the arguments and options.
+- `-a` or `--apps` followed by the name of the application file.
+- `-f` or `--flows` followed by the name of the information flows file.
+- `-r` or `--rules` followed by the name of the rules file.
+- `-o` or `--output` overrides the output file name. If missing, the name is the component file base name with the suffix `drawio.xml`.
 - `-d` or `--debug` Turn on debug logging.
 - `-t` or `--trace` Turn on tracing (more details than debug)
 - `-lc` or `--lenient-comp` Applications that reference a component that is not in the component model are ignored.
