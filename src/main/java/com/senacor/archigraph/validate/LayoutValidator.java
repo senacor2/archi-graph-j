@@ -89,7 +89,7 @@ public class LayoutValidator {
      * @return A validation issue if the components are not properly spaced.
      */
     private Optional<ValidationIssue> validateSpacing(Component c1, Component c2) {
-        final int MINDISTANCE = 2;
+        final int MINDISTANCE = c1.getProxyAreaSize() + c2.getProxyAreaSize();
         if (c1.getCompArea().hasMinDistance(c2.getCompArea(), MINDISTANCE)) {
             return Optional.empty();
         } else {
@@ -120,7 +120,7 @@ public class LayoutValidator {
      * @return A validation issue if the number of proxies exceeds the space available around the component.
      */
     private Optional<ValidationIssue> validateProxySpace(Component comp) {
-        final int proxySpace = comp.getWidth()*2 + comp.getHeight()*2 + 4;
+        final int proxyBoxSize = proxyBoxSize(comp);
         final int nbrProxies = comp.getCrossL1CompInformationFlows().stream()
                 .map(flow -> {
                     if (flow.getSource().getComponent().getL1Component() == comp) return flow.getDestination();
@@ -128,13 +128,24 @@ public class LayoutValidator {
                 })
                 .collect(Collectors.toSet())
                 .size();
-        if (nbrProxies > proxySpace) {
+        if (nbrProxies > proxyBoxSize) {
             return Optional.of(new ValidationIssue(comp.getName(), null,
                     String.format("Component %s needs space for %d proxies and has only space for %d",
-                            comp.getName(), nbrProxies, proxySpace)));
+                            comp.getName(), nbrProxies, proxyBoxSize)));
         } else {
             return Optional.empty();
         }
+    }
+
+    /**
+     * Calculate the number of positions in the proxy box.
+     * This is the size of the proxy box minus the size of the component
+     * @param comp Component to check
+     * @return the number of proxies that can be placed around the component.
+     */
+    private int proxyBoxSize(Component comp) {
+        return (comp.getWidth() + 2*comp.getProxyAreaSize()) * (comp.getHeight() + 2*comp.getProxyAreaSize())
+                - comp.getWidth() * comp.getHeight();
     }
 
     /**

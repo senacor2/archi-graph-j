@@ -15,17 +15,16 @@ public class ProxyBoxLayout extends AbstractLayout {
 
     public ProxyBoxLayout(Component comp) {
         super(comp);
-        int rows = comp.getHeight() + 2;
-        int columns = comp.getWidth() + 2;
+        int rows = comp.getHeight() + 2 * comp.getProxyAreaSize();
+        int columns = comp.getWidth() + 2 * comp.getProxyAreaSize();
         layout = new HashMap<>(rows * columns);
         proxyBoxCoords = new LinkedList<>();
-        for (int c = 0; c < columns; c++) {
-            proxyBoxCoords.add(new Coordinate(0, c));
-            proxyBoxCoords.add(new Coordinate(rows - 1, c));
-        }
-        for (int r = 1; r < rows - 1; r++) {
-            proxyBoxCoords.add(new Coordinate(r, 0));
-            proxyBoxCoords.add(new Coordinate(r, columns - 1));
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < columns; c++) {
+                if (isInProxyArea(rows, columns, comp.getProxyAreaSize(), r, c)) {
+                    proxyBoxCoords.add(new Coordinate(r, c));
+                }
+            }
         }
     }
 
@@ -61,5 +60,19 @@ public class ProxyBoxLayout extends AbstractLayout {
      */
     public void setProxyPosition(Application proxy, Coordinate proxyCoord) {
         layout.put(proxy, proxyCoord);
+    }
+
+    /**
+     * Check if the given coordinate is in the proxyArea or in the compArea.
+     * @param maxRows Number of rows of the proxyArea.
+     * @param maxColumns Number of columns of the proxyArea.
+     * @param proxyAreaSize the thickness of the proxyArea
+     * @param row the row to check
+     * @param column the column to check
+     * @return true if row/column are outside the component area.
+     */
+    private static boolean isInProxyArea(int maxRows, int maxColumns, int proxyAreaSize, int row, int column) {
+        return row < proxyAreaSize || row >= maxRows - proxyAreaSize ||
+                column < proxyAreaSize || column >= maxColumns - proxyAreaSize;
     }
 }

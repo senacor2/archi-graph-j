@@ -69,6 +69,9 @@ name of the system is shown in a horizontal heading bar at the top of the diagra
 Each component has a name (which **must** match the component name used in the applications file) and (row/colum) 
 coordinates and height and width also expressed in rows and columns.
 
+Top level components can also specify the `proxy-area-size` which is the thickness of the ring around a component 
+where the proxies will be placed. The default value is 1 which implies one row and one column on each side.
+
 A component with no sub-components uses the entire component body, i.e. the overall size without the top row 
 occupied by the component heading for apps which are also placed in cells. When the component has sub-components it 
 is the responsibility of the designer to fit them into the space.

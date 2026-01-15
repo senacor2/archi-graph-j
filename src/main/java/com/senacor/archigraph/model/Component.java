@@ -54,12 +54,16 @@ public class Component {
 
     private final AppMatrix l1AppMatrix;
 
+    @Setter
+    private int proxyAreaSize;
+
     public Component(String name, int row, int col, int width, int height, int level) {
         this.name = name;
         this.compArea = new Area(row, col, width, height);
         this.appArea = new Area(1, 0, width, height - 1);
         this.isAppAreaOverride = false;
         this.level = level;
+        this.proxyAreaSize = 1;
         this.appMatrix = new AppMatrix(height, width);
         if (level == 1) {
             l1AppMatrix = new AppMatrix(height + 2, width + 2);

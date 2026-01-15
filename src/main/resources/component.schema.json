@@ -50,6 +50,13 @@
         "h": {
           "$ref": "#/types/height"
         },
+        "proxy-area-size": {
+          "description": "Width/height of the proxy area around an L1 component",
+          "type": "integer",
+          "minimum": 1,
+          "maximum": 2,
+          "default": 1
+        },
         "app-area": {
           "description": "Where to place the apps in a component that has sub-components.",
           "type": "object",

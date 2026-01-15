@@ -21,6 +21,8 @@ public class Reader {
     public static final String COMPONENTS = "components";
     public static final String SYSTEM = "system";
     public static final String APP_AREA = "app-area";
+    public static final String COMPONENT_NAMES = "component-names";
+    public static final String PROXY_AREA_SIZE = "proxy-area-size";
     private final String compFile;
     private final String appsFile;
     private final String flowsFile;
@@ -51,6 +53,9 @@ public class Reader {
                     n.get("w").intValue(),
                     n.get("h").intValue(),
                     level);
+            if (level == 1 && n.has(PROXY_AREA_SIZE)) {
+                comp.setProxyAreaSize(n.get(PROXY_AREA_SIZE).intValue());
+            }
             if (n.has(APP_AREA)) {
                 var areaNode = n.get(APP_AREA);
                 var area = new Area(areaNode.get("y").intValue(),
@@ -69,7 +74,7 @@ public class Reader {
 
     private List<String> mapComponentNames(JsonNode node) {
         var result = new LinkedList<String>();
-        for (JsonNode n : node.get("component-names")) {
+        for (JsonNode n : node.get(COMPONENT_NAMES)) {
             result.add(n.textValue());
         }
         return result;
