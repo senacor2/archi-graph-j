@@ -161,7 +161,7 @@ public class RenderModel {
             render(c);
         }
         if (comp instanceof L1Component) {
-            renderL1CompFlows(comp);
+            renderL1CompFlows((L1Component) comp);
             renderCrossL1CompFlows((L1Component) comp, x, y);
         } else {
             comp.getParentComponent().getAppMatrix().merge(comp.getAppMatrix(), comp.getRow() + 1, comp.getCol());
@@ -231,7 +231,7 @@ public class RenderModel {
      *
      * @param comp  the L1 component.
      */
-    void renderL1CompFlows(Component comp) {
+    void renderL1CompFlows(L1Component comp) {
         var count = 0;
         log.debug("Render l1 flows for {}", comp.getName());
         for (var flow : comp.getL1CompInformationFlows()) {

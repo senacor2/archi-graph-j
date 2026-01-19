@@ -391,10 +391,11 @@ public class RenderModelTest {
         var comp2 = new L1Component("C2", 9, 9, 3, 3, 1);
         var if1 = new InformationFlow("IF112", "A11", "A2", "BO", Direction.ONE_WAY);
         var if2 = new InformationFlow("IF122", "A12", "A2", "BO", Direction.ONE_WAY);
+        var if3 = new InformationFlow("IF1112", "A11", "A12", "BO", Direction.ONE_WAY);
         comp1.setComponents(List.of(comp11));
         model.setL1Components(List.of(comp1, comp2));
         model.setApplications(List.of(app11, app12, app2));
-        model.setInformationFlows(List.of(if1, if2));
+        model.setInformationFlows(List.of(if1, if2, if3));
         // when
         var fixture = new RenderModel();
         var result = fixture.render(model);
@@ -432,7 +433,7 @@ public class RenderModelTest {
                 .text("A2")
                 .rounded(true)
                 .x(-280)
-                .y(840)
+                .y(640)
                 .w(240)
                 .h(120)
                 .fontcolor(Color.BLACK)
@@ -450,18 +451,18 @@ public class RenderModelTest {
                                 .text("BO")
                                 .start(rectApp11)
                                 .end(rectApp2)
-                                .anchors(new Point[] {
-                                        new Point(160, 780),
-                                        new Point(-20, 780),
-                                        new Point(-20, 900)
-                                })
+                                .anchors(new Point[0])
                                 .build(),
                         Line.builder()
                                 .id("IF122")
                                 .text("BO")
                                 .start(rectApp12)
                                 .end(rectApp2)
-                                .anchors(new Point[0])
+                                .anchors(new Point[] {
+                                        new Point(160, 820),
+                                        new Point(-20, 820),
+                                        new Point(-20, 700)
+                                })
                                 .build()
                 );
     }
