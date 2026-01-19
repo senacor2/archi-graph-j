@@ -12,8 +12,8 @@ public class ModelTest {
 
     @Test
     void testSetComponentsNoNesting() {
-        Component c1 = new Component("COMP-1", 0, 0, 5, 3, 1);
-        Component c2 = new Component("COMP-2", 0, 7, 4, 3, 1);
+        L1Component c1 = new L1Component("COMP-1", 0, 0, 5, 3, 1);
+        L1Component c2 = new L1Component("COMP-2", 0, 7, 4, 3, 1);
         var components = List.of(c1, c2);
         var model = new Model();
         model.setL1Components(components);
@@ -26,8 +26,8 @@ public class ModelTest {
 
     @Test
     void testSetComponentsNested() {
-        Component c1 = new Component("COMP-1", 0, 0, 5, 3, 1);
-        Component c2 = new Component("COMP-2", 0, 7, 4, 3, 1);
+        L1Component c1 = new L1Component("COMP-1", 0, 0, 5, 3, 1);
+        L1Component c2 = new L1Component("COMP-2", 0, 7, 4, 3, 1);
         var components = List.of(c1, c2);
         Component c11 = new Component("COMP-11", 1, 0, 2, 2, 2);
         Component c12 = new Component("COMP-12", 1, 3, 2, 2, 2);
@@ -52,8 +52,8 @@ public class ModelTest {
     @Test
     void testSetApplications() {
         var components = List.of(
-                new Component("COMP-1", 0, 0, 5, 3, 1),
-                new Component("COMP-2", 0, 7, 4, 3, 1));
+                new L1Component("COMP-1", 0, 0, 5, 3, 1),
+                new L1Component("COMP-2", 0, 7, 4, 3, 1));
         var applications = List.of(
                 new Application("APP-1", "Application 1", "COMP-1"),
                 new Application("APP-2", "Application 2", "COMP-2"));
@@ -69,8 +69,8 @@ public class ModelTest {
 
     @Test
     void testSetInformationFlows() {
-        var c1 = new Component("COMP-1", 0, 0, 5, 3, 1);
-        var c2 = new Component("COMP-2", 0, 7, 4, 3, 1);
+        var c1 = new L1Component("COMP-1", 0, 0, 5, 3, 1);
+        var c2 = new L1Component("COMP-2", 0, 7, 4, 3, 1);
         var components = List.of(c1, c2);
         var a11 = new Application("APP-11", "Application 11", "COMP-1");
         var a12 = new Application("APP-12", "Application 12", "COMP-1");

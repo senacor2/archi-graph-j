@@ -12,10 +12,10 @@ public class ComponentTest {
     public void testSelectInformationFlows() {
         // fixture
         var model = new Model();
-        var l1Comp1 = new Component("C l1 1", 0, 0, 0, 0, 1);
+        var l1Comp1 = new L1Component("C l1 1", 0, 0, 0, 0, 1);
         var comp11 = new Component("C11", 0, 0, 0, 0, 2);
         var comp12 = new Component("C12", 0, 0, 0, 0, 2);
-        var l1Comp2 = new Component("C l1 2", 0, 0, 0, 0, 1);
+        var l1Comp2 = new L1Component("C l1 2", 0, 0, 0, 0, 1);
         var comp21 = new Component("C21", 0, 0, 0, 0, 2);
         l1Comp1.setComponents(List.of(comp11, comp12));
         l1Comp2.setComponents(List.of(comp21));

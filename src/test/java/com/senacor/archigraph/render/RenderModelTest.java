@@ -29,8 +29,8 @@ public class RenderModelTest {
                 .name("System 1")
                 .componentNames(List.of("Level 1"))
                 .build();
-        var c1 = new Component("COMP-1", 1, 0, 3, 3, 1);
-        var c2 = new Component("COMP-2", 1, 4, 2, 3, 1);
+        var c1 = new L1Component("COMP-1", 1, 0, 3, 3, 1);
+        var c2 = new L1Component("COMP-2", 1, 4, 2, 3, 1);
         model.setL1Components(List.of(c1, c2));
         model.setApplications(List.of());
         model.setInformationFlows(List.of());
@@ -101,7 +101,7 @@ public class RenderModelTest {
                 .name("System 1")
                 .componentNames(List.of("Level 1"))
                 .build();
-        var c1 = new Component("COMP-1", 1, 0, 3, 3, 1);
+        var c1 = new L1Component("COMP-1", 1, 0, 3, 3, 1);
         model.setL1Components(List.of(c1));
         var a1 = new Application("App-1", "Application 1", "COMP-1");
         var a2 = new Application("App-2", "Application 2", "COMP-1");
@@ -180,7 +180,7 @@ public class RenderModelTest {
     @Test
     void testModelWithSubComponents() {
         // fixture
-        var comp1 = new Component("COMP-1", 1, 0, 4, 3, 1);
+        var comp1 = new L1Component("COMP-1", 1, 0, 4, 3, 1);
         var comp2 = new Component("COMP-11", 0, 0, 3, 2, 2);
         var app1 = new Application("A1", "App-1", "COMP-11");
         var app2 = new Application("A2", "App-2", "COMP-11");
@@ -292,7 +292,7 @@ public class RenderModelTest {
                 .build();
         var app1 = new Application("A1", "A1", "C1");
         var app2 = new Application("A2", "A2", "C1");
-        var comp1 = new Component("C1", 1, 0, 3, 3, 1);
+        var comp1 = new L1Component("C1", 1, 0, 3, 3, 1);
         var if1 = new InformationFlow("IF12", "A1", "A2", "BO", Direction.ONE_WAY);
         model.setL1Components(List.of(comp1));
         model.setApplications(List.of(app1, app2));
@@ -386,9 +386,9 @@ public class RenderModelTest {
         var app11 = new Application("A11", "A11", "C11");
         var app12 = new Application("A12", "A12", "C11");
         var app2 = new Application("A2", "A2", "C2");
-        var comp1 = new Component("C1", 1, 0, 3, 5, 1);
+        var comp1 = new L1Component("C1", 1, 0, 3, 5, 1);
         var comp11 = new Component("C11", 0, 0, 1, 3, 2);
-        var comp2 = new Component("C2", 9, 9, 3, 3, 1);
+        var comp2 = new L1Component("C2", 9, 9, 3, 3, 1);
         var if1 = new InformationFlow("IF112", "A11", "A2", "BO", Direction.ONE_WAY);
         var if2 = new InformationFlow("IF122", "A12", "A2", "BO", Direction.ONE_WAY);
         comp1.setComponents(List.of(comp11));

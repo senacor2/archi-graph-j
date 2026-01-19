@@ -214,7 +214,7 @@ public class ComponentLayoutTest {
     @Test
     void testFindAppPositionsWithoutFlows() {
         // fixture
-        var comp = new Component("COMP-1", 0, 0, 2, 2, 1);
+        var comp = new L1Component("COMP-1", 0, 0, 2, 2, 1);
         var appA = new Application("APP-A", "A1", "COMP-1");
         var appB = new Application("APP-B", "A2", "COMP-1");
         var appC = new Application("APP-C", "A3", "COMP-1");
@@ -237,7 +237,7 @@ public class ComponentLayoutTest {
     void testFindAppPositions2in2x2() {
         // fixture
         var model = new Model();
-        var comp = new Component("COMP-1", 0, 0, 2, 3, 1);
+        var comp = new L1Component("COMP-1", 0, 0, 2, 3, 1);
         var appA = new Application("APP-A", "A1", "COMP-1");
         var appB = new Application("APP-B", "A2", "COMP-1");
         var appC = new Application("APP-C", "A3", "COMP-1");
@@ -261,7 +261,7 @@ public class ComponentLayoutTest {
     @Test
     void testFindAppPositions6in3x3() {
         // fixture
-        var comp = new Component("COMP-1", 0, 0, 3, 3, 1);
+        var comp = new L1Component("COMP-1", 0, 0, 3, 3, 1);
         var appA = new Application("APP-A", "A1", "COMP-1");
         var appB = new Application("APP-B", "A2", "COMP-1");
         var appC = new Application("APP-C", "A3", "COMP-1");
@@ -291,7 +291,7 @@ public class ComponentLayoutTest {
     @Test
     void testFindAppPositions6in3x3WithMoreFlows() {
         // fixture
-        var comp = new Component("COMP-1", 0, 0, 3, 3, 1);
+        var comp = new L1Component("COMP-1", 0, 0, 3, 3, 1);
         var appA = new Application("APP-A", "A1", "COMP-1");
         var appB = new Application("APP-B", "A2", "COMP-1");
         var appC = new Application("APP-C", "A3", "COMP-1");
@@ -335,7 +335,7 @@ public class ComponentLayoutTest {
     @Test
     void testAddLayouts() {
         // Fixture
-        Component outerComp = new Component("Outer", 0, 0, 4, 5, 1);
+        L1Component outerComp = new L1Component("Outer", 0, 0, 4, 5, 1);
         Application app1 = new Application("A1", "App1", "Outer");
         Application app2 = new Application("A2", "App2", "Outer");
         Component innerComp = new Component("Inner", 2, 2, 2, 2, 2);
@@ -360,7 +360,7 @@ public class ComponentLayoutTest {
     @Test
     void testAddLayoutsWithAppAreaOnOuterComp() {
         // Fixture
-        Component outerComp = new Component("Outer", 0, 0, 4, 5, 1);
+        L1Component outerComp = new L1Component("Outer", 0, 0, 4, 5, 1);
         outerComp.setAppArea(new Area(1, 3, 1, 2));
         Application app1 = new Application("A1", "App1", "Outer");
         Application app2 = new Application("A2", "App2", "Outer");
@@ -387,7 +387,7 @@ public class ComponentLayoutTest {
     void testBigComponentWithFewApps() {
         // Given
         Model model = new Model();
-        Component comp = new Component("Big", 0, 0, 4, 7, 1);
+        L1Component comp = new L1Component("Big", 0, 0, 4, 7, 1);
         Application app1 = new Application("A1", "App1", "Big");
         Application app2 = new Application("A2", "App2", "Big");
         Application app3 = new Application("A3", "App3", "Big");

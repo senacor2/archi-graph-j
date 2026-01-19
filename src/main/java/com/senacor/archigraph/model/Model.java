@@ -24,11 +24,11 @@ public class Model {
     private Map<String, Component> componentMap;
     private Map<String, Application> applicationMap;
     private Map<String, InformationFlow> informationFlowMap;
-    private List<Component> l1Components;
+    private List<L1Component> l1Components;
 
     public Model() {}
 
-    public void setL1Components(List<Component> components) {
+    public void setL1Components(List<L1Component> components) {
         l1Components = components;
         componentMap = components.stream()
                 .flatMap(Component::flattened)

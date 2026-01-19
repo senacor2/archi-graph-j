@@ -13,7 +13,7 @@ public class ProxyBoxLayout extends AbstractLayout {
     @Getter
     private final List<Coordinate> proxyBoxCoords;
 
-    public ProxyBoxLayout(Component comp) {
+    public ProxyBoxLayout(L1Component comp) {
         super(comp);
         int rows = comp.getHeight() + 2 * comp.getProxyAreaSize();
         int columns = comp.getWidth() + 2 * comp.getProxyAreaSize();

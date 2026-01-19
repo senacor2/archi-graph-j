@@ -160,9 +160,9 @@ public class RenderModel {
         for (var c : comp.getComponents()) {
             render(c);
         }
-        if (comp.getParentComponent() == null) { // L1 components have no parent
+        if (comp instanceof L1Component) {
             renderL1CompFlows(comp);
-            renderCrossL1CompFlows(comp, x, y);
+            renderCrossL1CompFlows((L1Component) comp, x, y);
         } else {
             comp.getParentComponent().getAppMatrix().merge(comp.getAppMatrix(), comp.getRow() + 1, comp.getCol());
             log.debug("After merge {} into {}: \n{}", comp.getName(), comp.getParentComponent().getName(),
@@ -250,11 +250,11 @@ public class RenderModel {
      * @param origX The x position of the components left edge.
      * @param origY The y position of the components top edge.
      */
-    void renderCrossL1CompFlows(Component comp, int origX, int origY) {
+    void renderCrossL1CompFlows(L1Component comp, int origX, int origY) {
         var count = 0;
         log.debug("Render cross l1 flows for {}", comp.getName());
-        int proxyOrigX = origX - COL_WIDTH;
-        int proxyOrigY = origY - ROW_HEIGHT * 2; // take header row offset into account
+        int proxyOrigX = origX - COL_WIDTH * comp.getProxyAreaSize();
+        int proxyOrigY = origY - ROW_HEIGHT * (comp.getProxyAreaSize() + 1); // take header row offset into account
         createAndPlaceProxies(comp, proxyOrigX, proxyOrigY);
         for (var flow : comp.getCrossL1CompInformationFlows()) {
             render(flow, true, comp);
@@ -288,7 +288,7 @@ public class RenderModel {
             destRect = findProxyRectangle(comp.getName(), flow.getDestId());
         }
         log.debug("Render flow from {} to {}", sourceRect, destRect);
-        Point[] anchors = getAnchors(proxy ? comp.getL1AppMatrix() : comp.getAppMatrix(),
+        Point[] anchors = getAnchors(proxy ? ((L1Component)comp).getL1AppMatrix() : comp.getAppMatrix(),
                 flow.getSource(), flow.getDestination(), sourceRect, destRect);
 
         add(Line.builder()
@@ -323,9 +323,9 @@ public class RenderModel {
      * @param origX Left edge x position of the proxy box.
      * @param origY Top edge y position of the proxy box.
      */
-    private void createAndPlaceProxies(Component comp, int origX, int origY) {
+    private void createAndPlaceProxies(L1Component comp, int origX, int origY) {
         var proxyBoxLayout = new ProxyBoxLayout(comp);
-        comp.getL1AppMatrix().merge(comp.getAppMatrix(), 1, 1);
+        comp.getL1AppMatrix().merge(comp.getAppMatrix(), comp.getProxyAreaSize(), comp.getProxyAreaSize());
         for (var flow : comp.getCrossL1CompInformationFlows()) {
             var proxyApp = flow.getSource().getComponent().getL1Component() == comp ? flow.getDestination() : flow.getSource();
             var innerApp = flow.getSource().getComponent().getL1Component() == comp ? flow.getSource() : flow.getDestination();

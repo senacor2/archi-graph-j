@@ -14,7 +14,7 @@ public class ProxyBoxLayoutTest {
     @Test
     void testCreateProxyBox() {
         // fixture
-        var comp = new Component("Comp-1", 4, 8, 2, 2, 1);
+        var comp = new L1Component("Comp-1", 4, 8, 2, 2, 1);
         var compLayout = new ComponentLayout(comp);
         compLayout.layout();
         // test
@@ -40,8 +40,7 @@ public class ProxyBoxLayoutTest {
     @Test
     void testCreateProxyBox2() {
         // fixture
-        var comp = new Component("Comp-1", 4, 8, 2, 2, 1);
-        comp.setProxyAreaSize(2);
+        var comp = new L1Component("Comp-1", 4, 8, 2, 2, 2);
         var compLayout = new ComponentLayout(comp);
         compLayout.layout();
         // test
@@ -93,7 +92,7 @@ public class ProxyBoxLayoutTest {
     void testFindEmptyCell(String test, int height, int width, int appRow, int appCol, int proxyRow, int proxyCol) {
         // fixture
         var appCoord = new Coordinate(appRow, appCol);
-        var comp = new Component("Comp-1", 4, 8, width, height, 1);
+        var comp = new L1Component("Comp-1", 4, 8, width, height, 1);
         var compLayout = new ComponentLayout(comp);
         compLayout.layout();
         var proxyBoxLayout = new ProxyBoxLayout(comp);

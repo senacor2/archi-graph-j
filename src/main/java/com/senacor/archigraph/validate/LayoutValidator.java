@@ -1,6 +1,7 @@
 package com.senacor.archigraph.validate;
 
 import com.senacor.archigraph.model.Component;
+import com.senacor.archigraph.model.L1Component;
 import com.senacor.archigraph.model.Model;
 import lombok.extern.slf4j.Slf4j;
 
@@ -26,19 +27,19 @@ public class LayoutValidator {
     public List<ValidationIssue> validate(Model model) {
         log.debug("Starting layout validation");
         List<ValidationIssue> result = new LinkedList<>();
-        Component[] components = new Component[model.getL1Components().size()];
-        model.getL1Components().toArray(components);
+        L1Component[] l1components = new L1Component[model.getL1Components().size()];
+        model.getL1Components().toArray(l1components);
         if (model.getComponentNames().size() > 4) {
             result.add(new ValidationIssue(null, null,
                     String.format("Maximum component nesting is 4 but is actually %d", model.getComponentNames().size())));
         }
-        for (int i = 0; i < components.length; i++) {
-            result.addAll(validateContainment(components[i]));
-            validateProxySpace(components[i]).ifPresent(result::add);
-            validateNesting(components[i], model.getComponentNames().size()).ifPresent(result::add);
-            for (int j = i+1; j < components.length; j++){
-                validateNoOverlap(components[i], components[j]).ifPresent(result::add);
-                validateSpacing(components[i], components[j]).ifPresent(result::add);
+        for (int i = 0; i < l1components.length; i++) {
+            result.addAll(validateContainment(l1components[i]));
+            validateProxySpace(l1components[i]).ifPresent(result::add);
+            validateNesting(l1components[i], model.getComponentNames().size()).ifPresent(result::add);
+            for (int j = i+1; j < l1components.length; j++){
+                validateNoOverlap(l1components[i], l1components[j]).ifPresent(result::add);
+                validateSpacing(l1components[i], l1components[j]).ifPresent(result::add);
             }
         }
         for (Component c : model.getComponentMap().values()) {
@@ -88,7 +89,7 @@ public class LayoutValidator {
      * @param c2 second l1 component to check.
      * @return A validation issue if the components are not properly spaced.
      */
-    private Optional<ValidationIssue> validateSpacing(Component c1, Component c2) {
+    private Optional<ValidationIssue> validateSpacing(L1Component c1, L1Component c2) {
         final int MINDISTANCE = c1.getProxyAreaSize() + c2.getProxyAreaSize();
         if (c1.getCompArea().hasMinDistance(c2.getCompArea(), MINDISTANCE)) {
             return Optional.empty();
@@ -119,7 +120,7 @@ public class LayoutValidator {
      * @param comp An L1 component.
      * @return A validation issue if the number of proxies exceeds the space available around the component.
      */
-    private Optional<ValidationIssue> validateProxySpace(Component comp) {
+    private Optional<ValidationIssue> validateProxySpace(L1Component comp) {
         final int proxyBoxSize = proxyBoxSize(comp);
         final int nbrProxies = comp.getCrossL1CompInformationFlows().stream()
                 .map(flow -> {
@@ -140,10 +141,10 @@ public class LayoutValidator {
     /**
      * Calculate the number of positions in the proxy box.
      * This is the size of the proxy box minus the size of the component
-     * @param comp Component to check
+     * @param comp L1Component to check
      * @return the number of proxies that can be placed around the component.
      */
-    private int proxyBoxSize(Component comp) {
+    private int proxyBoxSize(L1Component comp) {
         return (comp.getWidth() + 2*comp.getProxyAreaSize()) * (comp.getHeight() + 2*comp.getProxyAreaSize())
                 - comp.getWidth() * comp.getHeight();
     }

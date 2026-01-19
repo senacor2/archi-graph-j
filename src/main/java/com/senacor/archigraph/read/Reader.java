@@ -53,31 +53,57 @@ public class Reader {
         return model;
     }
 
+    private List<L1Component> mapL1Components(JsonNode node) {
+        var result = new LinkedList<L1Component>();
+        for (JsonNode n : node.get(COMPONENTS)) {
+            L1Component comp;
+            var name = n.get("name").textValue();
+            var row = n.get("y").intValue();
+            var column = n.get("x").intValue();
+            var width = n.get("w").intValue();
+            var height = n.get("h").intValue();
+            var proxyAreaSize = 1;
+            if (n.has(PROXY_AREA_SIZE)) {
+                proxyAreaSize = n.get(PROXY_AREA_SIZE).intValue();
+            }
+            comp = new L1Component(name, row, column, width, height, proxyAreaSize);
+            mapAppArea(n, comp);
+            if (n.has(COMPONENTS)) {
+                comp.setComponents(mapComponents(n, 2));
+            }
+            result.add(comp);
+        }
+        return result;
+    }
+
     private List<Component> mapComponents(JsonNode node, int level) {
         var result = new LinkedList<Component>();
         for (JsonNode n : node.get(COMPONENTS)) {
-            var comp = new Component(n.get("name").textValue(),
-                    n.get("y").intValue(), n.get("x").intValue(),
-                    n.get("w").intValue(),
-                    n.get("h").intValue(),
-                    level);
-            if (level == 1 && n.has(PROXY_AREA_SIZE)) {
-                comp.setProxyAreaSize(n.get(PROXY_AREA_SIZE).intValue());
-            }
-            if (n.has(APP_AREA)) {
-                var areaNode = n.get(APP_AREA);
-                var area = new Area(areaNode.get("y").intValue(),
-                        areaNode.get("x").intValue(),
-                        areaNode.get("w").intValue(),
-                        areaNode.get("h").intValue());
-                comp.setAppArea(area);
-            }
+            var name = n.get("name").textValue();
+            var row = n.get("y").intValue();
+            var column = n.get("x").intValue();
+            var width = n.get("w").intValue();
+            var height = n.get("h").intValue();
+            Component comp;
+            comp = new Component(name, row, column, width, height, level);
+            mapAppArea(n, comp);
             if (n.has(COMPONENTS)) {
                 comp.setComponents(mapComponents(n, level + 1));
             }
             result.add(comp);
         }
         return result;
+    }
+
+    private void mapAppArea(JsonNode n, Component comp) {
+        if (n.has(APP_AREA)) {
+            var areaNode = n.get(APP_AREA);
+            var area = new Area(areaNode.get("y").intValue(),
+                    areaNode.get("x").intValue(),
+                    areaNode.get("w").intValue(),
+                    areaNode.get("h").intValue());
+            comp.setAppArea(area);
+        }
     }
 
     private List<String> mapComponentNames(JsonNode node) {
@@ -92,7 +118,7 @@ public class Reader {
         log.debug("Reading components from {}", compFile);
         var mapper = new ObjectMapper();
         var jsonModel = mapper.readTree(new File(compFile));
-        model.setL1Components(mapComponents(jsonModel, 1));
+        model.setL1Components(mapL1Components(jsonModel));
         model.setName(jsonModel.get(SYSTEM).textValue());
         model.setComponentNames(mapComponentNames(jsonModel));
         log.debug("Reading components: Model {} read", model.getName());
