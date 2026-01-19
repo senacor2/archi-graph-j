@@ -1,7 +1,6 @@
 package com.senacor.archigraph.model;
 
 import lombok.Getter;
-import lombok.Setter;
 
 public class L1Component extends Component {
 
