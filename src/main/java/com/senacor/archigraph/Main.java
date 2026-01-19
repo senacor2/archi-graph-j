@@ -4,7 +4,6 @@ import ch.qos.logback.classic.Level;
 import com.senacor.archigraph.draw.DrawModelDrawIO;
 import com.senacor.archigraph.model.Model;
 import com.senacor.archigraph.render.RenderModel;
-import com.senacor.archigraph.rules.RuleBase;
 import com.senacor.archigraph.validate.LayoutValidator;
 import com.senacor.archigraph.validate.SemanticValidator;
 import lombok.extern.slf4j.Slf4j;
@@ -79,16 +78,14 @@ public class Main {
             } else {
                 root.setLevel(Level.INFO);
             }
-            var reader = new Reader(compFile, appsFile, flowsFile);
+            var reader = new Reader(compFile, appsFile, flowsFile, rulesFile);
             if (outputFile == null) {
                 outputFile = buildOutputFileName(compFile);
             }
             var model = reader.readModels();
-            var ruleBase = new RuleBase();
-            ruleBase.load(rulesFile);
             validate(lenientComp, lenientFlow, exitAfterValidate, exitAfterFailure, model);
             var renderModel = new RenderModel();
-            renderModel.setRuleBase(ruleBase);
+            renderModel.setRuleBase(reader.getRuleBase());
             renderModel.render(model);
             new DrawModelDrawIO().draw(renderModel).write(outputFile);
         } catch (ParseException pe) {

@@ -4,6 +4,8 @@ import com.senacor.archigraph.model.Area;
 import com.senacor.archigraph.model.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.JsonNode;
+import com.senacor.archigraph.rules.RuleBase;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import org.apache.commons.csv.CSVFormat;
@@ -26,11 +28,15 @@ public class Reader {
     private final String compFile;
     private final String appsFile;
     private final String flowsFile;
+    private final String rulesFile;
+    @Getter
+    private RuleBase ruleBase;
 
-    public Reader(String compFile, String appsFile, String flowsFile) {
+    public Reader(String compFile, String appsFile, String flowsFile, String rulesFile) {
         this.compFile = compFile;
         this.appsFile = appsFile;
         this.flowsFile = flowsFile;
+        this.rulesFile = rulesFile;
     }
 
     public Model readModels() throws IOException {
@@ -38,6 +44,8 @@ public class Reader {
         readComponentModel(model);
         if (appsFile != null) model.setApplications(readApplications());
         if (flowsFile != null) model.setInformationFlows(readInformationFlows());
+        ruleBase = new RuleBase();
+        ruleBase.load(rulesFile);
         log.info("Model size:");
         log.info("Components:        {}", model.getComponentMap().size());
         log.info("Applications:      {}", model.getApplicationMap().size());
