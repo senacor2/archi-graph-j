@@ -15,8 +15,9 @@ public class ReaderTest {
     public static final String COMP2_FILE = "data/comp2.json";
     public static final String APPS_FILE = "data/apps1.csv";
     public static final String FLOWS_FILE = "data/flows1.csv";
+    public static final String RULES_FILE = "data/rules.csv";
 
-    private final Reader reader = new Reader(COMP1_FILE, APPS_FILE, FLOWS_FILE);
+    private final Reader reader = new Reader(COMP1_FILE, APPS_FILE, FLOWS_FILE, RULES_FILE);
 
     @Test
     void testReadApplications() throws IOException {
@@ -51,7 +52,7 @@ public class ReaderTest {
 
     @Test
     void testReadNestedComponents() throws IOException {
-        var reader = new Reader(COMP2_FILE, null, null);
+        var reader = new Reader(COMP2_FILE, null, null, null);
         var model = new Model();
         reader.readComponentModel(model);
         var componentMap = model.getComponentMap();
