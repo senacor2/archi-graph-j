@@ -45,10 +45,11 @@
     },
     {
       "name": "Component 2",
-      "x": 6,
+      "x": 7,
       "y": 2,
       "w": 2,
-      "h": 3
+      "h": 3,
+      "proxy-area-size": 2
     }
   ]
 }
