@@ -3,12 +3,14 @@ package com.senacor.archigraph.render;
 import com.senacor.archigraph.model.Application;
 import com.senacor.archigraph.rules.RuleBase;
 import lombok.Setter;
+import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+@Slf4j
 class AppFormatter {
 
     static final Color SEA_GREEN = Color.decode("#378C96");
@@ -20,7 +22,6 @@ class AppFormatter {
     static final RuleBase DEFAULT_RULEBASE = new RuleBase(List.of("id", "market", "target", "replacedByTnr",
             "connectItStatus"), DEFAULT_COLORS);
 
-    @Setter
     private RuleBase ruleBase = DEFAULT_RULEBASE;
 
     void format(Application app, Rectangle rect) {
@@ -36,6 +37,13 @@ class AppFormatter {
         rect.setFontSize(FONT_SIZE);
         rect.setText(app.getName());
         rect.setRounded(true);
+    }
+
+    void setRuleBase(RuleBase ruleBase) {
+        log.debug("Setting rulebase {}", ruleBase);
+        if (ruleBase != null) {
+            this.ruleBase = ruleBase;
+        }
     }
 
     void formatProxy(Application app, Rectangle rect) {
