@@ -2,7 +2,6 @@ package com.senacor.archigraph.render;
 
 import com.senacor.archigraph.model.Application;
 import com.senacor.archigraph.rules.RuleBase;
-import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.awt.*;
