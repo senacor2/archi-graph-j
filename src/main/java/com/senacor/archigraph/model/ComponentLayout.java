@@ -36,7 +36,7 @@ public class ComponentLayout extends AbstractLayout {
         final int rows = component.getAppHeight();
         final int columns = component.getAppWidth();
         var indexes = IntStream.range(0, rows*columns).boxed().toList();
-        return new EnumeratorAdapter<>(new Permutator<>(indexes, appCount)).stream()
+        return new EnumeratorAdapter<>(new Permutator<>(indexes, appCount)).parallelStream()
                 .map(onePerm -> onePerm.stream()
                         .map(i -> Coordinate.fromIndex(columns, i))
                         .toList());
