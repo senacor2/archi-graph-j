@@ -140,12 +140,13 @@ The result names must be preceded by `result.` identifying them as results.
 ## Example Rules File
 
 ```
-"Name","id","market","target","replacedByAbc","eamStatus","result.backgroundColor","result.fontColor","result.
+"Name","id","market","target","replacedByAbc","eamStatus","isProxy",result.backgroundColor","result.fontColor","result.
 borderColor","result.fillStyle"
-"Replaced by ABC","*","*","*","Yes","*","#EA9999","#000000","#000000","solid"
-"Local application","*","!central","*","*","*","#378C96","#FFFFFF","#000000","solid"
-"New central application","*","*","2026","*","*","#38761D","#FFFFFF","#000000","solid"
-"Existing central application","*","*","*","*","*","#000000","#FFFFFF","#000000","solid"
+"Replaced by ABC","*","*","*","Yes","*","No","#EA9999","#000000","#000000","solid"
+"Local application","*","!central","*","*","*","No","#378C96","#FFFFFF","#000000","solid"
+"New central application","*","*","2026","*","*","No","#38761D","#FFFFFF","#000000","solid"
+"Integration across domains","*","*","*","*","*","Yes","#FFFFFF","#000000","#000000","solid"
+"Existing central application","*","*","*","*","*","*","#000000","#FFFFFF","#000000","solid"
 ```
 
 The first line contains the headers. _Name_ is a predefined column where the rule name must be defined. _id_ is also
@@ -154,9 +155,11 @@ predefined and refers to the AppID of an application. Use this column for app-sp
 _market_, _target_, _replacedByAbc_ and _eamStatus_ are attributes that would also appear in the applications file.
 Make sure that they are spelled equally.
 
+_isProxy_ is passed by the renderer to select the format options for the proxy apps.
+
 The remainder of the header are the result columns, each identified by the `result.`-Prefix.
 
-The example above contains four rules.
+The example above contains five rules.
 
 The first rule, named _Replaced by ABC_ returns a result, when the _replacedByAbc_ column contains _Yes_. It returns
 a solid pink background, a black border and text.
@@ -166,5 +169,8 @@ blueish solid background, white text and a black border.
 
 The third rule, named _New central application_ returns a result, when the _target_ column is equal to _2026_. It 
 returns a solid dark green background, white text and a black border.
+
+The fourth rule, named _Integration across domains_ returns a result if the _isProxy_ context attribute is equal to
+_Yes_. The renderer provides this attribute internally.
 
 The final rule, named _Existing central application" always returns a result because all conditions are wildcards.
