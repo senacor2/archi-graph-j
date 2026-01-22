@@ -1,8 +1,5 @@
 package com.senacor.archigraph.draw;
 
-import com.senacor.archigraph.render.Line;
-import com.senacor.archigraph.render.Rectangle;
-import com.senacor.archigraph.render.RenderModel;
 import com.mxgraph.io.mxCodec;
 import com.mxgraph.model.mxCell;
 import com.mxgraph.model.mxGeometry;
@@ -10,6 +7,10 @@ import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.model.mxICell;
 import com.mxgraph.util.mxPoint;
 import com.mxgraph.util.mxXmlUtils;
+import com.senacor.archigraph.render.Line;
+import com.senacor.archigraph.render.Rectangle;
+import com.senacor.archigraph.render.RenderModel;
+import com.senacor.archigraph.render.RenderModelElement;
 import lombok.extern.slf4j.Slf4j;
 import org.w3c.dom.Node;
 
@@ -17,29 +18,54 @@ import java.awt.*;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
 
 @Slf4j
 public class DrawModelDrawIO implements DrawModel {
 
     private mxGraphModel graph;
-    private mxICell layer;
+    private mxICell defaultLayer;
+    private final Map<String, mxICell> layers = new HashMap<>();
 
     @Override
     public DrawModel draw(RenderModel render) {
         graph = new mxGraphModel();
         var root = (mxICell)graph.getRoot();
-        layer = root.getChildAt(0);
-        graph.add(root, layer, 0);
+        defaultLayer = root.getChildAt(0);
+        graph.add(root, defaultLayer, 0);
+        createLayers(root, render);
         for (var elem : render.getElements()) {
             elem.draw(this);
         }
         return this;
     }
 
+    void createLayers(mxICell root, RenderModel render) {
+        var layerNames = render.getElements().stream()
+                .map(RenderModelElement::getLayer)
+                .filter(Objects::nonNull)
+                .toList();
+        var index = 1;
+        for (String name : layerNames) {
+            var layer = new mxCell(name);
+            layer.setParent(root);
+            layer.setId(name);
+            graph.add(root, layer, index++);
+            layers.put(name, layer);
+        }
+    }
+
+    mxICell getLayer(RenderModelElement rme) {
+        return layers.getOrDefault(rme.getLayer(), defaultLayer);
+    }
+
     public void draw(Rectangle rect) {
         log.debug("Draw rect {}", rect.getId());
         var geom = new mxGeometry(rect.getX(), rect.getY(), rect.getW(), rect.getH());
         var node = new mxCell(rect.getText(), geom, getStyle(rect));
+        var layer = getLayer(rect);
         var index = layer.getChildCount();
 
         node.setId(rect.getId());
@@ -51,6 +77,7 @@ public class DrawModelDrawIO implements DrawModel {
         log.debug("Draw line {}", line.getId());
         var geom = new mxGeometry();
         var node = new mxCell(line.getText(), geom, getStyle(line));
+        var layer = getLayer(line);
         var index = layer.getChildCount();
 
         node.setId(line.getId());
