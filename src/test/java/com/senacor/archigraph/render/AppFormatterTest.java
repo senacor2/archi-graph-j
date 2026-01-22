@@ -64,9 +64,9 @@ public class AppFormatterTest {
         // when
         fixture.format(app, rect);
         // then
-        assertEquals(AppFormatter.LAWN_GREEN, rect.getBackground());
-        assertEquals(Color.WHITE, rect.getFontcolor());
-        assertEquals(Color.BLACK, rect.getBordercolor());
+        assertEquals(AppFormatter.LAWN_GREEN, rect.getBackground(), "Background");
+        assertEquals(Color.WHITE, rect.getFontcolor(), "Font");
+        assertEquals(Color.BLACK, rect.getBordercolor(), "Border");
     }
 
     @Test
@@ -81,9 +81,9 @@ public class AppFormatterTest {
         // when
         fixture.format(app, rect);
         // then
-        assertEquals(AppFormatter.PINK, rect.getBackground());
-        assertEquals(Color.BLACK, rect.getBordercolor());
-        assertEquals(Color.BLACK, rect.getFontcolor());
+        assertEquals(AppFormatter.PINK, rect.getBackground(), "Background");
+        assertEquals(Color.BLACK, rect.getBordercolor(), "Border");
+        assertEquals(Color.BLACK, rect.getFontcolor(), "Font");
     }
 
     @Test
@@ -96,9 +96,9 @@ public class AppFormatterTest {
         // when
         fixture.format(app, rect);
         // then
-        assertEquals(AppFormatter.SEA_GREEN, rect.getBackground());
-        assertEquals(Color.BLACK, rect.getBordercolor());
-        assertEquals(Color.WHITE, rect.getFontcolor());
+        assertEquals(AppFormatter.SEA_GREEN, rect.getBackground(), "Background");
+        assertEquals(Color.BLACK, rect.getBordercolor(), "Border");
+        assertEquals(Color.WHITE, rect.getFontcolor(), "Font");
     }
 
     @Test

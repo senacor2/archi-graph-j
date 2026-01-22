@@ -16,19 +16,24 @@ class AppFormatter {
     static final Color LAWN_GREEN = Color.decode("#38761D");
     static final Color PINK = Color.decode("#EA9999");
     static final int FONT_SIZE = 12;
-    static final Map<String, String> DEFAULT_COLORS = Map.of("backgroundColor", "#000000",
-            "fontColor", "#FFFFFF", "borderColor", "#000000", "fillStyle", "solid");
+    static final String BACKGROUND_COLOR = "backgroundColor";
+    static final String FONT_COLOR = "fontColor";
+    static final String BORDER_COLOR = "borderColor";
+    static final String FILL_STYLE = "fillStyle";
+    static final Map<String, String> DEFAULT_COLORS = Map.of(BACKGROUND_COLOR, "#000000",
+            FONT_COLOR, "#FFFFFF", BORDER_COLOR, "#000000", FILL_STYLE, "solid");
     static final RuleBase DEFAULT_RULEBASE = new RuleBase(List.of("id", "market", "target", "replacedByTnr",
             "connectItStatus"), DEFAULT_COLORS);
+    public static final String IS_PROXY = "isProxy";
 
     private RuleBase ruleBase = DEFAULT_RULEBASE;
 
     void format(Application app, Rectangle rect) {
-        var result = ruleBase.evaluate(app).orElse(DEFAULT_COLORS);
-        var bgColor = Color.decode(result.get("backgroundColor"));
-        var fontColor = Color.decode(result.get("fontColor"));
-        var borderColor = Color.decode(result.get("borderColor"));
-        var fillStyle = result.get("fillStyle");
+        var result = ruleBase.evaluate(app, Map.of(IS_PROXY, "No")).orElse(DEFAULT_COLORS);
+        var bgColor = Color.decode(result.get(BACKGROUND_COLOR));
+        var fontColor = Color.decode(result.get(FONT_COLOR));
+        var borderColor = Color.decode(result.get(BORDER_COLOR));
+        var fillStyle = result.get(FILL_STYLE);
         rect.setBackground(bgColor);
         rect.setFillStyle(fillStyle);
         rect.setFontcolor(fontColor);
@@ -46,12 +51,16 @@ class AppFormatter {
     }
 
     void formatProxy(Application app, Rectangle rect) {
+        var result = ruleBase.evaluate(app, Map.of(IS_PROXY, "Yes")).orElse(DEFAULT_COLORS);
+        var bgColor = Color.decode(result.get(BACKGROUND_COLOR));
+        var fontColor = Color.decode(result.get(FONT_COLOR));
+        var borderColor = Color.decode(result.get(BORDER_COLOR));
+        var fillStyle = result.get(FILL_STYLE);
         rect.setText(app.getName());
         rect.setFontSize(FONT_SIZE);
-        rect.setBackground(Color.WHITE);
-        rect.setFontcolor(Color.BLACK);
-        rect.setBordercolor(Color.BLACK);
-        rect.setFontSize(FONT_SIZE);
+        rect.setBackground(bgColor);
+        rect.setFontcolor(fontColor);
+        rect.setBordercolor(borderColor);
         rect.setRounded(true);
     }
 
@@ -59,22 +68,14 @@ class AppFormatter {
         List<Rectangle> result = new LinkedList<>();
         ruleBase.getNamedResultMap().forEach((k, v) ->
                 result.add(Rectangle.builder()
-                        .background(Color.decode(v.get("backgroundColor")))
-                        .fontcolor(Color.decode(v.get("fontColor")))
-                        .bordercolor(Color.decode(v.get("borderColor")))
-                        .fillStyle(v.get("fillStyle"))
+                        .background(Color.decode(v.get(BACKGROUND_COLOR)))
+                        .fontcolor(Color.decode(v.get(FONT_COLOR)))
+                        .bordercolor(Color.decode(v.get(BORDER_COLOR)))
+                        .fillStyle(v.get(FILL_STYLE))
                         .fontSize(FONT_SIZE)
                         .rounded(true)
                         .text(k)
                         .build()));
-        result.add(Rectangle.builder()
-                .background(Color.WHITE)
-                .fontcolor(Color.BLACK)
-                .bordercolor(Color.BLACK)
-                .fontSize(FONT_SIZE)
-                .rounded(true)
-                .text("Integration across domains")
-                .build());
         return result;
     }
 }

@@ -85,14 +85,20 @@ public class RuleBase {
     /**
      * Evaluate all rules in the rule base and return the results from the first matching rule.
      * @param o Business object to evaluate against the rule base.
+     * @param context key/value pairs with additional evaluation context for the rules. All elements of the
+     *                context are also evaluated against the rule base.
      * @return A map of key/value pairs with the results. The optional is empty when no rule matches.
      */
-    public Optional<Map<String, String>> evaluate(ObjectWithAttributes o) {
+    public Optional<Map<String, String>> evaluate(ObjectWithAttributes o, Map<String, String> context) {
         for (var r : rules) {
-            var result = r.evaluate(o);
+            var result = r.evaluate(o, context);
             if (result.isPresent()) return result;
         }
         return Optional.empty();
+    }
+
+    public Optional<Map<String, String>> evaluate(ObjectWithAttributes o) {
+        return evaluate(o, Map.of());
     }
 
     /**

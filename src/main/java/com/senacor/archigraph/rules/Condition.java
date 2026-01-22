@@ -2,6 +2,8 @@ package com.senacor.archigraph.rules;
 
 import lombok.extern.slf4j.Slf4j;
 
+import java.util.Map;
+
 /**
  * Defines a single expression applied on an attribute of the business object.
  */
@@ -46,14 +48,20 @@ public class Condition {
         else return expression;
     }
 
-    public boolean match(ObjectWithAttributes o) {
-        if (operator == Operator.WILDCARD) return true;
-        String propertyValue = o.getAttribute(attributeName);
-        if (operator == Operator.EQUAL) {
-            return match(value, propertyValue);
+    public boolean match(ObjectWithAttributes o, Map<String, String> context) {
+        if (context.containsKey(attributeName)) {
+            return evaluate(context.get(attributeName));
         } else {
-            return !match(value, propertyValue);
+            return evaluate(o.getAttribute(attributeName));
         }
+    }
+
+    private boolean evaluate(String propertyValue) {
+        return switch (operator) {
+            case Operator.WILDCARD -> true;
+            case Operator.EQUAL -> match(value, propertyValue);
+            case Operator.NOT_EQUAL -> !match(value, propertyValue);
+        };
     }
 
     private static boolean match(String conditionValue, String propertyValue) {
