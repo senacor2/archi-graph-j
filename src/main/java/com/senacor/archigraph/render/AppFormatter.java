@@ -61,6 +61,7 @@ class AppFormatter {
         rect.setBackground(bgColor);
         rect.setFontcolor(fontColor);
         rect.setBordercolor(borderColor);
+        rect.setFillStyle(fillStyle);
         rect.setRounded(true);
     }
 
