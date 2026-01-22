@@ -436,10 +436,12 @@ public class RenderModelTest {
                 .y(640)
                 .w(240)
                 .h(120)
-                .fontcolor(Color.BLACK)
+                .fontcolor(Color.WHITE)
                 .bordercolor(Color.BLACK)
-                .background(Color.WHITE)
+                .background(Color.BLACK)
                 .fontSize(12)
+                .fillStyle("solid")
+                .layer(RenderModel.PROXIES)
                 .build();
         assertThat(result.getElements())
                 .contains(
@@ -451,6 +453,7 @@ public class RenderModelTest {
                                 .text("BO")
                                 .start(rectApp11)
                                 .end(rectApp2)
+                                .layer(RenderModel.PROXIES)
                                 .anchors(new Point[0])
                                 .build(),
                         Line.builder()
@@ -458,6 +461,7 @@ public class RenderModelTest {
                                 .text("BO")
                                 .start(rectApp12)
                                 .end(rectApp2)
+                                .layer(RenderModel.PROXIES)
                                 .anchors(new Point[] {
                                         new Point(160, 820),
                                         new Point(-20, 820),

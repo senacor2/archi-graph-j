@@ -14,6 +14,7 @@ import java.util.List;
 @Slf4j
 public class RenderModel {
 
+    public static final String PROXIES = "Proxies";
     private static final Color COLOR_LINE = Color.BLACK;
 
     /**
@@ -297,6 +298,7 @@ public class RenderModel {
                 .start(sourceRect)
                 .end(destRect)
                 .anchors(anchors)
+                .layer(proxy ? PROXIES : null)
                 .build());
     }
 

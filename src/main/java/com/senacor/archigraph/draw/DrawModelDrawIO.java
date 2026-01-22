@@ -46,6 +46,7 @@ public class DrawModelDrawIO implements DrawModel {
         var layerNames = render.getElements().stream()
                 .map(RenderModelElement::getLayer)
                 .filter(Objects::nonNull)
+                .distinct()
                 .toList();
         var index = 1;
         for (String name : layerNames) {
