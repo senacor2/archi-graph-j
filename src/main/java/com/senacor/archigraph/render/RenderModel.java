@@ -258,6 +258,7 @@ public class RenderModel {
         int proxyOrigY = origY - ROW_HEIGHT * (comp.getProxyAreaSize() + 1); // take header row offset into account
         createAndPlaceProxies(comp, proxyOrigX, proxyOrigY);
         for (var flow : comp.getCrossL1CompInformationFlows()) {
+            // TODO make sure you connect to the nearest proxy
             render(flow, true, comp);
             count++;
         }
@@ -331,14 +332,14 @@ public class RenderModel {
         for (var flow : comp.getCrossL1CompInformationFlows()) {
             var proxyApp = flow.getSource().getComponent().getL1Component() == comp ? flow.getDestination() : flow.getSource();
             var innerApp = flow.getSource().getComponent().getL1Component() == comp ? flow.getSource() : flow.getDestination();
-            if (proxyBoxLayout.getAppCoordinate(proxyApp) == null) {
-                var proxyAppCoord = proxyBoxLayout.findNearestEmptyCell(comp.getL1AppMatrix().getAppCoordinate(innerApp));
+            var innerAppCoordinate = comp.getL1AppMatrix().getAppCoordinate(innerApp);
+            if (proxyBoxLayout.hasNoProxy(proxyApp) || proxyBoxLayout.isTooFarAway(proxyApp, innerAppCoordinate)) {
+                var proxyAppCoord = proxyBoxLayout.findNearestEmptyCell(innerAppCoordinate);
                 proxyBoxLayout.setProxyPosition(proxyApp, proxyAppCoord);
                 add(renderApplicationProxy(proxyApp, comp, origX, origY, proxyAppCoord));
             }
         }
-        proxyBoxLayout.stream()
-                .forEach(e -> comp.getL1AppMatrix().put(e.getValue(), e.getKey()));
+        proxyBoxLayout.fillInto(comp.getL1AppMatrix());
     }
 
     private Rectangle renderApplicationProxy(Application app, Component parent, int origX, int origY,

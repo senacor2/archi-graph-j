@@ -243,8 +243,7 @@ public class Component {
         log.debug("Doing layout for {}", this);
         var layout = new ComponentLayout(this);
         layout.layout();
-        layout.stream()
-                .forEach(e -> appMatrix.put(translateToComponent(e.getValue()), e.getKey()));
+        layout.fillInto(appMatrix);
     }
 
     public String toString() {

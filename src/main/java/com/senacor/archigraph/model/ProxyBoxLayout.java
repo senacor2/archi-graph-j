@@ -6,12 +6,21 @@ import lombok.extern.slf4j.Slf4j;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 public class ProxyBoxLayout extends AbstractLayout {
 
+    /**
+     * The positions available for app proxies.
+     */
     @Getter
     private final List<Coordinate> proxyBoxCoords;
+
+    /**
+     * Coordinates of the proxies for an application.
+     */
+    private final Map<Application,List<Coordinate>> layout;
 
     public ProxyBoxLayout(L1Component comp) {
         super(comp);
@@ -54,12 +63,36 @@ public class ProxyBoxLayout extends AbstractLayout {
     }
 
     /**
+     * Check if the nearest proxy for <i>app</i> is close enough to the inner app.
+     * Use this check to prevent cross domain information flow lines from crossing the entire domain.
+     * @param app The app for which we need a proxy.
+     * @param innerAppCoord The coordinate of the app inside the domain.
+     * @return true if the distance between the closest proxy and the local app is too big.
+     */
+    public boolean isTooFarAway(Application app, Coordinate innerAppCoord) {
+        var proxies = layout.get(app);
+        if (proxies == null || proxies.isEmpty()) return false;
+        var minDist = proxies.stream()
+                .map(coord -> coord.distance(innerAppCoord))
+                .min(Double::compareTo)
+                .orElse(0.0);
+        return minDist > Math.min(component.getHeight(), component.getWidth()) * 0.6;
+    }
+
+    /**
      * Allocate a cell to a proxy application.
-     * @param proxy An Application.
+     * @param app An Application.
      * @param proxyCoord The cell coordinate of app.
      */
-    public void setProxyPosition(Application proxy, Coordinate proxyCoord) {
-        layout.put(proxy, proxyCoord);
+    public void setProxyPosition(Application app, Coordinate proxyCoord) {
+        if (hasNoProxy(app)) {
+            layout.put(app, new LinkedList<>());
+        }
+        layout.get(app).add(proxyCoord);
+    }
+
+    public boolean hasNoProxy(Application app) {
+        return !layout.containsKey(app);
     }
 
     /**
@@ -74,5 +107,11 @@ public class ProxyBoxLayout extends AbstractLayout {
     private static boolean isInProxyArea(int maxRows, int maxColumns, int proxyAreaSize, int row, int column) {
         return row < proxyAreaSize || row >= maxRows - proxyAreaSize ||
                 column < proxyAreaSize || column >= maxColumns - proxyAreaSize;
+    }
+
+    public void fillInto(AppMatrix appMatrix) {
+        layout.forEach((app, coords) -> {
+            coords.forEach(c -> appMatrix.put(c, app));
+        });
     }
 }
