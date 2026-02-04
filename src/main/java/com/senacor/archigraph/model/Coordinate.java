@@ -1,5 +1,8 @@
 package com.senacor.archigraph.model;
 
+import com.senacor.archigraph.render.Rectangle;
+import com.senacor.archigraph.render.RenderModel;
+
 /**
  * Row/column address inside the drawing grid.
  * @param row
@@ -12,6 +15,11 @@ public record Coordinate(
 
     static Coordinate fromIndex(final int columns, final int index) {
         return new Coordinate(index / columns, index % columns);
+    }
+
+    public static Coordinate of(AppMatrix appMatrix , Rectangle rect) {
+        return new Coordinate((rect.getY() - appMatrix.getOrigY() - RenderModel.SPACING) / RenderModel.ROW_HEIGHT,
+                (rect.getX() - appMatrix.getOrigX() - RenderModel.SPACING) / RenderModel.COL_WIDTH);
     }
 
     /**

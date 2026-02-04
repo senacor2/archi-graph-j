@@ -2,9 +2,6 @@ package com.senacor.archigraph.model;
 
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.Map;
-import java.util.stream.Stream;
-
 
 /**
  * Base class for layouts that map applications to coordinates.
@@ -15,25 +12,16 @@ import java.util.stream.Stream;
 public abstract class AbstractLayout {
 
     protected final Component component;
-    protected Map<Application, Coordinate> layout;
 
     public AbstractLayout(Component comp) {
         component = comp;
     }
 
     /**
-     * Returns the row column position of an app as defined by the layout.
-     *
-     * @param app An Application.
-     * @return The coordinate of the app. Will return <code>null</code> if the layout does not contain the app.
+     * Transfer the app layout created in this app into the appMatrix.
+     * @param appMatrix apps and coordinates go here.
      */
-    public Coordinate getAppCoordinate(Application app) {
-        return layout.get(app);
-    }
-
-    public Stream<Map.Entry<Application, Coordinate>> stream() {
-        return layout.entrySet().stream();
-    }
+    abstract void fillInto(AppMatrix appMatrix);
 
     protected record AppCoordinate(Application app, Coordinate coord) {
     }

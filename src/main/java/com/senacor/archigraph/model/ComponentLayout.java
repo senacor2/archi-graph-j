@@ -21,6 +21,8 @@ import java.util.stream.StreamSupport;
 public class ComponentLayout extends AbstractLayout {
 
     private int quality;
+    protected Map<Application, Coordinate> layout;
+
 
     public ComponentLayout(Component comp) {
         super(comp);
@@ -146,6 +148,16 @@ public class ComponentLayout extends AbstractLayout {
         }
     }
 
+    /**
+     * Returns the row column position of an app as defined by the layout.
+     *
+     * @param app An Application.
+     * @return The coordinate of the app. Will return <code>null</code> if the layout does not contain the app.
+     */
+    Coordinate getAppCoordinate(Application app) {
+        return layout.get(app);
+    }
+
     int getQuality() {
         return quality;
     }
@@ -188,6 +200,10 @@ public class ComponentLayout extends AbstractLayout {
             }
             return (int) result;
         }
+    }
+
+    void fillInto(AppMatrix appMatrix) {
+        layout.forEach((app, coord) -> appMatrix.put(component.translateToComponent(coord), app));
     }
 
 }

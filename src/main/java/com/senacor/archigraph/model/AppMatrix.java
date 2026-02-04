@@ -1,5 +1,7 @@
 package com.senacor.archigraph.model;
 
+import lombok.Getter;
+
 import java.util.Iterator;
 
 public class AppMatrix {
@@ -7,6 +9,10 @@ public class AppMatrix {
     private final Application[][] apps;
     private final int rows;
     private final int columns;
+    @Getter
+    private int origX;
+    @Getter
+    private int origY;
 
     public AppMatrix(final int rows, final int columns) {
         apps = new Application[rows][columns];
@@ -20,6 +26,11 @@ public class AppMatrix {
 
     public Application get(int row, int col) {
         return apps[row][col];
+    }
+
+    public void setOrigin(int x, int y) {
+        origX = x;
+        origY = y;
     }
 
     public Coordinate getAppCoordinate(final Application app) {

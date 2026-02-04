@@ -120,14 +120,14 @@ public class Component {
     }
 
     /**
-     * @return the height of the component.
+     * @return the height in rows of the component.
      */
     public int getHeight() {
         return compArea.height();
     }
 
     /**
-     * @return the width of the component.
+     * @return the width in columns of the component.
      */
     public int getWidth() {
         return compArea.width();
@@ -193,6 +193,16 @@ public class Component {
     }
 
     /**
+     * Set the position of the top left corner of the component box.
+     * This information is later needed to translate between coordinates and positions.
+     * @param x horizontal pixel offset from the left edge of the drawing.
+     * @param y vertical pixel offset from the top edge of the drawing.
+     */
+    public void setOrigin(int x, int y) {
+        appMatrix.setOrigin(x, y);
+    }
+
+    /**
      * Scan all information flows and sort them into
      * <ul>
      *     <li>information flows local to this component,</li>
@@ -243,8 +253,7 @@ public class Component {
         log.debug("Doing layout for {}", this);
         var layout = new ComponentLayout(this);
         layout.layout();
-        layout.stream()
-                .forEach(e -> appMatrix.put(translateToComponent(e.getValue()), e.getKey()));
+        layout.fillInto(appMatrix);
     }
 
     public String toString() {
