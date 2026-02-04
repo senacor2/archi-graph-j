@@ -48,10 +48,13 @@ public class ComponentFormatter {
         var result = new Rectangle[componentNames.size()];
         for (int i = 0; i < componentNames.size(); i++) {
             result[i] = Rectangle.builder()
+                    .id("_Legend_" + componentNames.get(i).replace(' ', '_'))
                     .background(BG_COLOR_COMP_HEAD[i])
+                    .bordercolor(Color.BLACK)
                     .fontcolor(FONT_COLOR_COMP_HEAD[i])
                     .fontSize(getFontSize(i+1))
                     .text(componentNames.get(i))
+                    .layer(null)
                     .build();
         }
         return result;

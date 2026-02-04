@@ -375,6 +375,72 @@ public class RenderModelTest {
     }
 
     @Test
+    void testModelWithL1InformationFlows() {
+        // given
+        var model = Model.builder()
+                .name("System 1")
+                .componentNames(List.of("Level 1", "Level 2"))
+                .build();
+        var app11_1 = new Application("A1", "A1", "C11");
+        var app12_2 = new Application("A2", "A2", "C12");
+        var app13_3 = new Application("A3", "A3", "C13");
+        var comp1 = new L1Component("C1", 1, 1, 3, 3, 1);
+        var comp11 = new Component("C11", 0, 0, 1, 2, 2);
+        var comp12 = new Component("C12", 0, 1, 1, 2, 2);
+        var comp13 = new Component("C13", 0, 2, 1, 2, 2);
+        var if1_3 = new InformationFlow("IF1-3", "A1", "A3", "BO", Direction.ONE_WAY);
+        comp1.setComponents(List.of(comp11, comp12, comp13));
+        model.setL1Components(List.of(comp1));
+        model.setApplications(List.of(app11_1, app12_2, app13_3));
+        model.setInformationFlows(List.of(if1_3));
+        // when
+        var fixture = new RenderModel();
+        var result = fixture.render(model);
+        // then
+        assertThat(result.getElements())
+                .contains(Line.builder()
+                        .start(Rectangle.builder()
+                                .id("A1")
+                                .text("A1")
+                                .x(360)
+                                .y(640)
+                                .w(RenderModel.APP_WIDTH)
+                                .h(RenderModel.APP_HEIGHT)
+                                .background(Color.BLACK)
+                                .bordercolor(Color.BLACK)
+                                .fontcolor(Color.WHITE)
+                                .fontSize(12)
+                                .fillStyle("solid")
+                                .rounded(true)
+                                .layer(null)
+                                .build())
+                        .end(Rectangle.builder()
+                                .id("A3")
+                                .text("A3")
+                                .x(1000)
+                                .y(640)
+                                .w(RenderModel.APP_WIDTH)
+                                .h(RenderModel.APP_HEIGHT)
+                                .background(Color.BLACK)
+                                .bordercolor(Color.BLACK)
+                                .fontcolor(Color.WHITE)
+                                .fontSize(12)
+                                .fillStyle("solid")
+                                .rounded(true)
+                                .layer(null)
+                                .build())
+                        .id("IF1-3")
+                        .text("BO")
+                        .hasEndArrow(true)
+                        .anchors(new Point[]{
+                                new Point(480, 620),
+                                new Point(1120, 620)
+                        })
+                        .build()
+                );
+    }
+
+    @Test
     void testModelWithCrossL1InformationFlows() {
         // given
         var model = Model.builder()
@@ -427,7 +493,7 @@ public class RenderModelTest {
                 .fontSize(12)
                 .build();
         var rectApp2 = Rectangle.builder()
-                .id("C1-proxy-A2")
+                .id("C1_proxy_A2_1")
                 .text("A2")
                 .rounded(true)
                 .x(-280)
@@ -460,7 +526,7 @@ public class RenderModelTest {
                                 .start(rectApp12)
                                 .end(rectApp2)
                                 .layer(RenderModel.PROXIES)
-                                .anchors(new Point[] {
+                                .anchors(new Point[]{
                                         new Point(160, 820),
                                         new Point(-20, 820),
                                         new Point(-20, 700)
@@ -607,7 +673,7 @@ public class RenderModelTest {
         // given
         var model = new RenderModel();
         var comp = new Component("C1", 0, 0, 3, 3, 1);
-        comp.setOrigin(RenderModel.COL_WIDTH, RenderModel.ROW_HEIGHT);
+        comp.setOrigin(0, 0);
         var fixture = comp.getAppMatrix();
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(2, 0);
@@ -644,7 +710,7 @@ public class RenderModelTest {
         fixture.put(c3, a3);
         // then
         assertThat(model.getAnchors(fixture, rect1, rect2))
-                .containsExactly(new Point(260, 320), new Point(900, 320));
+                .containsExactly(new Point(160, 220), new Point(800, 220));
     }
 
     @Test
@@ -668,7 +734,7 @@ public class RenderModelTest {
         fixture.put(c3, a3);
         // then
         assertThat(model.getAnchors(fixture, rect1, rect2))
-                .containsExactly(new Point(400, 200), new Point(400, 600));
+                .containsExactly(new Point(300, 100), new Point(300, 500));
     }
 
     @Test
@@ -689,9 +755,9 @@ public class RenderModelTest {
         fixture.put(c2, a2);
         // then
         assertThat(model.getAnchors(fixture, rect1, rect2))
-                .containsExactly(new Point(260, 520),
-                        new Point(440, 520),
-                        new Point(440, 400));
+                .containsExactly(new Point(160, 420),
+                        new Point(340, 420),
+                        new Point(340, 300));
     }
 
     @Test
@@ -712,9 +778,9 @@ public class RenderModelTest {
         fixture.put(c2, a2);
         // then
         assertThat(model.getAnchors(fixture, rect1, rect2))
-                .containsExactly(new Point(260, 480),
-                        new Point(440, 480),
-                        new Point(440, 600));
+                .containsExactly(new Point(160, 380),
+                        new Point(340, 380),
+                        new Point(340, 500));
     }
 
     @Test
@@ -736,9 +802,9 @@ public class RenderModelTest {
         System.out.println(fixture.dump());
         // then
         assertThat(model.getAnchors(fixture, rect1, rect2))
-                .containsExactly(new Point(260, 520),
-                        new Point(440, 520),
-                        new Point(440, 400));
+                .containsExactly(new Point(160, 420),
+                        new Point(340, 420),
+                        new Point(340, 300));
     }
 
 }

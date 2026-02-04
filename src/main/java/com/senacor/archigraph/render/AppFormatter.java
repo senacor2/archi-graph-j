@@ -70,10 +70,12 @@ class AppFormatter {
         List<Rectangle> result = new LinkedList<>();
         ruleBase.getNamedResultMap().forEach((k, v) ->
                 result.add(Rectangle.builder()
+                        .id("_Legend_" + k.replace(' ', '_'))
                         .background(Color.decode(v.get(BACKGROUND_COLOR)))
                         .fontcolor(Color.decode(v.get(FONT_COLOR)))
                         .bordercolor(Color.decode(v.get(BORDER_COLOR)))
                         .fillStyle(v.get(FILL_STYLE))
+                        .layer(null)
                         .fontSize(FONT_SIZE)
                         .rounded(true)
                         .text(k)

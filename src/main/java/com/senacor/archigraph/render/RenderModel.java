@@ -156,6 +156,7 @@ public class RenderModel {
                 .build();
         compFormatter.formatHead(comp, compHeadRect);
         add(compHeadRect);
+        comp.setOrigin(x, y);
         y += ROW_HEIGHT;
         // Body rectangle
         var compBodyRect = Rectangle.builder()
@@ -166,7 +167,6 @@ public class RenderModel {
                 .h((comp.getHeight() - 1) * ROW_HEIGHT - indent(comp) * 2)
                 .build();
         compFormatter.formatBody(comp, compBodyRect);
-        comp.setOrigin(x, y);
         add(compBodyRect);
         renderApplications(comp);
         renderLocalFlows(comp);
@@ -247,6 +247,7 @@ public class RenderModel {
     void renderL1CompFlows(L1Component comp) {
         var count = 0;
         log.debug("Render l1 flows for {}", comp.getName());
+        log.trace("Before rendering L1 flows for {}:\n{}", comp.getName(), comp.getL1AppMatrix().dump());
         for (var flow : comp.getL1CompInformationFlows()) {
             render(flow, comp);
             count++;
@@ -267,11 +268,10 @@ public class RenderModel {
         log.debug("Render cross l1 flows for {}", comp.getName());
         int proxyOrigX = origX - COL_WIDTH * comp.getProxyAreaSize();
         int proxyOrigY = origY - ROW_HEIGHT * (comp.getProxyAreaSize() + 1); // y has already been corrected for comp header height
-        comp.getL1AppMatrix().setOrigin(proxyOrigX, proxyOrigY); // TODO
+        comp.getL1AppMatrix().setOrigin(proxyOrigX, proxyOrigY);
+        log.trace("Before placing proxies for {}:\n{}", comp.getName(), comp.getL1AppMatrix().dump());
         var flowToProxy = createAndPlaceProxies(comp, proxyOrigX, proxyOrigY);
-        flowToProxy.forEach((flow, proxyRect) -> {
-            render(flow, proxyRect, comp);
-        });
+        flowToProxy.forEach((flow, proxyRect) -> render(flow, proxyRect, comp));
     }
 
     /**
@@ -488,12 +488,14 @@ public class RenderModel {
         final int width = 2 * COL_WIDTH;
         final int height = Math.max(appRects.size(), compRects.length) * ROW_HEIGHT;
         add(Rectangle.builder()
+                .id("_Legend_box_")
                 .background(Color.WHITE)
                 .bordercolor(Color.BLACK)
                 .x(legendX)
                 .y(maxY - height)
                 .w(width)
                 .h(height)
+                .layer(null)
                 .build());
         int x = legendX + SPACING;
         int y = maxY - height + SPACING;
