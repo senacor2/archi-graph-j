@@ -1,5 +1,7 @@
 package com.senacor.archigraph.model;
 
+import com.senacor.archigraph.render.Rectangle;
+import com.senacor.archigraph.render.RenderModel;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,5 +26,23 @@ public class CoordinateTest {
         assertEquals(0.0, new Coordinate(1, 1).distance(new Coordinate(1, 1)));
         assertEquals(1.0, new Coordinate(1, 1).distance(new Coordinate(2, 1)));
         assertEquals(Math.sqrt(2.0), new Coordinate(1, 1).distance(new Coordinate(2, 2)));
+    }
+
+    @Test
+    public void testCoordinateOf() {
+        var appMatrix = new AppMatrix(5, 5);
+        appMatrix.setOrigin(10 * RenderModel.COL_WIDTH, 10 * RenderModel.ROW_HEIGHT);
+        assertEquals(new Coordinate(0, 0),
+                Coordinate.of(appMatrix,
+                        Rectangle.builder()
+                                .x(10 * RenderModel.COL_WIDTH + RenderModel.SPACING)
+                                .y(10 * RenderModel.ROW_HEIGHT + RenderModel.SPACING)
+                                .build()));
+        assertEquals(new Coordinate(1, 1),
+                Coordinate.of(appMatrix,
+                        Rectangle.builder()
+                                .x(11 * RenderModel.COL_WIDTH + RenderModel.SPACING)
+                                .y(11 * RenderModel.ROW_HEIGHT + RenderModel.SPACING)
+                                .build()));
     }
 }

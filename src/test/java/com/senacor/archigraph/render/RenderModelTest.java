@@ -1,7 +1,5 @@
 package com.senacor.archigraph.render;
 
-import com.senacor.archigraph.model.AppMatrix;
-import com.senacor.archigraph.model.Coordinate;
 import com.senacor.archigraph.model.*;
 import com.senacor.archigraph.model.Component;
 import org.junit.jupiter.api.Test;
@@ -10,7 +8,7 @@ import java.awt.*;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RenderModelTest {
 
@@ -389,9 +387,9 @@ public class RenderModelTest {
         var comp1 = new L1Component("C1", 1, 0, 3, 5, 1);
         var comp11 = new Component("C11", 0, 0, 1, 3, 2);
         var comp2 = new L1Component("C2", 9, 9, 3, 3, 1);
-        var if1 = new InformationFlow("IF112", "A11", "A2", "BO", Direction.ONE_WAY);
-        var if2 = new InformationFlow("IF122", "A12", "A2", "BO", Direction.ONE_WAY);
-        var if3 = new InformationFlow("IF1112", "A11", "A12", "BO", Direction.ONE_WAY);
+        var if1 = new InformationFlow("IF11-2", "A11", "A2", "BO", Direction.ONE_WAY);
+        var if2 = new InformationFlow("IF12-2", "A12", "A2", "BO", Direction.ONE_WAY);
+        var if3 = new InformationFlow("IF11-12", "A11", "A12", "BO", Direction.ONE_WAY);
         comp1.setComponents(List.of(comp11));
         model.setL1Components(List.of(comp1, comp2));
         model.setApplications(List.of(app11, app12, app2));
@@ -449,7 +447,7 @@ public class RenderModelTest {
                         rectApp12,
                         rectApp2,
                         Line.builder()
-                                .id("IF112")
+                                .id("IF11-2")
                                 .text("BO")
                                 .start(rectApp11)
                                 .end(rectApp2)
@@ -457,7 +455,7 @@ public class RenderModelTest {
                                 .anchors(new Point[0])
                                 .build(),
                         Line.builder()
-                                .id("IF122")
+                                .id("IF12-2")
                                 .text("BO")
                                 .start(rectApp12)
                                 .end(rectApp2)
@@ -532,130 +530,165 @@ public class RenderModelTest {
         assertEquals(RenderModel.Side.TOP, fixture.sideFrom(false));
     }
 
-    private Rectangle buildRect(int row, int col, int origX, int origY) {
+    private Rectangle buildRect(int row, int col, Component comp) {
         return Rectangle.builder()
-                .x(col * RenderModel.COL_WIDTH + RenderModel.SPACING + origX)
-                .y(row * RenderModel.ROW_HEIGHT + RenderModel.SPACING + origY)
+                .x(col * RenderModel.COL_WIDTH + RenderModel.SPACING + comp.getCol() * RenderModel.COL_WIDTH)
+                .y(row * RenderModel.ROW_HEIGHT + RenderModel.SPACING + comp.getRow() * RenderModel.ROW_HEIGHT)
                 .w(RenderModel.APP_WIDTH)
                 .h(RenderModel.APP_HEIGHT)
                 .build();
     }
 
     @Test
-    void testGetAnchorTwoHorizSideBySide() {
+    void testGetAnchorTwoVertSideBySide() {
+        // given
         var model = new RenderModel();
-        var fixture = new AppMatrix(3, 3);
+        var comp = new Component("C1", 0, 0, 3, 3, 1);
+        comp.setOrigin(0, 0);
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(1, 0);
-        var rect1 = buildRect(c1.row(), c1.col(), 100, 100);
-        var rect2 = buildRect(c2.row(), c2.col(), 100, 100);
+        var rect1 = buildRect(c1.row(), c1.col(), comp);
+        var rect2 = buildRect(c2.row(), c2.col(), comp);
+        var fixture = comp.getAppMatrix();
         Application a1 = new Application("A1", "A1", "C1");
         Application a2 = new Application("A2", "A2", "C1");
+        // when
         fixture.put(c1, a1);
         fixture.put(c2, a2);
-        assertThat(model.getAnchors(fixture, a1, a2, rect1, rect2))
+        // then
+        assertThat(model.getAnchors(fixture, rect1, rect2))
                 .isEmpty();
     }
 
     @Test
-    void testGetAnchorTwoVertSideBySide() {
+    void testGetAnchorTwoHorizSideBySide() {
+        // given
         var model = new RenderModel();
-        var fixture = new AppMatrix(3, 3);
+        var comp = new Component("C1", 0, 0, 3, 3, 1);
+        comp.setOrigin(0, 0);
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(0, 1);
-        var rect1 = buildRect(c1.row(), c1.col(), 100, 100);
-        var rect2 = buildRect(c2.row(), c2.col(), 100, 100);
+        var rect1 = buildRect(c1.row(), c1.col(), comp);
+        var rect2 = buildRect(c2.row(), c2.col(), comp);
+        var fixture = comp.getAppMatrix();
         Application a1 = new Application("A1", "A1", "C1");
         Application a2 = new Application("A2", "A2", "C1");
+        // when
         fixture.put(c1, a1);
         fixture.put(c2, a2);
-        assertThat(model.getAnchors(fixture, a1, a2, rect1, rect2))
+        // then
+        assertThat(model.getAnchors(fixture, rect1, rect2))
                 .isEmpty();
     }
 
     @Test
     void testGetAnchorTwoSameRowWithGap() {
+        // given
         var model = new RenderModel();
-        var fixture = new AppMatrix(3, 3);
+        var comp = new Component("C1", 0, 0, 3, 3, 1);
+        comp.setOrigin(0, 0);
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(0, 2);
-        var rect1 = buildRect(c1.row(), c1.col(), 100, 100);
-        var rect2 = buildRect(c2.row(), c2.col(), 100, 100);
+        var rect1 = buildRect(c1.row(), c1.col(), comp);
+        var rect2 = buildRect(c2.row(), c2.col(), comp);
+        var fixture = comp.getAppMatrix();
         Application a1 = new Application("A1", "A1", "C1");
         Application a2 = new Application("A2", "A2", "C1");
+        // when
         fixture.put(c1, a1);
         fixture.put(c2, a2);
-        assertThat(model.getAnchors(fixture, a1, a2, rect1, rect2))
+        // then
+        assertThat(model.getAnchors(fixture, rect1, rect2))
                 .isEmpty();
     }
 
     @Test
     void testGetAnchorTwoVertWithGap() {
+        // given
         var model = new RenderModel();
-        var fixture = new AppMatrix(3, 3);
+        var comp = new Component("C1", 0, 0, 3, 3, 1);
+        comp.setOrigin(RenderModel.COL_WIDTH, RenderModel.ROW_HEIGHT);
+        var fixture = comp.getAppMatrix();
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(2, 0);
-        var rect1 = buildRect(c1.row(), c1.col(), 100, 100);
-        var rect2 = buildRect(c2.row(), c2.col(), 100, 100);
+        var rect1 = buildRect(c1.row(), c1.col(), comp);
+        var rect2 = buildRect(c2.row(), c2.col(), comp);
         Application a1 = new Application("A1", "A1", "C1");
         Application a2 = new Application("A2", "A2", "C1");
+        // when
         fixture.put(c1, a1);
         fixture.put(c2, a2);
-        assertThat(model.getAnchors(fixture, a1, a2, rect1, rect2))
+        // then
+        assertThat(model.getAnchors(fixture, rect1, rect2))
                 .isEmpty();
     }
 
     @Test
     void testGetAnchorThreeInARow() {
+        // given
         var model = new RenderModel();
-        var fixture = new AppMatrix(3, 3);
+        var comp = new Component("C1", 0, 0, 3, 3, 1);
+        comp.setOrigin(0, 0);
+        var fixture = comp.getAppMatrix();
         var c1 = new Coordinate(1, 0);
         var c2 = new Coordinate(1, 1);
         var c3 = new Coordinate(1, 2);
-        var rect1 = buildRect(c1.row(), c1.col(), 100, 100);
-        var rect2 = buildRect(c3.row(), c3.col(), 100, 100);
+        var rect1 = buildRect(c1.row(), c1.col(), comp);
+        var rect2 = buildRect(c3.row(), c3.col(), comp);
         Application a1 = new Application("A1", "A1", "C1");
         Application a2 = new Application("A2", "A2", "C1");
         Application a3 = new Application("A3", "A3", "C1");
+        // when
         fixture.put(c1, a1);
         fixture.put(c2, a2);
         fixture.put(c3, a3);
-        assertThat(model.getAnchors(fixture, a1, a3, rect1, rect2))
+        // then
+        assertThat(model.getAnchors(fixture, rect1, rect2))
                 .containsExactly(new Point(260, 320), new Point(900, 320));
     }
 
     @Test
     void testGetAnchorThreeInACol() {
+        // given
         var model = new RenderModel();
-        var fixture = new AppMatrix(3, 3);
+        var comp = new Component("C1", 0, 0, 3, 3, 1);
+        comp.setOrigin(0, 0);
+        var fixture = comp.getAppMatrix();
         var c1 = new Coordinate(0, 0);
         var c2 = new Coordinate(1, 0);
         var c3 = new Coordinate(2, 0);
-        var rect1 = buildRect(c1.row(), c1.col(), 100, 100);
-        var rect2 = buildRect(c3.row(), c3.col(), 100, 100);
+        var rect1 = buildRect(c1.row(), c1.col(), comp);
+        var rect2 = buildRect(c3.row(), c3.col(), comp);
         Application a1 = new Application("A1", "A1", "C1");
         Application a2 = new Application("A2", "A2", "C1");
         Application a3 = new Application("A3", "A3", "C1");
+        // when
         fixture.put(c1, a1);
         fixture.put(c2, a2);
         fixture.put(c3, a3);
-        assertThat(model.getAnchors(fixture, a1, a3, rect1, rect2))
+        // then
+        assertThat(model.getAnchors(fixture, rect1, rect2))
                 .containsExactly(new Point(400, 200), new Point(400, 600));
     }
 
     @Test
     void testGetAnchorTwoOneRowColApartBottomLeftTopRight() {
+        // given
         var model = new RenderModel();
-        var fixture = new AppMatrix(3, 3);
+        var comp = new Component("C1", 0, 0, 3, 3, 1);
+        comp.setOrigin(0, 0);
+        var fixture = comp.getAppMatrix();
         var c1 = new Coordinate(2, 0);
         var c2 = new Coordinate(1, 1);
-        var rect1 = buildRect(c1.row(), c1.col(), 100, 100);
-        var rect2 = buildRect(c2.row(), c2.col(), 100, 100);
+        var rect1 = buildRect(c1.row(), c1.col(), comp);
+        var rect2 = buildRect(c2.row(), c2.col(), comp);
         Application a1 = new Application("A1", "A1", "C1");
         Application a2 = new Application("A2", "A2", "C1");
+        // when
         fixture.put(c1, a1);
         fixture.put(c2, a2);
-        assertThat(model.getAnchors(fixture, a1, a2, rect1, rect2))
+        // then
+        assertThat(model.getAnchors(fixture, rect1, rect2))
                 .containsExactly(new Point(260, 520),
                         new Point(440, 520),
                         new Point(440, 400));
@@ -663,17 +696,22 @@ public class RenderModelTest {
 
     @Test
     void testGetAnchorTwoOneRowColApartTopLeftBottomRight() {
+        // given
         var model = new RenderModel();
-        var fixture = new AppMatrix(3, 3);
+        var comp = new Component("C1", 0, 0, 3, 3, 1);
+        comp.setOrigin(0, 0);
+        var fixture = comp.getAppMatrix();
         var c1 = new Coordinate(1, 0);
         var c2 = new Coordinate(2, 1);
-        var rect1 = buildRect(c1.row(), c1.col(), 100, 100);
-        var rect2 = buildRect(c2.row(), c2.col(), 100, 100);
+        var rect1 = buildRect(c1.row(), c1.col(), comp);
+        var rect2 = buildRect(c2.row(), c2.col(), comp);
         Application a1 = new Application("A1", "A1", "C1");
         Application a2 = new Application("A2", "A2", "C1");
+        // when
         fixture.put(c1, a1);
         fixture.put(c2, a2);
-        assertThat(model.getAnchors(fixture, a1, a2, rect1, rect2))
+        // then
+        assertThat(model.getAnchors(fixture, rect1, rect2))
                 .containsExactly(new Point(260, 480),
                         new Point(440, 480),
                         new Point(440, 600));
@@ -681,18 +719,23 @@ public class RenderModelTest {
 
     @Test
     void testGetAnchorTwoByThreeBottomLeftToTopRight() {
+        // given
         var model = new RenderModel();
-        var fixture = new AppMatrix(3, 2);
+        var comp = new Component("C1", 0, 0, 2, 3, 1);
+        comp.setOrigin(0, 0);
+        var fixture = comp.getAppMatrix();
         var c1 = new Coordinate(2, 0);
         var c2 = new Coordinate(1, 1);
-        var rect1 = buildRect(c1.row(), c1.col(), 100, 100);
-        var rect2 = buildRect(c2.row(), c2.col(), 100, 100);
+        var rect1 = buildRect(c1.row(), c1.col(), comp);
+        var rect2 = buildRect(c2.row(), c2.col(), comp);
         var a1 = new Application("A1", "A1", "C1");
         var a2 = new Application("A2", "A2", "C1");
+        // when
         fixture.put(c1, a1);
         fixture.put(c2, a2);
         System.out.println(fixture.dump());
-        assertThat(model.getAnchors(fixture, a1, a2, rect1, rect2))
+        // then
+        assertThat(model.getAnchors(fixture, rect1, rect2))
                 .containsExactly(new Point(260, 520),
                         new Point(440, 520),
                         new Point(440, 400));

@@ -20,14 +20,23 @@ public class RenderModel {
     /**
      * Grid row height.
      */
-    static final int ROW_HEIGHT = 200;
+    public static final int ROW_HEIGHT = 200;
 
     /**
      * Grid column width.
      */
-    static final int COL_WIDTH = (int) (ROW_HEIGHT * 1.6);
+    public static final int COL_WIDTH = (int) (ROW_HEIGHT * 1.6);
+
+    /**
+     * Middle of a row.
+     */
     private static final int ROW_HEIGHT_HALF = ROW_HEIGHT / 2;
+
+    /**
+     * Center of a column.
+     */
     private static final int COL_WIDTH_HALF = COL_WIDTH / 2;
+
     /**
      * Each component is spaced by this amount w.r.t. the enclosing component.
      */
@@ -37,7 +46,7 @@ public class RenderModel {
      * The spacing of a component w.r.t. the cell. Note that the distance to the component border
      * is different because components may be nested.
      */
-    static final int SPACING = 40;
+    public static final int SPACING = 40;
 
     /**
      * A half spacing is used to place information flow lines.
@@ -91,11 +100,13 @@ public class RenderModel {
 
     /**
      * Set the rule bases required to format the applications.
+     *
      * @param ruleBase a loaded rule base.
      */
     public void setRuleBase(RuleBase ruleBase) {
         appFormatter.setRuleBase(ruleBase);
     }
+
     /**
      * Populates the RenderModel with logical drawing components like rectangles and lines.
      *
@@ -155,6 +166,7 @@ public class RenderModel {
                 .h((comp.getHeight() - 1) * ROW_HEIGHT - indent(comp) * 2)
                 .build();
         compFormatter.formatBody(comp, compBodyRect);
+        comp.setOrigin(x, y);
         add(compBodyRect);
         renderApplications(comp);
         renderLocalFlows(comp);
@@ -165,7 +177,7 @@ public class RenderModel {
             renderL1CompFlows((L1Component) comp);
             renderCrossL1CompFlows((L1Component) comp, x, y);
         } else {
-            comp.getParentComponent().getAppMatrix().merge(comp.getAppMatrix(), comp.getRow() + 1, comp.getCol());
+            comp.getParentComponent().getAppMatrix().merge(comp.getAppMatrix(), comp.getRow()+1, comp.getCol());
             log.debug("After merge {} into {}: \n{}", comp.getName(), comp.getParentComponent().getName(),
                     comp.getParentComponent().getAppMatrix().dump());
 
@@ -215,13 +227,13 @@ public class RenderModel {
     /**
      * Draw the internal flow lines inside one component.
      *
-     * @param comp  The enclosing component
+     * @param comp The enclosing component
      */
     void renderLocalFlows(Component comp) {
         var count = 0;
         log.debug("Render local flows for {}", comp.getName());
         for (var flow : comp.getLocalInformationFlows()) {
-            render(flow, false, comp);
+            render(flow, comp);
             count++;
         }
         log.debug("Render local flows for {}: {} flows rendered", comp.getName(), count);
@@ -230,13 +242,13 @@ public class RenderModel {
     /**
      * Draw the flows inside one L1 component.
      *
-     * @param comp  the L1 component.
+     * @param comp the L1 component.
      */
     void renderL1CompFlows(L1Component comp) {
         var count = 0;
         log.debug("Render l1 flows for {}", comp.getName());
         for (var flow : comp.getL1CompInformationFlows()) {
-            render(flow, false, comp);
+            render(flow, comp);
             count++;
         }
         log.debug("Render l1 flows for {}: {} flows rendered", comp.getName(), count);
@@ -252,46 +264,31 @@ public class RenderModel {
      * @param origY The y position of the components top edge.
      */
     void renderCrossL1CompFlows(L1Component comp, int origX, int origY) {
-        var count = 0;
         log.debug("Render cross l1 flows for {}", comp.getName());
         int proxyOrigX = origX - COL_WIDTH * comp.getProxyAreaSize();
-        int proxyOrigY = origY - ROW_HEIGHT * (comp.getProxyAreaSize() + 1); // take header row offset into account
-        createAndPlaceProxies(comp, proxyOrigX, proxyOrigY);
-        for (var flow : comp.getCrossL1CompInformationFlows()) {
-            // TODO make sure you connect to the nearest proxy
-            render(flow, true, comp);
-            count++;
-        }
-        log.debug("Render cross l1 flows for {}: {} flows rendered", comp.getName(), count);
+        int proxyOrigY = origY - ROW_HEIGHT * (comp.getProxyAreaSize() + 1); // y has already been corrected for comp header height
+        comp.getL1AppMatrix().setOrigin(proxyOrigX, proxyOrigY); // TODO
+        var flowToProxy = createAndPlaceProxies(comp, proxyOrigX, proxyOrigY);
+        flowToProxy.forEach((flow, proxyRect) -> {
+            render(flow, proxyRect, comp);
+        });
     }
 
     /**
-     * Render an information flow.
+     * Render an information flow inside an L1 component.
      * Adds a line object to the model connecting the source and destination app.
-     * The two apps may be in the same component, in the same L1 component or in different L1 components.
+     * The two apps may be in the same component or in the same L1 component.
      *
-     * @param flow  An InformationFlow
-     * @param proxy True when proxies shall be rendered, false otherwise.
-     * @param comp  The enclosing component or the L1 component containing one of the apps.
+     * @param flow An InformationFlow
+     * @param comp The enclosing component or the L1 component containing one of the apps.
      */
-    void render(InformationFlow flow, boolean proxy, Component comp) {
-        log.debug("Render flow {} proxy = {}", flow.getId(), proxy);
-        Component compL1 = comp.getParentComponent() == null ? comp : comp.getL1Component();
-        Rectangle sourceRect;
-        Rectangle destRect;
-        if (flow.getSource().getComponent().getL1Component() == compL1) {
-            sourceRect = (Rectangle) elementsById.get(flow.getSourceId());
-        } else {
-            sourceRect = findProxyRectangle(comp.getName(), flow.getSourceId());
-        }
-        if (flow.getDestination().getComponent().getL1Component() == compL1) {
-            destRect = (Rectangle) elementsById.get(flow.getDestId());
-        } else {
-            destRect = findProxyRectangle(comp.getName(), flow.getDestId());
-        }
+    void render(InformationFlow flow, Component comp) {
+        log.debug("Render flow {}", flow.getId());
+        Rectangle sourceRect, destRect;
+        sourceRect = (Rectangle) elementsById.get(flow.getSourceId());
+        destRect = (Rectangle) elementsById.get(flow.getDestId());
         log.debug("Render flow from {} to {}", sourceRect, destRect);
-        Point[] anchors = getAnchors(proxy ? ((L1Component)comp).getL1AppMatrix() : comp.getAppMatrix(),
-                flow.getSource(), flow.getDestination(), sourceRect, destRect);
+        Point[] anchors = getAnchors(comp.getAppMatrix(), sourceRect, destRect);
 
         add(Line.builder()
                 .id(flow.getId())
@@ -299,23 +296,42 @@ public class RenderModel {
                 .start(sourceRect)
                 .end(destRect)
                 .anchors(anchors)
-                .layer(proxy ? PROXIES : null)
+                .layer(null)
                 .build());
     }
 
-    private Rectangle findProxyRectangle(String compName, String appId) {
-        String proxyId = getProxyAppId(compName, appId);
-        log.debug("Find proxy rectangle for {}", proxyId);
-        if (elementsById.containsKey(proxyId)) {
-            return (Rectangle) elementsById.get(proxyId);
+    /**
+     * Render an information flow across the boundary of an L1 component.
+     * Either the source or the destination of the flow is outside the l1 component.
+     *
+     * @param flow      An InformationFlow
+     * @param proxyRect the Rectangle for the app proxy, i.e. the app outside the component.
+     * @param comp      The L1Component where the flow is located.
+     */
+    void render(InformationFlow flow, Rectangle proxyRect, L1Component comp) {
+        log.debug("Render flow {} to proxy {}", flow.getId(), proxyRect.getId());
+        Rectangle sourceRect, destRect;
+        if (flow.getSource().getComponent().getL1Component() == comp) {
+            sourceRect = (Rectangle) elementsById.get(flow.getSourceId());
+            destRect = proxyRect;
         } else {
-            log.error("Proxy app {} not found", proxyId);
-            throw new IllegalArgumentException("Proxy app not found: " + proxyId);
+            sourceRect = proxyRect;
+            destRect = (Rectangle) elementsById.get(flow.getDestId());
         }
+        log.debug("Render flow from {} to {}", sourceRect, destRect);
+        Point[] anchors = getAnchors(comp.getL1AppMatrix(), sourceRect, destRect);
+        add(Line.builder()
+                .id(flow.getId())
+                .text(flow.getBusinessObject())
+                .start(sourceRect)
+                .end(destRect)
+                .anchors(anchors)
+                .layer(PROXIES)
+                .build());
     }
 
-    private String getProxyAppId(String compName, String appId) {
-        return compName + "-proxy-" + appId;
+    private String getProxyAppId(String compName, String appId, int numCopies) {
+        return String.format("%s_proxy_%s_%d", compName, appId, numCopies);
     }
 
     /**
@@ -325,28 +341,46 @@ public class RenderModel {
      * @param comp  Enclosing L1 component.
      * @param origX Left edge x position of the proxy box.
      * @param origY Top edge y position of the proxy box.
+     * @return A map of information flows with their associated proxy rectangles.
      */
-    private void createAndPlaceProxies(L1Component comp, int origX, int origY) {
+    private Map<InformationFlow, Rectangle> createAndPlaceProxies(L1Component comp, int origX, int origY) {
+        Map<InformationFlow, Rectangle> result = new HashMap<>();
         var proxyBoxLayout = new ProxyBoxLayout(comp);
         comp.getL1AppMatrix().merge(comp.getAppMatrix(), comp.getProxyAreaSize(), comp.getProxyAreaSize());
         for (var flow : comp.getCrossL1CompInformationFlows()) {
             var proxyApp = flow.getSource().getComponent().getL1Component() == comp ? flow.getDestination() : flow.getSource();
             var innerApp = flow.getSource().getComponent().getL1Component() == comp ? flow.getSource() : flow.getDestination();
             var innerAppCoordinate = comp.getL1AppMatrix().getAppCoordinate(innerApp);
-            if (proxyBoxLayout.hasNoProxy(proxyApp) || proxyBoxLayout.isTooFarAway(proxyApp, innerAppCoordinate)) {
-                var proxyAppCoord = proxyBoxLayout.findNearestEmptyCell(innerAppCoordinate);
-                proxyBoxLayout.setProxyPosition(proxyApp, proxyAppCoord);
-                add(renderApplicationProxy(proxyApp, comp, origX, origY, proxyAppCoord));
+            log.debug("Render proxy for {}", proxyApp.getId());
+            Coordinate proxyCoord = proxyBoxLayout.findUsableProxy(comp, proxyApp, innerAppCoordinate);
+            Rectangle proxyRect;
+            if (proxyCoord == null) {
+                proxyCoord = proxyBoxLayout.findNearestEmptyCell(innerAppCoordinate);
+                int numCopies = proxyBoxLayout.setProxyPosition(proxyApp, proxyCoord);
+                proxyRect = renderApplicationProxy(proxyApp, numCopies, comp, origX, origY, proxyCoord);
+                add(proxyRect);
+            } else {
+                final int row = proxyCoord.row();
+                final int col = proxyCoord.col();
+                proxyRect = elements.stream()
+                        .filter(e -> e instanceof Rectangle)
+                        .map(e -> (Rectangle) e)
+                        .filter(r -> r.getX() == origX + col * COL_WIDTH + SPACING &&
+                                r.getY() == origY + row * ROW_HEIGHT + SPACING)
+                        .findFirst()
+                        .orElseThrow();
             }
+            result.put(flow, proxyRect);
         }
         proxyBoxLayout.fillInto(comp.getL1AppMatrix());
+        return result;
     }
 
-    private Rectangle renderApplicationProxy(Application app, Component parent, int origX, int origY,
+    private Rectangle renderApplicationProxy(Application app, int numCopies, Component parent, int origX, int origY,
                                              Coordinate proxyAppCoord) {
         log.debug("Render proxy for {} base pos x={} y={} coord = {}", app.getId(), origX, origY, proxyAppCoord);
         var rect = Rectangle.builder()
-                .id(getProxyAppId(parent.getName(), app.getId()))
+                .id(getProxyAppId(parent.getName(), app.getId(), numCopies))
                 .x(origX + proxyAppCoord.col() * COL_WIDTH + SPACING)
                 .y(origY + proxyAppCoord.row() * ROW_HEIGHT + SPACING)
                 .w(APP_WIDTH)
@@ -360,16 +394,15 @@ public class RenderModel {
      * Returns a vector of turning points for the line drawn between two applications.
      * The algorithm considers space blocked by other apps and routes lines around them.
      *
-     * @param appMatrix The component layout that contains the coordinates of the apps and all other apps.
-     * @param source    Application where the information flow starts.
-     * @param dest      Application where the information flow ends.
+     * @param appMatrix  The component's appMatrix to be used for finding the best line path.
+     * @param sourceRect Rectangle where the information flow starts.
+     * @param destRect   Rectangle where the information flow ends.
      * @return A vector of points where the information flow line shall be bent. The vector will be empty
      * when the Apps are directly adjacent or on the same for or column with no apps inbetween.
      */
-    Point[] getAnchors(AppMatrix appMatrix, Application source, Application dest,
-                       Rectangle sourceRect, Rectangle destRect) {
-        var srcCoord = appMatrix.getAppCoordinate(source);
-        var dstCoord = appMatrix.getAppCoordinate(dest);
+    Point[] getAnchors(AppMatrix appMatrix, Rectangle sourceRect, Rectangle destRect) {
+        var srcCoord = Coordinate.of(appMatrix, sourceRect);
+        var dstCoord = Coordinate.of(appMatrix, destRect);
         int distanceHor = Math.abs(srcCoord.col() - dstCoord.col());
         int distanceVrt = Math.abs(srcCoord.row() - dstCoord.row());
         Point[] result;
@@ -474,7 +507,7 @@ public class RenderModel {
         }
         x = legendX + COL_WIDTH + SPACING;
         y = maxY - height + SPACING;
-        for (var rect: appRects) {
+        for (var rect : appRects) {
             rect.setX(x);
             rect.setY(y);
             rect.setW(APP_WIDTH);
