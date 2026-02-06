@@ -28,8 +28,18 @@ public class Rectangle extends RenderModelElement {
 
     private boolean rounded;
 
+    /**
+     * Only present for proxies. Contains the id of the rectangle that this object is a proxy for.
+     * <code>null</code> otherwise.
+     */
+    private String originalId;
+
     @Override
     public void draw(DrawModel drawModel) {
         drawModel.draw(this);
+    }
+
+    public boolean isProxy() {
+        return originalId != null;
     }
 }
