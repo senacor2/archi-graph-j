@@ -37,7 +37,7 @@ public class RenderModelTest {
         assertThat(result.getElements())
                 .contains(
                         Rectangle.builder()
-                                .id("ROOT")
+                                .id("_graphHeading")
                                 .x(0)
                                 .y(0)
                                 .w(2240)
@@ -110,7 +110,7 @@ public class RenderModelTest {
         assertThat(result.getElements())
                 .contains(
                         Rectangle.builder()
-                                .id("ROOT")
+                                .id("_graphHeading")
                                 .text("System 1")
                                 .x(0)
                                 .y(0)
@@ -193,7 +193,7 @@ public class RenderModelTest {
         assertThat(result.getElements())
                 .contains(
                         Rectangle.builder()
-                                .id("ROOT")
+                                .id("_graphHeading")
                                 .text("System 1")
                                 .x(0)
                                 .y(0)
@@ -330,7 +330,7 @@ public class RenderModelTest {
         assertThat(result.getElements())
                 .contains(
                         Rectangle.builder()
-                                .id("ROOT")
+                                .id("_graphHeading")
                                 .text("System 1")
                                 .x(0)
                                 .y(0)
@@ -441,6 +441,44 @@ public class RenderModelTest {
     }
 
     @Test
+    void testModelWithLocalInformationFlows() {
+        // given
+        var model = Model.builder()
+                .name("System 1")
+                .componentNames(List.of("Level 1", "Level 2"))
+                .build();
+        var app1 = new Application("A1", "A1", "C1");
+        var app2 = new Application("A2", "A2", "C1");
+        var app3 = new Application("A3", "A3", "C1");
+        var comp1 = new L1Component("C1", 1, 0, 3, 2, 1);
+        var if12 = new InformationFlow("IF12", "A1", "A2", "BO", Direction.ONE_WAY);
+        var if13 = new InformationFlow("IF13", "A1", "A3", "BO", Direction.ONE_WAY);
+        var if23 = new InformationFlow("IF23", "A2", "A3", "BO", Direction.ONE_WAY);
+        model.setL1Components(List.of(comp1));
+        model.setApplications(List.of(app1, app2, app3));
+        model.setInformationFlows(List.of(if12, if13, if23));
+        // when
+        var fixture = new RenderModel();
+        var result = fixture.render(model);
+        // then
+        assertThat(result.getElements())
+                .filteredOn(rme -> rme instanceof Line)
+                .map(rme -> (Line) rme)
+                .extracting(Line::getAnchors)
+                .filteredOn(pts -> pts.length == 0)
+                .hasSize(2);
+        assertThat(result.getElements())
+                .filteredOn(rme -> rme instanceof Line)
+                .map(rme -> (Line) rme)
+                .extracting(Line::getAnchors)
+                .filteredOn(pts -> pts.length == 2)
+                .hasSize(1);
+        assertThat(result.getElements())
+                .filteredOn(rme -> rme instanceof Line)
+                .hasSize(3);
+    }
+  
+    @Test
     void testModelWithCrossL1InformationFlows() {
         // given
         var model = Model.builder()
@@ -506,6 +544,7 @@ public class RenderModelTest {
                 .fontSize(12)
                 .fillStyle("solid")
                 .layer(RenderModel.PROXIES)
+                .originalId("A2")
                 .build();
         assertThat(result.getElements())
                 .contains(

@@ -1,4 +1,4 @@
-package com.senacor.archigraph.draw;
+package com.senacor.archigraph.draw.drawio;
 
 import com.mxgraph.io.mxCodec;
 import com.mxgraph.model.mxCell;
@@ -7,6 +7,7 @@ import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.model.mxICell;
 import com.mxgraph.util.mxPoint;
 import com.mxgraph.util.mxXmlUtils;
+import com.senacor.archigraph.draw.DrawModel;
 import com.senacor.archigraph.render.Line;
 import com.senacor.archigraph.render.Rectangle;
 import com.senacor.archigraph.render.RenderModel;
@@ -23,14 +24,16 @@ import java.util.Map;
 import java.util.Objects;
 
 @Slf4j
-public class DrawModelDrawIO implements DrawModel {
+public class DrawModelImpl implements DrawModel {
 
     private mxGraphModel graph;
     private mxICell defaultLayer;
+    private mxCodec codec;
     private final Map<String, mxICell> layers = new HashMap<>();
 
     @Override
     public DrawModel draw(RenderModel render) {
+        codec = new mxCodec();
         graph = new mxGraphModel();
         var root = (mxICell)graph.getRoot();
         defaultLayer = root.getChildAt(0);
@@ -64,14 +67,27 @@ public class DrawModelDrawIO implements DrawModel {
 
     public void draw(Rectangle rect) {
         log.debug("Draw rect {}", rect.getId());
+
         var geom = new mxGeometry(rect.getX(), rect.getY(), rect.getW(), rect.getH());
-        var node = new mxCell(rect.getText(), geom, getStyle(rect));
+        var cell = new mxCell(rect.getText(), geom, getStyle(rect));
+        cell.setVertex(true);
+        cell.setId(rect.getId());
         var layer = getLayer(rect);
         var index = layer.getChildCount();
 
-        node.setId(rect.getId());
-        node.setVertex(true);
-        graph.add(layer, node, index);
+        if (rect.isProxy()) {
+            var userObject = codec.getDocument().createElement("UserObject");
+            userObject.setAttribute("id", rect.getId());
+            userObject.setAttribute("label", rect.getText());
+            userObject.setAttribute("link", "data:action/json,{\"actions\":[{\"select\":{\"cells\":[\""
+                    + rect.getOriginalId()
+                    + "\"]}},{\"scroll\":{\"cells\":[\""
+                    + rect.getOriginalId()
+                    + "\"]}}]}");
+            cell.setValue(userObject);
+        }
+
+        graph.add(layer, cell, index);
     }
 
     public void draw(Line line) {
@@ -134,7 +150,7 @@ public class DrawModelDrawIO implements DrawModel {
         str.append("rounded=1;");
         str.append("orthogonalLoop=1;");
         str.append("jettySize=auto;");
-        str.append("html=1");
+        str.append("html=1;");
         str.append("curved=0;");
         str.append("strokeWidth=2;");
         if (line.isHasStartArrow()) {
@@ -151,7 +167,6 @@ public class DrawModelDrawIO implements DrawModel {
     }
 
     public String toString() {
-        var codec = new mxCodec();
         var wrapper = mxWrap(codec.encode(graph));
         return mxXmlUtils.getXml(wrapper);
     }

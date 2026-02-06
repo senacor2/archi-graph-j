@@ -115,7 +115,7 @@ public class RenderModel {
      */
     public RenderModel render(Model model) {
         Rectangle modelRect = Rectangle.builder()
-                .id("ROOT")
+                .id("_graphHeading")
                 .text(model.getName())
                 .x(0)
                 .y(0)
@@ -385,6 +385,7 @@ public class RenderModel {
                 .y(origY + proxyAppCoord.row() * ROW_HEIGHT + SPACING)
                 .w(APP_WIDTH)
                 .h(APP_HEIGHT)
+                .originalId(app.getId())
                 .build();
         appFormatter.formatProxy(app, rect);
         return rect;
