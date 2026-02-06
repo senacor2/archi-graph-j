@@ -55,7 +55,7 @@ public class ProxyBoxLayout extends AbstractLayout {
             }
         }
         if (result == null) {
-            log.error("Could not find an empty proxy cell");
+            log.error("Could not find an empty proxy cell around component {}", component.getName());
             throw new IllegalArgumentException("No empty proxy cell");
         }
         proxyBoxCoords.remove(result);
@@ -108,9 +108,7 @@ public class ProxyBoxLayout extends AbstractLayout {
     }
 
     public void fillInto(AppMatrix appMatrix) {
-        layout.forEach((app, coords) -> {
-            coords.forEach(c -> appMatrix.put(c, app));
-        });
+        layout.forEach((app, coords) -> coords.forEach(c -> appMatrix.put(c, app)));
     }
 
     public Coordinate findUsableProxy(Component comp, Application proxyApp, Coordinate innerAppCoordinate) {

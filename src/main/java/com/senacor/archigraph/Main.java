@@ -1,7 +1,7 @@
 package com.senacor.archigraph;
 
 import ch.qos.logback.classic.Level;
-import com.senacor.archigraph.draw.DrawModelDrawIO;
+import com.senacor.archigraph.draw.drawio.DrawModelImpl;
 import com.senacor.archigraph.model.Model;
 import com.senacor.archigraph.render.RenderModel;
 import com.senacor.archigraph.validate.LayoutValidator;
@@ -87,7 +87,7 @@ public class Main {
             var renderModel = new RenderModel();
             renderModel.setRuleBase(reader.getRuleBase());
             renderModel.render(model);
-            new DrawModelDrawIO().draw(renderModel).write(outputFile);
+            new DrawModelImpl().draw(renderModel).write(outputFile);
         } catch (ParseException pe) {
             System.err.println("Could not parse command line: " + pe.getMessage());
             usage(options);
