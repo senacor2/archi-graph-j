@@ -68,7 +68,7 @@ public class Main {
             var lenientFlow = cmdLine.hasOption("lenient-flow");
             var exitAfterValidate = cmdLine.hasOption("x");
             var exitAfterFailure = !cmdLine.hasOption("X");
-            ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger)LoggerFactory.getLogger("com.bmw.archigraph");
+            ch.qos.logback.classic.Logger root = (ch.qos.logback.classic.Logger)LoggerFactory.getLogger("com.senacor.archigraph");
             if (cmdLine.hasOption("d") || cmdLine.hasOption("t")) {
                 if (cmdLine.hasOption("t")) {
                     root.setLevel(Level.TRACE);

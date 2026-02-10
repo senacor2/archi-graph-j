@@ -108,8 +108,8 @@ public class LayoutValidator {
     private Optional<ValidationIssue> validateAppArea(Component c) {
         if (!c.getComponents().isEmpty() && !c.getApplications().isEmpty() && !c.isAppAreaOverride()) {
             return Optional.of(new ValidationIssue(c.getName(), null,
-                    String.format("Component %s has subcomponents and applications but no AppArea",
-                            c.getName())));
+                    String.format("Component %s has subcomponents and %d applications but no AppArea",
+                            c.getName(), c.getComponents().size())));
         } else {
             return Optional.empty();
         }

@@ -51,7 +51,8 @@ public class Reader {
         log.info("Model size:");
         log.info("Components:        {}", model.getComponentMap().size());
         log.info("Applications:      {}", model.getApplicationMap().size());
-        log.info("Information Flows: {}", model.getInformationFlowMap().size());
+        log.info("Information flows: {}", model.getInformationFlowMap().size());
+        log.info("Rules:             {}", ruleBase.size());
         return model;
     }
 
