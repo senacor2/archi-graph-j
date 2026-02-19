@@ -3,6 +3,28 @@
   <component name="JsonSchemaMappingsProjectConfiguration">
     <state>
       <map>
+        <entry key="Archi-Graph Schema">
+          <value>
+            <SchemaInfo>
+              <option name="generatedName" value="New Schema" />
+              <option name="name" value="Archi-Graph Schema" />
+              <option name="relativePathToSchema" value="src/main/resources/component.schema.json" />
+              <option name="patterns">
+                <list>
+                  <Item>
+                    <option name="path" value="data/comp1.json" />
+                  </Item>
+                  <Item>
+                    <option name="path" value="data/comp2.json" />
+                  </Item>
+                  <Item>
+                    <option name="path" value="data/comp3.json" />
+                  </Item>
+                </list>
+              </option>
+            </SchemaInfo>
+          </value>
+        </entry>
         <entry key="JSON Schema 2020-12">
           <value>
             <SchemaInfo>

@@ -143,6 +143,7 @@ public class RenderModel {
         int x = comp.getAbsCompCol() * COL_WIDTH + indent(comp);
         int y = comp.getAbsCompRow() * ROW_HEIGHT + indent(comp) + (comp.getLevel() - 1) * ROW_HEIGHT;
         int w = comp.getWidth() * COL_WIDTH - (comp.getLevel() - 1) * COMP_SPACING * 2;
+        int h = ROW_HEIGHT - (comp.getLevel() - 1) * COMP_SPACING * 2;
         log.debug("Render comp {} orig {}/{}", comp, x, y);
 
         // Heading rectangle
@@ -152,19 +153,19 @@ public class RenderModel {
                 .x(x)
                 .y(y)
                 .w(w)
-                .h(ROW_HEIGHT)
+                .h(h)
                 .build();
         compFormatter.formatHead(comp, compHeadRect);
         add(compHeadRect);
         comp.setOrigin(x, y);
-        y += ROW_HEIGHT;
+        y += h;
         // Body rectangle
         var compBodyRect = Rectangle.builder()
                 .id(comp.getName().replace(" ", "_") + "_body")
                 .x(x)
                 .y(y)
                 .w(w)
-                .h((comp.getHeight() - 1) * ROW_HEIGHT - indent(comp) * 2)
+                .h((comp.getHeight() - 1) * ROW_HEIGHT)
                 .build();
         compFormatter.formatBody(comp, compBodyRect);
         add(compBodyRect);
