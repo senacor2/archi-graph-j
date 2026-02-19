@@ -18,8 +18,13 @@ public record Coordinate(
     }
 
     public static Coordinate of(AppMatrix appMatrix , Rectangle rect) {
-        return new Coordinate((rect.getY() - appMatrix.getOrigY() - RenderModel.SPACING) / RenderModel.ROW_HEIGHT,
-                (rect.getX() - appMatrix.getOrigX() - RenderModel.SPACING) / RenderModel.COL_WIDTH);
+        /*
+         * Note: This calculation ignores RenderModel.SPACING but is accurate enough for this purpose.
+         * Using SPACING would also require to take the indentation into account as SPACING is only correct
+         * for the l1 component and reduced by the indentation for each nested component.
+         */
+        return new Coordinate((rect.getY() - appMatrix.getOrigY()) / RenderModel.ROW_HEIGHT,
+                (rect.getX() - appMatrix.getOrigX()) / RenderModel.COL_WIDTH);
     }
 
     /**

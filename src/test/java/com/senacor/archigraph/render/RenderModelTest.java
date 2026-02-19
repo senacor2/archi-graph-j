@@ -231,7 +231,7 @@ public class RenderModelTest {
                                 .x(10)
                                 .y(410)
                                 .w(940)
-                                .h(200)
+                                .h(180)
                                 .fontcolor(Color.BLACK)
                                 .background(new Color(111, 168, 220))
                                 .bordercolor(Color.BLACK)
@@ -240,9 +240,9 @@ public class RenderModelTest {
                         Rectangle.builder()
                                 .id("COMP-11_body")
                                 .x(10)
-                                .y(610)
+                                .y(590)
                                 .w(940)
-                                .h(180)
+                                .h(200)
                                 .background(Color.WHITE)
                                 .bordercolor(Color.BLACK)
                                 .build(),
@@ -447,13 +447,17 @@ public class RenderModelTest {
                 .name("System 1")
                 .componentNames(List.of("Level 1", "Level 2"))
                 .build();
-        var app1 = new Application("A1", "A1", "C1");
-        var app2 = new Application("A2", "A2", "C1");
-        var app3 = new Application("A3", "A3", "C1");
-        var comp1 = new L1Component("C1", 1, 0, 3, 2, 1);
+        var app1 = new Application("A1", "A1", "C111");
+        var app2 = new Application("A2", "A2", "C111");
+        var app3 = new Application("A3", "A3", "C111");
+        var comp1 = new L1Component("C1", 1, 0, 3, 4, 1);
+        var comp11 = new Component("C11", 0, 0, 3, 3, 2);
+        var comp111 = new Component("C111", 0, 0, 3, 2, 3);
         var if12 = new InformationFlow("IF12", "A1", "A2", "BO", Direction.ONE_WAY);
         var if13 = new InformationFlow("IF13", "A1", "A3", "BO", Direction.ONE_WAY);
         var if23 = new InformationFlow("IF23", "A2", "A3", "BO", Direction.ONE_WAY);
+        comp1.setComponents(List.of(comp11));
+        comp11.setComponents(List.of(comp111));
         model.setL1Components(List.of(comp1));
         model.setApplications(List.of(app1, app2, app3));
         model.setInformationFlows(List.of(if12, if13, if23));
