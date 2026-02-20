@@ -481,6 +481,7 @@ public class RenderModelTest {
                 .filteredOn(rme -> rme instanceof Line)
                 .hasSize(3);
     }
+
     @Test
     void testModelWithCrossL1InformationFlows() {
         // given

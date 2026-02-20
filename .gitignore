@@ -4,6 +4,7 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+/logs/
 
 ### IntelliJ IDEA ###
 .idea/modules.xml
@@ -13,6 +14,7 @@ target/
 .idea/encodings.xml
 .idea/misc.xml
 .idea/vcs.xml
+.idea/csv-editor.xml
 .idea/libraries/
 *.iws
 *.iml
