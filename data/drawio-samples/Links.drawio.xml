@@ -1,0 +1,28 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/29.3.0 Chrome/140.0.7339.249 Electron/38.7.2 Safari/537.36" version="29.3.0">
+  <diagram id="oy7kTzH0EzicozBe48Am" name="Seite-1">
+    <mxGraphModel dx="975" dy="654" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1169" pageHeight="827" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="qGMbYsQRC-5mJY-mGeLX-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Item A" vertex="1">
+          <mxGeometry height="60" width="120" x="1280" y="480" as="geometry" />
+        </mxCell>
+        <mxCell id="V9j5s06CMYVqQOZru64y-2" parent="1" style="rounded=0;whiteSpace=wrap;html=1;" value="Item B" vertex="1">
+          <mxGeometry height="60" width="120" x="730" y="310" as="geometry" />
+        </mxCell>
+        <mxCell id="V9j5s06CMYVqQOZru64y-1" parent="0" value="Proxies" />
+        <UserObject label="Item A Proxy" link="data:action/json,{&quot;actions&quot;:[{&quot;scroll&quot;:{&quot;cells&quot;:[&quot;qGMbYsQRC-5mJY-mGeLX-2&quot;]}},{&quot;select&quot;:{&quot;cells&quot;:[&quot;qGMbYsQRC-5mJY-mGeLX-2&quot;]}}]}" id="qGMbYsQRC-5mJY-mGeLX-1">
+          <mxCell parent="V9j5s06CMYVqQOZru64y-1" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1">
+            <mxGeometry height="60" width="120" x="440" y="310" as="geometry" />
+          </mxCell>
+        </UserObject>
+        <mxCell id="V9j5s06CMYVqQOZru64y-3" edge="1" parent="V9j5s06CMYVqQOZru64y-1" source="qGMbYsQRC-5mJY-mGeLX-1" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" target="V9j5s06CMYVqQOZru64y-2" value="">
+          <mxGeometry height="50" relative="1" width="50" as="geometry">
+            <mxPoint x="630" y="370" as="sourcePoint" />
+            <mxPoint x="680" y="320" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
