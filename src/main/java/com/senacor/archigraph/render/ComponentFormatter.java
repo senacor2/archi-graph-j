@@ -28,14 +28,15 @@ public class ComponentFormatter {
         rect.setFontcolor(FONT_COLOR_COMP_HEAD[comp.getLevel()-1]);
         rect.setBordercolor(Color.BLACK);
         rect.setFontSize(getFontSize(comp.getLevel()));
+        rect.setFontStyle(FontStyle.BOLD);
     }
 
     private static int getFontSize(int level) {
         return switch (level) {
-            case 1 -> 48;
-            case 2 -> 40;
-            case 3 -> 32;
-            default -> 24;
+            case 1 -> 60;
+            case 2 -> 48;
+            case 3 -> 40;
+            default -> 32;
         };
     }
 

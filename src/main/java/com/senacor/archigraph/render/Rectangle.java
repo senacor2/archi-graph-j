@@ -23,6 +23,7 @@ public class Rectangle extends RenderModelElement {
     private String fillStyle;
 
     private int fontSize;
+    private FontStyle fontStyle;
 
     private String text;
 

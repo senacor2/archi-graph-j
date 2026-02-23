@@ -125,7 +125,9 @@ public class DrawModelImpl implements DrawModel {
         str.append("whiteSpace=wrap;");
         str.append("html=1;");
         str.append("fontSize="); str.append(rect.getFontSize()); str.append(';');
-        str.append("fontStyle=1;");
+        if (rect.getFontStyle() != null) {
+            str.append("fontStyle="); str.append(rect.getFontStyle().styleCode); str.append(';');
+        }
         str.append("align=center;");
         str.append("verticalAlign=middle;");
         if (rect.getBackground() != null) {

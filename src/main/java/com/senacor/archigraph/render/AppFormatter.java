@@ -15,7 +15,7 @@ class AppFormatter {
     static final Color SEA_GREEN = Color.decode("#378C96");
     static final Color LAWN_GREEN = Color.decode("#38761D");
     static final Color PINK = Color.decode("#EA9999");
-    static final int FONT_SIZE = 12;
+    static final int FONT_SIZE = 24;
     static final String BACKGROUND_COLOR = "backgroundColor";
     static final String FONT_COLOR = "fontColor";
     static final String BORDER_COLOR = "borderColor";
@@ -34,6 +34,7 @@ class AppFormatter {
         var fontColor = Color.decode(result.get(FONT_COLOR));
         var borderColor = Color.decode(result.get(BORDER_COLOR));
         var fillStyle = result.get(FILL_STYLE);
+        rect.setFontStyle(FontStyle.NORMAL);
         rect.setBackground(bgColor);
         rect.setFillStyle(fillStyle);
         rect.setFontcolor(fontColor);
@@ -58,6 +59,7 @@ class AppFormatter {
         var fillStyle = result.get(FILL_STYLE);
         rect.setText(app.getName());
         rect.setFontSize(FONT_SIZE);
+        rect.setFontStyle(FontStyle.NORMAL);
         rect.setBackground(bgColor);
         rect.setFontcolor(fontColor);
         rect.setBordercolor(borderColor);

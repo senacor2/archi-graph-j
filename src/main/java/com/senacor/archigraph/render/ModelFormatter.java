@@ -14,5 +14,6 @@ public class ModelFormatter {
         rect.setFontcolor(FG_COLOR_MODEL);
         rect.setBordercolor(Color.BLACK);
         rect.setFontSize(96);
+        rect.setFontStyle(FontStyle.BOLD);
     }
 }

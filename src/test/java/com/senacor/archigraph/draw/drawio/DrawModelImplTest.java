@@ -1,5 +1,6 @@
 package com.senacor.archigraph.draw.drawio;
 
+import com.senacor.archigraph.render.FontStyle;
 import com.senacor.archigraph.render.Line;
 import com.senacor.archigraph.render.Rectangle;
 import com.senacor.archigraph.render.RenderModel;
@@ -41,7 +42,7 @@ public class DrawModelImplTest {
                         <mxCell id="0"/>\
                         <mxCell id="1" parent="0"/>\
                         <mxCell id="RECT-1" parent="1" \
-                        style="rounded=0;whiteSpace=wrap;html=1;fontSize=22;fontStyle=1;\
+                        style="rounded=0;whiteSpace=wrap;html=1;fontSize=22;\
                         align=center;verticalAlign=middle;\
                         fillColor=#FFFFFF;fontColor=#000000;" \
                         value="Rectangle 1" vertex="1">\
@@ -95,7 +96,7 @@ public class DrawModelImplTest {
                         <mxCell id="0"/>\
                         <mxCell id="1" parent="0"/>\
                         <mxCell id="RECT-1" parent="1" \
-                        style="rounded=0;whiteSpace=wrap;html=1;fontSize=22;fontStyle=1;\
+                        style="rounded=0;whiteSpace=wrap;html=1;fontSize=22;\
                         align=center;verticalAlign=middle;\
                         fillColor=#FFFFFF;fontColor=#000000;" \
                         value="Rectangle 1" vertex="1">\
@@ -103,7 +104,7 @@ public class DrawModelImplTest {
                         </mxCell>\
                         <mxCell id="Proxies" parent="0" value="Proxies"/>\
                         <mxCell id="RECT-2" parent="Proxies" \
-                        style="rounded=0;whiteSpace=wrap;html=1;fontSize=22;fontStyle=1;\
+                        style="rounded=0;whiteSpace=wrap;html=1;fontSize=22;\
                         align=center;verticalAlign=middle;\
                         fillColor=#FFFFFF;fontColor=#000000;" \
                         value="Rectangle 2" vertex="1">\
@@ -128,6 +129,7 @@ public class DrawModelImplTest {
                 .h(100)
                 .text("Rectangle 1")
                 .fontSize(22)
+                .fontStyle(FontStyle.BOLD)
                 .background(Color.WHITE)
                 .fontcolor(Color.BLACK)
                 .build();
@@ -140,6 +142,7 @@ public class DrawModelImplTest {
                 .h(100)
                 .text("Rectangle 2")
                 .fontSize(22)
+                .fontStyle(FontStyle.BOLD)
                 .background(Color.WHITE)
                 .fontcolor(Color.BLACK)
                 .originalId("RECT-3")
