@@ -44,6 +44,7 @@ public class RenderModelTest {
                                 .h(200)
                                 .text("System 1")
                                 .fontSize(96)
+                                .fontStyle(FontStyle.BOLD)
                                 .background(new Color(0, 0, 156))
                                 .fontcolor(Color.WHITE)
                                 .bordercolor(Color.BLACK)
@@ -55,7 +56,8 @@ public class RenderModelTest {
                                 .w(960)
                                 .h(200)
                                 .text("COMP-1")
-                                .fontSize(48)
+                                .fontSize(60)
+                                .fontStyle(FontStyle.BOLD)
                                 .background(new Color(11, 83, 148))
                                 .bordercolor(Color.BLACK)
                                 .fontcolor(Color.WHITE)
@@ -76,7 +78,8 @@ public class RenderModelTest {
                                 .y(200)
                                 .w(640)
                                 .h(200)
-                                .fontSize(48)
+                                .fontSize(60)
+                                .fontStyle(FontStyle.BOLD)
                                 .background(new Color(11, 83, 148))
                                 .bordercolor(Color.BLACK)
                                 .fontcolor(Color.WHITE)
@@ -120,6 +123,7 @@ public class RenderModelTest {
                                 .fontcolor(Color.WHITE)
                                 .bordercolor(Color.BLACK)
                                 .fontSize(96)
+                                .fontStyle(FontStyle.BOLD)
                                 .build(),
                         Rectangle.builder()
                                 .id("COMP-1_head")
@@ -131,7 +135,8 @@ public class RenderModelTest {
                                 .background(new Color(11, 83, 148))
                                 .fontcolor(Color.WHITE)
                                 .bordercolor(Color.BLACK)
-                                .fontSize(48)
+                                .fontSize(60)
+                                .fontStyle(FontStyle.BOLD)
                                 .build(),
                         Rectangle.builder()
                                 .id("COMP-1_body")
@@ -154,7 +159,8 @@ public class RenderModelTest {
                                 .fillStyle("solid")
                                 .fontcolor(Color.WHITE)
                                 .bordercolor(Color.BLACK)
-                                .fontSize(12)
+                                .fontSize(24)
+                                .fontStyle(FontStyle.NORMAL)
                                 .build(),
                         Rectangle.builder()
                                 .id("App-2")
@@ -168,7 +174,8 @@ public class RenderModelTest {
                                 .fillStyle("solid")
                                 .fontcolor(Color.WHITE)
                                 .bordercolor(Color.BLACK)
-                                .fontSize(12)
+                                .fontSize(24)
+                                .fontStyle(FontStyle.NORMAL)
                                 .build()
                 );
         assertEquals(new Coordinate(1, 0), c1.getAppMatrix().getAppCoordinate(a1));
@@ -203,6 +210,7 @@ public class RenderModelTest {
                                 .background(new Color(0, 0, 156))
                                 .bordercolor(Color.BLACK)
                                 .fontSize(96)
+                                .fontStyle(FontStyle.BOLD)
                                 .build(),
                         Rectangle.builder()
                                 .id("COMP-1_head")
@@ -214,7 +222,8 @@ public class RenderModelTest {
                                 .fontcolor(Color.WHITE)
                                 .background(new Color(11, 83, 148))
                                 .bordercolor(Color.BLACK)
-                                .fontSize(48)
+                                .fontSize(60)
+                                .fontStyle(FontStyle.BOLD)
                                 .build(),
                         Rectangle.builder()
                                 .id("COMP-1_body")
@@ -235,7 +244,8 @@ public class RenderModelTest {
                                 .fontcolor(Color.BLACK)
                                 .background(new Color(111, 168, 220))
                                 .bordercolor(Color.BLACK)
-                                .fontSize(40)
+                                .fontSize(48)
+                                .fontStyle(FontStyle.BOLD)
                                 .build(),
                         Rectangle.builder()
                                 .id("COMP-11_body")
@@ -258,7 +268,8 @@ public class RenderModelTest {
                                 .fillStyle("solid")
                                 .fontcolor(Color.WHITE)
                                 .bordercolor(Color.BLACK)
-                                .fontSize(12)
+                                .fontSize(24)
+                                .fontStyle(FontStyle.NORMAL)
                                 .build(),
                         Rectangle.builder()
                                 .id("A2")
@@ -272,7 +283,8 @@ public class RenderModelTest {
                                 .fillStyle("solid")
                                 .fontcolor(Color.WHITE)
                                 .bordercolor(Color.BLACK)
-                                .fontSize(12)
+                                .fontSize(24)
+                                .fontStyle(FontStyle.NORMAL)
                                 .build()
                 );
         assertEquals(new Coordinate(2, 0), comp1.getAppMatrix().getAppCoordinate(app1));
@@ -311,7 +323,8 @@ public class RenderModelTest {
                 .background(Color.BLACK)
                 .fillStyle("solid")
                 .bordercolor(Color.BLACK)
-                .fontSize(12)
+                .fontSize(24)
+                .fontStyle(FontStyle.NORMAL)
                 .build();
         var rectApp2 = Rectangle.builder()
                 .id("A2")
@@ -325,7 +338,8 @@ public class RenderModelTest {
                 .background(Color.BLACK)
                 .fillStyle("solid")
                 .bordercolor(Color.BLACK)
-                .fontSize(12)
+                .fontSize(24)
+                .fontStyle(FontStyle.NORMAL)
                 .build();
         assertThat(result.getElements())
                 .contains(
@@ -340,6 +354,7 @@ public class RenderModelTest {
                                 .background(new Color(0, 0, 156))
                                 .bordercolor(Color.BLACK)
                                 .fontSize(96)
+                                .fontStyle(FontStyle.BOLD)
                                 .build(),
                         Rectangle.builder()
                                 .id("C1_body")
@@ -360,7 +375,8 @@ public class RenderModelTest {
                                 .fontcolor(Color.WHITE)
                                 .background(new Color(11, 83, 148))
                                 .bordercolor(Color.BLACK)
-                                .fontSize(48)
+                                .fontSize(60)
+                                .fontStyle(FontStyle.BOLD)
                                 .build(),
                         rectApp1,
                         rectApp2,
@@ -409,7 +425,8 @@ public class RenderModelTest {
                                 .background(Color.BLACK)
                                 .bordercolor(Color.BLACK)
                                 .fontcolor(Color.WHITE)
-                                .fontSize(12)
+                                .fontSize(24)
+                                .fontStyle(FontStyle.NORMAL)
                                 .fillStyle("solid")
                                 .rounded(true)
                                 .layer(null)
@@ -424,7 +441,8 @@ public class RenderModelTest {
                                 .background(Color.BLACK)
                                 .bordercolor(Color.BLACK)
                                 .fontcolor(Color.WHITE)
-                                .fontSize(12)
+                                .fontSize(24)
+                                .fontStyle(FontStyle.NORMAL)
                                 .fillStyle("solid")
                                 .rounded(true)
                                 .layer(null)
@@ -518,7 +536,8 @@ public class RenderModelTest {
                 .fontcolor(Color.WHITE)
                 .background(Color.BLACK)
                 .fillStyle("solid")
-                .fontSize(12)
+                .fontSize(24)
+                .fontStyle(FontStyle.NORMAL)
                 .build();
         var rectApp12 = Rectangle.builder()
                 .id("A12")
@@ -532,7 +551,8 @@ public class RenderModelTest {
                 .fontcolor(Color.WHITE)
                 .background(Color.BLACK)
                 .fillStyle("solid")
-                .fontSize(12)
+                .fontSize(24)
+                .fontStyle(FontStyle.NORMAL)
                 .build();
         var rectApp2 = Rectangle.builder()
                 .id("C1_proxy_A2_1")
@@ -545,7 +565,8 @@ public class RenderModelTest {
                 .fontcolor(Color.WHITE)
                 .bordercolor(Color.BLACK)
                 .background(Color.BLACK)
-                .fontSize(12)
+                .fontSize(24)
+                .fontStyle(FontStyle.NORMAL)
                 .fillStyle("solid")
                 .layer(RenderModel.PROXIES)
                 .originalId("A2")
