@@ -20,10 +20,10 @@ jobs:
         with:
           fetch-depth: 0  # Shallow clones disabled for better relevancy of analysis
 
-      - name: Set up JDK 21
+      - name: Set up JDK 25
         uses: actions/setup-java@v4
         with:
-          java-version: '21'
+          java-version: '25'
           distribution: 'temurin'
           cache: maven
 
@@ -39,5 +39,5 @@ jobs:
           args: >
             -Dsonar.projectKey=tnrcore_tnrarch-archi-graph-j
             -Dsonar.projectName=tnrarch-archi-graph-j
-            -Dsonar.java.source=21
+            -Dsonar.java.source=25
             -Dsonar.coverage.jacoco.xmlReportPaths=target/site/jacoco/jacoco.xml
