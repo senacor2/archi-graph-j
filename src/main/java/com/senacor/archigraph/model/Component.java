@@ -46,9 +46,9 @@ public class Component {
 
     private final List<InformationFlow> localInformationFlows = new LinkedList<>();
 
-    private final Set<InformationFlow> l1CompInformationFlows = new HashSet<>();
+    private final Set<InformationFlow> l1CompInformationFlows = new LinkedHashSet<>();
 
-    private final Set<InformationFlow> crossL1CompInformationFlows = new HashSet<>();
+    private final Set<InformationFlow> crossL1CompInformationFlows = new LinkedHashSet<>();
 
     private final AppMatrix appMatrix;
 
