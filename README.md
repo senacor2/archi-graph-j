@@ -44,6 +44,24 @@ Information flows where the source or destination application is not in the mode
 - `-x` or `--validateOnly` Load the model and validate it, then exit. No rendering of output is done.
 - `-X` or `--continueWithFailure` Try rendering, even if validation found issues. May fail during rendering.
 
+## Building
+
+An uberjar containing all dependencies can be built by running
+
+````shell
+mvn -Dskip-tests=yes package
+````
+
+This will invoke the maven shade plugin that collects all dependencies and prepares a proper manifest that
+starts the Main class. You can now start the program using `java -jar archi-graph-j.jar`.
+
+The Docker image is intended to be the base of your own image. It contains the generator and when run will show the
+usage information of the current version.
+
+Your own image would use it as a base and add the data cleansing programs, the mount point for the input and output
+files, scripts that do preprocessing and start the program and override the entrypoint.
+
+
 ## Future work
 
 - Build a graphical editor for the component file.
