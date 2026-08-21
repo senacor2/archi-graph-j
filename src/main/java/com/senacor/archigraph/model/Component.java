@@ -46,9 +46,13 @@ public class Component {
 
     private final List<InformationFlow> localInformationFlows = new LinkedList<>();
 
-    private final Set<InformationFlow> l1CompInformationFlows = new HashSet<>();
+    /**
+     * Linked sets keep the order in which the flows were read. The renderer places proxies in
+     * iteration order, so a plain HashSet would let the layout vary between JVMs.
+     */
+    private final Set<InformationFlow> l1CompInformationFlows = new LinkedHashSet<>();
 
-    private final Set<InformationFlow> crossL1CompInformationFlows = new HashSet<>();
+    private final Set<InformationFlow> crossL1CompInformationFlows = new LinkedHashSet<>();
 
     private final AppMatrix appMatrix;
 

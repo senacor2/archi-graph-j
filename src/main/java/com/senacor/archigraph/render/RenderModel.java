@@ -345,7 +345,8 @@ public class RenderModel {
      * @return A map of information flows with their associated proxy rectangles.
      */
     private Map<InformationFlow, Rectangle> createAndPlaceProxies(L1Component comp, int origX, int origY) {
-        Map<InformationFlow, Rectangle> result = new HashMap<>();
+        // Linked so that the flow lines are rendered in the order the flows were read.
+        Map<InformationFlow, Rectangle> result = new LinkedHashMap<>();
         var proxyBoxLayout = new ProxyBoxLayout(comp);
         comp.getL1AppMatrix().merge(comp.getAppMatrix(), comp.getProxyAreaSize(), comp.getProxyAreaSize());
         for (var flow : comp.getCrossL1CompInformationFlows()) {
