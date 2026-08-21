@@ -25,9 +25,17 @@ jobs:
         server-id: github # Value of the distributionManagement/repository/id field of the pom.xml
         settings-path: ${{ github.workspace }} # location for the settings.xml file
 
+    # jgraphx is resolved from the GitHub Packages repository of another project
+    # (scij/jgraphx), which the automatic github.token cannot read. Set the
+    # GH_PACKAGES_TOKEN secret to a PAT with the read:packages scope; without the
+    # secret the build falls back to the automatic token.
     - name: Build with Maven
-      run: mvn -B package --file pom.xml
+      run: mvn -B package -s $GITHUB_WORKSPACE/settings.xml --file pom.xml
+      env:
+        GITHUB_TOKEN: ${{ secrets.GH_PACKAGES_TOKEN || github.token }}
 
+    # Publishing goes to this repository's package registry, so it keeps using the
+    # automatic token, which the packages:write permission above covers.
     - name: Publish to GitHub Packages Apache Maven
       run: mvn deploy -s $GITHUB_WORKSPACE/settings.xml
       env:

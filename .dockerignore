@@ -1,0 +1,6 @@
+# The build context only needs the shaded jar, everything else is excluded so
+# that sources, sample data and logs do not end up in the build context.
+*
+!target
+target/*
+!target/archi-graph-j.jar

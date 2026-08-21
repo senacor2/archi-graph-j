@@ -44,23 +44,24 @@ Information flows where the source or destination application is not in the mode
 - `-x` or `--validateOnly` Load the model and validate it, then exit. No rendering of output is done.
 - `-X` or `--continueWithFailure` Try rendering, even if validation found issues. May fail during rendering.
 
-## Building
+## Container image
 
-An uberjar containing all dependencies can be built by running
+Every release publishes a multi-arch image (`linux/amd64` and `linux/arm64`) to the GitHub Container Registry:
 
-````shell
-mvn -Dskip-tests=yes package
-````
+```
+docker pull ghcr.io/senacor2/archi-graph-j:latest
+```
 
-This will invoke the maven shade plugin that collects all dependencies and prepares a proper manifest that
-starts the Main class. You can now start the program using `java -jar archi-graph-j.jar`.
+The image sets the program as its entry point and uses `/work` as working directory, so mount the directory
+holding the input files there and pass the file names relative to it:
 
-The Docker image is intended to be the base of your own image. It contains the generator and when run will show the
-usage information of the current version.
+```
+docker run --rm -v "$PWD:/work" ghcr.io/senacor2/archi-graph-j:latest \
+  component-model.json -a applications.csv -f informationflows.csv -r rulebase.csv
+```
 
-Your own image would use it as a base and add the data cleansing programs, the mount point for the input and output
-files, scripts that do preprocessing and start the program and override the entrypoint.
-
+The output file is written back into the mounted directory. On Linux hosts add `--user "$(id -u):$(id -g)"`
+to keep the generated file owned by the calling user.
 
 ## Future work
 
