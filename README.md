@@ -44,6 +44,25 @@ Information flows where the source or destination application is not in the mode
 - `-x` or `--validateOnly` Load the model and validate it, then exit. No rendering of output is done.
 - `-X` or `--continueWithFailure` Try rendering, even if validation found issues. May fail during rendering.
 
+## Container image
+
+Every release publishes a multi-arch image (`linux/amd64` and `linux/arm64`) to the GitHub Container Registry:
+
+```
+docker pull ghcr.io/senacor2/archi-graph-j:latest
+```
+
+The image sets the program as its entry point and uses `/work` as working directory, so mount the directory
+holding the input files there and pass the file names relative to it:
+
+```
+docker run --rm -v "$PWD:/work" ghcr.io/senacor2/archi-graph-j:latest \
+  component-model.json -a applications.csv -f informationflows.csv -r rulebase.csv
+```
+
+The output file is written back into the mounted directory. On Linux hosts add `--user "$(id -u):$(id -g)"`
+to keep the generated file owned by the calling user.
+
 ## Future work
 
 - Build a graphical editor for the component file.
