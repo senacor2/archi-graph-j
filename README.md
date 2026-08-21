@@ -46,11 +46,18 @@ Information flows where the source or destination application is not in the mode
 
 ## Container image
 
-Every release publishes a multi-arch image (`linux/amd64` and `linux/arm64`) to the GitHub Container Registry:
+Every release publishes a multi-arch image (`linux/amd64` and `linux/arm64`) to the GitHub Container Registry.
+
+The package is private, so pulling requires a login with a personal access token that has the
+`read:packages` scope:
 
 ```
+echo $GITHUB_TOKEN | docker login ghcr.io -u your-github-username --password-stdin
 docker pull ghcr.io/senacor2/archi-graph-j:latest
 ```
+
+The `latest` tag points at the most recent release. Images are also tagged with the release version
+and with `sha-<short commit>`, which is what a manual workflow run produces.
 
 The image sets the program as its entry point and uses `/work` as working directory, so mount the directory
 holding the input files there and pass the file names relative to it:
