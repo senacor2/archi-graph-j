@@ -137,4 +137,19 @@
         </repository>
     </repositories>
 
+    <!-- The id matches the server-id that the workflow lets setup-java write into
+         settings.xml, so that mvn deploy authenticates with the workflow token. -->
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/senacor2/archi-graph-j</url>
+        </repository>
+        <snapshotRepository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/senacor2/archi-graph-j</url>
+        </snapshotRepository>
+    </distributionManagement>
+
 </project>
