@@ -1,6 +1,7 @@
 package com.senacor.archigraph.model;
 
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
 import java.util.List;
 import java.util.Map;
@@ -415,6 +416,7 @@ public class ComponentLayoutTest {
      * Refers to issue 17
      */
     @Test
+    @EnabledIfEnvironmentVariable(named = "LONG_RUNNING", matches = "true")
     void testEnumTooLarge() {
         // Given
         Model model = new Model();
