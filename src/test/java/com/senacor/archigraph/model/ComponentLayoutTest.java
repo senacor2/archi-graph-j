@@ -410,4 +410,40 @@ public class ComponentLayoutTest {
         assertThat(comp.getAppMatrix().getAppCoordinate(app3)).isNotNull();
         assertThat(comp.getAppMatrix().getAppCoordinate(app4)).isNotNull();
     }
+
+    /**
+     * Refers to issue 17
+     */
+    @Test
+    void testEnumTooLarge() {
+        // Given
+        Model model = new Model();
+        L1Component c1 = new L1Component("C1", 1, 1, 4, 5, 0);
+        Application app1 = new Application("a1", "A1", "C1");
+        Application app2 = new Application("a2", "A2", "C1");
+        Application app3 = new Application("a3", "A3", "C1");
+        Application app4 = new Application("a4", "A4", "C1");
+        Application app5 = new Application("a5", "A5", "C1");
+        Application app6 = new Application("a6", "A6", "C1");
+        Application app7 = new Application("a7", "A7", "C1");
+        Application app8 = new Application("a8", "A8", "C1");
+        Application app9 = new Application("a9", "A9", "C1");
+        InformationFlow if12 = new InformationFlow("if12", "a1", "a2", "", Direction.ONE_WAY);
+        InformationFlow if24 = new InformationFlow("if24", "a2", "a4", "", Direction.ONE_WAY);
+        InformationFlow if48 = new InformationFlow("if48", "a4", "a8", "", Direction.ONE_WAY);
+        model.setL1Components(List.of(c1));
+        model.setApplications(List.of(app1, app2, app3, app4, app5, app6, app7, app8, app9));
+        model.setInformationFlows(List.of(if12, if24, if48));
+
+        // when
+        long start = System.currentTimeMillis();
+        c1.layout();
+        long end = System.currentTimeMillis();
+
+        // then
+        assertThat(end - start).isLessThan(10 * 60 * 1000);
+        assertThat(c1.getApplications()).containsExactlyInAnyOrder(
+                app1, app2, app3, app4, app5, app6, app7, app8, app9
+        );
+    }
 }
