@@ -1,12 +1,12 @@
 package com.senacor.archigraph.model;
 
 import com.github.dakusui.combinatoradix.Combinator;
-import com.github.dakusui.combinatoradix.Enumerator;
 import com.github.dakusui.combinatoradix.Permutator;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -31,14 +31,15 @@ public class ComponentLayout extends AbstractLayout {
     /**
      * Computes all possible permutations of app positions inside the component and returns
      * them as a stream of position list where each list is one possible placement.
+     *
      * @param appCount Number of apps in this component.
      * @return A stream of List with app coordinates.
      */
     Stream<List<Coordinate>> appPositionsInComponent(final int appCount) {
         final int rows = component.getAppHeight();
         final int columns = component.getAppWidth();
-        var indexes = IntStream.range(0, rows*columns).boxed().toList();
-        return new EnumeratorAdapter<>(new Permutator<>(indexes, appCount)).parallelStream()
+        var indexes = IntStream.range(0, rows * columns).boxed().toList();
+        return StreamSupport.stream(new LongPermutationSpliterator<>(new Permutator<>(indexes, appCount)), true)
                 .map(onePerm -> onePerm.stream()
                         .map(i -> Coordinate.fromIndex(columns, i))
                         .toList());
@@ -180,25 +181,60 @@ public class ComponentLayout extends AbstractLayout {
 
     }
 
-    static class EnumeratorAdapter<E> extends AbstractList<List<E>> {
-        final Enumerator<E> enumerator;
+    static class LongPermutationSpliterator<E> implements Spliterator<List<E>> {
 
-        public EnumeratorAdapter(Enumerator<E> enumerator) {
-            this.enumerator = enumerator;
+        private final Permutator<E> permutator;
+        private long current;
+        private final long end;
+
+        public LongPermutationSpliterator(Permutator<E> permutator) {
+            this(permutator, 0L, permutator.size());
+        }
+
+        public LongPermutationSpliterator(Permutator<E> permutator, long start, long end) {
+            this.permutator = permutator;
+            this.current = start;
+            this.end = end;
         }
 
         @Override
-        public List<E> get(int index) {
-            return this.enumerator.get(index);
-        }
-
-        @Override
-        public int size() {
-            long result = this.enumerator.size();
-            if (result > Integer.MAX_VALUE) {
-                throw new IllegalStateException("Enum size is too large");
+        public boolean tryAdvance(Consumer<? super List<E>> action) {
+            if (current < end) {
+                action.accept(permutator.get(current));
+                current++;
+                return true;
+            } else {
+                return false;
             }
-            return (int) result;
+        }
+
+        @Override
+        public Spliterator<List<E>> trySplit() {
+            long remaining = end - current;
+
+            // do not split if splits are too small
+            if (remaining < 10_000L) {
+                return null;
+            }
+            long mid = current + (remaining / 2);
+
+            // create a new spliterator for the first half of the current spliterator
+            Spliterator<List<E>> prefix = new LongPermutationSpliterator<>(permutator, current, mid);
+
+            // move the current index of this spliterator behind the new spliterator
+            this.current = mid;
+
+            return prefix;
+        }
+
+        @Override
+        public long estimateSize() {
+            return end - current;
+        }
+
+        @Override
+        public int characteristics() {
+            return IMMUTABLE | NONNULL | ORDERED | SIZED | SUBSIZED;
         }
     }
 
