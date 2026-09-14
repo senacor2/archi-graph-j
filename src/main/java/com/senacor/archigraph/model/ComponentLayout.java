@@ -139,11 +139,21 @@ public class ComponentLayout extends AbstractLayout {
             quality = 0;
             layout = defaultLayout(component.getApplications());
         } else {
-            var best = appPositionsInComponent(component.getApplications().size())
+            // First run - terminate early if there is an intersection-free solution
+            Optional<RatedLayout> firstBest = appPositionsInComponent(component.getApplications().size())
+                    .unordered()
+                    .map(l -> zipmapAppsAndCoordinates(component.getApplications(), l))
+                    .map(layout -> layoutQuality(layout, flows))
+                    .filter(o -> o.getQuality() == 0)
+                    .findAny();
+
+            // If there is no best solution, find the number of minimal intersections. Currently, there seems
+            // to be no better way to achieve this with parallel streams.
+            var best = firstBest.orElseGet(() -> appPositionsInComponent(component.getApplications().size())
                     .map(l -> zipmapAppsAndCoordinates(component.getApplications(), l))
                     .map(layout -> layoutQuality(layout, flows))
                     .min(RatedLayout::compareTo)
-                    .orElseThrow();
+                    .orElseThrow());
             quality = best.quality;
             layout = best.layout;
         }
