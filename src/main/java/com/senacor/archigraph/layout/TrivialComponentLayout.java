@@ -35,6 +35,7 @@ public class TrivialComponentLayout extends AbstractComponentLayout {
         return zipmapAppsAndCoordinates(apps, coords);
     }
 
+    @Override
     public int getQuality() {
         return 0;
     }
