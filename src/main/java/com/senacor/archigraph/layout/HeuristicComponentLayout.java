@@ -14,7 +14,6 @@ import java.util.stream.IntStream;
  * Layout class that uses a heuristic approach to lay out applications inside
  * a component. This class shall be used when components are large and have
  * many applications.
- *
  * This optimizer uses the simulated annealing approach.
  */
 @Slf4j
