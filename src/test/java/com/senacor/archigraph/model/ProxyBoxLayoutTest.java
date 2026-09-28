@@ -1,5 +1,6 @@
 package com.senacor.archigraph.model;
 
+import com.senacor.archigraph.layout.ProxyBoxLayout;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,8 +16,7 @@ public class ProxyBoxLayoutTest {
     void testCreateProxyBox() {
         // fixture
         var comp = new L1Component("Comp-1", 4, 8, 2, 2, 1);
-        var compLayout = new ComponentLayout(comp);
-        compLayout.layout();
+        comp.layout();
         // test
         var proxyBoxLayout = new ProxyBoxLayout(comp);
         // verify
@@ -41,8 +41,7 @@ public class ProxyBoxLayoutTest {
     void testCreateProxyBox2() {
         // fixture
         var comp = new L1Component("Comp-1", 4, 8, 2, 2, 2);
-        var compLayout = new ComponentLayout(comp);
-        compLayout.layout();
+        comp.layout();
         // test
         var proxyBoxLayout = new ProxyBoxLayout(comp);
         // verify
@@ -93,8 +92,7 @@ public class ProxyBoxLayoutTest {
         // fixture
         var appCoord = new Coordinate(appRow, appCol);
         var comp = new L1Component("Comp-1", 4, 8, width, height, 1);
-        var compLayout = new ComponentLayout(comp);
-        compLayout.layout();
+        comp.layout();
         var proxyBoxLayout = new ProxyBoxLayout(comp);
         // test
         var result = proxyBoxLayout.findNearestEmptyCell(appCoord);

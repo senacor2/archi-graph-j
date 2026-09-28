@@ -13,7 +13,7 @@ public record Coordinate(
         int col
 ) implements Comparable<Coordinate>{
 
-    static Coordinate fromIndex(final int columns, final int index) {
+    public static Coordinate fromIndex(final int columns, final int index) {
         return new Coordinate(index / columns, index % columns);
     }
 

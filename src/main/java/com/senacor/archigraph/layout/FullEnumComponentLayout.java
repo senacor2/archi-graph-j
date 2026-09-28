@@ -1,13 +1,16 @@
-package com.senacor.archigraph.model;
+package com.senacor.archigraph.layout;
 
 import com.github.dakusui.combinatoradix.Combinator;
 import com.github.dakusui.combinatoradix.Permutator;
+import com.senacor.archigraph.model.Application;
+import com.senacor.archigraph.model.Component;
+import com.senacor.archigraph.model.Coordinate;
+import com.senacor.archigraph.model.InformationFlow;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -18,13 +21,11 @@ import java.util.stream.StreamSupport;
  * intersections of the information flow arcs.
  */
 @Slf4j
-public class ComponentLayout extends AbstractLayout {
+public class FullEnumComponentLayout extends AbstractLayout {
 
     private int quality;
-    protected Map<Application, Coordinate> layout;
 
-
-    public ComponentLayout(Component comp) {
+    public FullEnumComponentLayout(Component comp) {
         super(comp);
     }
 
@@ -98,22 +99,6 @@ public class ComponentLayout extends AbstractLayout {
     }
 
     /**
-     * Join (zip) the lists and components side by side into a map keyed by the apps with the coords as value.
-     * Both lists must have the same length.
-     *
-     * @param apps   Apps will be used as keys.
-     * @param coords Coords will be used as values.
-     * @return A map where each app in <code>apps</code> is associated with the coord at the same position in
-     * <code>coords</code>.
-     */
-    Map<Application, Coordinate> zipmapAppsAndCoordinates(List<Application> apps, List<Coordinate> coords) {
-        assert apps.size() == coords.size();
-        return IntStream.range(0, coords.size())
-                .mapToObj(i -> new AppCoordinate(apps.get(i), coords.get(i)))
-                .collect(Collectors.toMap(AppCoordinate::app, AppCoordinate::coord));
-    }
-
-    /**
      * Create a default layout for the apps inside the component.
      *
      * @param apps List of apps.
@@ -130,46 +115,30 @@ public class ComponentLayout extends AbstractLayout {
      * Create the application layout inside the component grid, taking information flows into account.
      * After this operation, the layout quality and the application positions are initialized and can be retrieved.
      */
+    @Override
     public void layout() {
         var flows = component.getLocalInformationFlows();
-        if (component.getApplications().isEmpty()) {
-            quality = 0;
-            layout = new HashMap<>();
-        } else if (flows.isEmpty()) {
-            quality = 0;
-            layout = defaultLayout(component.getApplications());
-        } else {
-            // First run - terminate early if there is an intersection-free solution
-            Optional<RatedLayout> firstBest = appPositionsInComponent(component.getApplications().size())
-                    .unordered()
-                    .map(l -> zipmapAppsAndCoordinates(component.getApplications(), l))
-                    .map(layout -> layoutQuality(layout, flows))
-                    .filter(o -> o.getQuality() == 0)
-                    .findAny();
+        // First run - terminate early if there is an intersection-free solution
+        Optional<RatedLayout> firstBest = appPositionsInComponent(component.getApplications().size())
+                .unordered()
+                .map(l -> zipmapAppsAndCoordinates(component.getApplications(), l))
+                .map(layout -> layoutQuality(layout, flows))
+                .filter(o -> o.getQuality() == 0)
+                .findAny();
 
-            // If there is no best solution, find the number of minimal intersections. Currently, there seems
-            // to be no better way to achieve this with parallel streams.
-            var best = firstBest.orElseGet(() -> appPositionsInComponent(component.getApplications().size())
-                    .map(l -> zipmapAppsAndCoordinates(component.getApplications(), l))
-                    .map(layout -> layoutQuality(layout, flows))
-                    .min(RatedLayout::compareTo)
-                    .orElseThrow());
-            quality = best.quality;
-            layout = best.layout;
-        }
+        // If there is no best solution, find the number of minimal intersections. Currently, there seems
+        // to be no better way to achieve this with parallel streams.
+        var best = firstBest.orElseGet(() -> appPositionsInComponent(component.getApplications().size())
+                .map(l -> zipmapAppsAndCoordinates(component.getApplications(), l))
+                .map(layout -> layoutQuality(layout, flows))
+                .min(RatedLayout::compareTo)
+                .orElseThrow());
+        quality = best.quality;
+        layout = best.layout;
     }
 
-    /**
-     * Returns the row column position of an app as defined by the layout.
-     *
-     * @param app An Application.
-     * @return The coordinate of the app. Will return <code>null</code> if the layout does not contain the app.
-     */
-    Coordinate getAppCoordinate(Application app) {
-        return layout.get(app);
-    }
-
-    int getQuality() {
+    @Override
+    public int getQuality() {
         return quality;
     }
 
@@ -246,10 +215,6 @@ public class ComponentLayout extends AbstractLayout {
         public int characteristics() {
             return IMMUTABLE | NONNULL | ORDERED | SIZED | SUBSIZED;
         }
-    }
-
-    void fillInto(AppMatrix appMatrix) {
-        layout.forEach((app, coord) -> appMatrix.put(component.translateToComponent(coord), app));
     }
 
 }

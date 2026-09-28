@@ -1,15 +1,16 @@
-package com.senacor.archigraph.model;
+package com.senacor.archigraph.layout;
 
+import com.senacor.archigraph.model.*;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.condition.EnabledIfEnvironmentVariable;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-public class ComponentLayoutTest {
+public class FullEnumComponentLayoutTest {
 
     /**
      * Helper function to increase readability and save typing.
@@ -20,7 +21,7 @@ public class ComponentLayoutTest {
 
     @Test
     void testAppPositionsInComponentWithOneApp() {
-        var cl = new ComponentLayout(new Component("C1", 0, 0, 2, 3, 1));
+        var cl = new FullEnumComponentLayout(new Component("C1", 0, 0, 2, 3, 1));
         assertThat(cl.appPositionsInComponent(1))
                 .containsExactlyInAnyOrder(List.of(nc(0, 0)),
                         List.of(nc(0, 1)),
@@ -30,7 +31,7 @@ public class ComponentLayoutTest {
 
     @Test
     void testAppPositionsInComponentWithTwoApps() {
-        var cl = new ComponentLayout(new Component("C1", 0, 0, 2, 3, 1));
+        var cl = new FullEnumComponentLayout(new Component("C1", 0, 0, 2, 3, 1));
         assertThat(cl.appPositionsInComponent(2))
                 .hasSameElementsAs(List.of(
                         List.of(nc(0, 0), nc(0, 1)),
@@ -49,7 +50,7 @@ public class ComponentLayoutTest {
 
     @Test
     void testAppPositionsInComponentWithThreeApps() {
-        var cl = new ComponentLayout(new Component("C1", 0, 0, 2, 3, 1));
+        var cl = new FullEnumComponentLayout(new Component("C1", 0, 0, 2, 3, 1));
         assertThat(cl.appPositionsInComponent(3))
                 .hasSameElementsAs(List.of(
                         List.of(nc(0, 0), nc(0, 1), nc(1, 0)),
@@ -81,14 +82,14 @@ public class ComponentLayoutTest {
 
     @Test
     void testLinesIntersect() {
-        var cl = new ComponentLayout(new Component("Comp1", 0, 0, 2, 2, 1));
+        var cl = new FullEnumComponentLayout(new Component("Comp1", 0, 0, 2, 2, 1));
         assertTrue(cl.linesIntersect(nc(0, 0), nc(1, 1), nc(1, 0), nc(0, 1)));
         assertTrue(cl.linesIntersect(nc(1, 0), nc(0, 1), nc(0, 0), nc(1, 1)));
     }
 
     @Test
     void testLinesDoNotIntersect() {
-        var cl = new ComponentLayout(new Component("Comp1", 0, 0, 2, 2, 1));
+        var cl = new FullEnumComponentLayout(new Component("Comp1", 0, 0, 2, 2, 1));
         assertFalse(cl.linesIntersect(nc(0, 0), nc(0, 1), nc(1, 0), nc(1, 1)));
         assertFalse(cl.linesIntersect(nc(1, 0), nc(1, 1), nc(0, 0), nc(0, 1)));
         assertFalse(cl.linesIntersect(nc(0, 0), nc(1, 0), nc(0, 1), nc(1, 1)));
@@ -97,19 +98,19 @@ public class ComponentLayoutTest {
 
     @Test
     void testLinesWithSameEndpoint() {
-        var cl = new ComponentLayout(new Component("Comp1", 0, 0, 2, 2, 1));
+        var cl = new FullEnumComponentLayout(new Component("Comp1", 0, 0, 2, 2, 1));
         assertFalse(cl.linesIntersect(nc(0,1), nc(1, 1), nc(0, 0), nc(1, 1)));
     }
 
     @Test
     void testLinesIntersectViceVersa() {
-        var cl = new ComponentLayout(new Component("Comp1", 0, 0, 2, 2, 1));
+        var cl = new FullEnumComponentLayout(new Component("Comp1", 0, 0, 2, 2, 1));
         assertFalse(cl.linesIntersect(nc(0, 0), nc(0, 1), nc(0, 1), nc(0, 0)));
     }
 
     @Test
     void testLinesIntersectWithSixApps() {
-        var cl = new ComponentLayout(new Component("Comp1", 0, 0, 2, 2, 1));
+        var cl = new FullEnumComponentLayout(new Component("Comp1", 0, 0, 2, 2, 1));
         assertFalse(cl.linesIntersect(nc(2, 2), nc(1, 2), nc(0, 2), nc(2, 1)));
         assertFalse(cl.linesIntersect(nc(0, 2), nc(2, 1), nc(0, 1), nc(1, 1)));
         assertFalse(cl.linesIntersect(nc(2, 2), nc(1, 2), nc(0, 1), nc(1, 1)));
@@ -117,7 +118,7 @@ public class ComponentLayoutTest {
 
     @Test
     void testLayoutQualityNoIntersections() {
-        var cl = new ComponentLayout(new Component("Comp 1", 0, 0, 2, 2, 1));
+        var cl = new FullEnumComponentLayout(new Component("Comp 1", 0, 0, 2, 2, 1));
         var appA = new Application("A", "A", "C");
         var appB = new Application("B", "B", "C");
         var appC = new Application("C", "C", "C");
@@ -138,7 +139,7 @@ public class ComponentLayoutTest {
 
     @Test
     void testLayoutQualityDiagonalIntersections() {
-        var cl = new ComponentLayout(new Component("Comp1", 0, 0, 2, 2, 1));
+        var cl = new FullEnumComponentLayout(new Component("Comp1", 0, 0, 2, 2, 1));
         var appA = new Application("A", "A", "C");
         var appB = new Application("B", "B", "C");
         var appC = new Application("C", "C", "C");
@@ -159,7 +160,7 @@ public class ComponentLayoutTest {
 
     @Test
     void testLayoutQualitySameEndpoint() {
-        var cl = new ComponentLayout(new Component("Comp1", 0, 0, 2, 2, 1));
+        var cl = new FullEnumComponentLayout(new Component("Comp1", 0, 0, 2, 2, 1));
         var appA = new Application("A", "A", "C");
         var appB = new Application("B", "B", "C");
         var appC = new Application("C", "C", "C");
@@ -178,7 +179,7 @@ public class ComponentLayoutTest {
 
     @Test
     void TestLayoutQualityThreeFlows() {
-        var cl = new ComponentLayout(new Component("Comp1", 0, 0, 3, 3, 1));
+        var cl = new FullEnumComponentLayout(new Component("Comp1", 0, 0, 3, 3, 1));
         var appA = new Application("A", "A", "C");
         var appB = new Application("B", "B", "C");
         var appC = new Application("C", "C", "C");
@@ -207,7 +208,8 @@ public class ComponentLayoutTest {
     @Test
     void testFindAppPositionsEmptyComponent() {
         var comp = new Component("COMP-1", 0, 0, 2, 2, 1);
-        var cl = new ComponentLayout(comp);
+        comp.layout();
+        var cl = new EmptyLayout(comp);
         cl.layout();
         assertEquals(0, cl.getQuality());
     }
@@ -224,7 +226,7 @@ public class ComponentLayoutTest {
         model.setL1Components(List.of(comp));
         model.setApplications(List.of(appA, appB, appC, appD));
         // test
-        var cl = new ComponentLayout(comp);
+        var cl = new TrivialComponentLayout(comp);
         cl.layout();
         // verify
         assertEquals(nc(0, 0), cl.getAppCoordinate(appA), "App-A");
@@ -249,7 +251,7 @@ public class ComponentLayoutTest {
         model.setApplications(List.of(appA, appB, appC, appD));
         model.setInformationFlows(List.of(ifAC, ifBD));
         // test
-        var cl = new ComponentLayout(comp);
+        var cl = new FullEnumComponentLayout(comp);
         cl.layout();
         // verify
         assertEquals(nc(0, 0), cl.getAppCoordinate(appA), "App-A");
@@ -277,7 +279,7 @@ public class ComponentLayoutTest {
         model.setApplications(List.of(appA, appB, appC, appD, appE, appF));
         model.setInformationFlows(List.of(ifAB, ifCD, ifEF));
         // test
-        var cl = new ComponentLayout(comp);
+        var cl = new FullEnumComponentLayout(comp);
         cl.layout();
         // verify
         assertEquals(nc(0, 0), cl.getAppCoordinate(appA), "App-A");
@@ -321,7 +323,7 @@ public class ComponentLayoutTest {
         model.setInformationFlows(List.of(ifAB, ifAC, ifBD, ifBE, ifBF, ifCD, ifDA, ifEF, ifFB));
 
         // test
-        var cl = new ComponentLayout(comp);
+        var cl = new FullEnumComponentLayout(comp);
         cl.layout();
         // verify
         assertEquals(nc(0, 0), cl.getAppCoordinate(appA), "App-A");
@@ -416,7 +418,6 @@ public class ComponentLayoutTest {
      * Refers to issue 17
      */
     @Test
-    @EnabledIfEnvironmentVariable(named = "LONG_RUNNING", matches = "true")
     void testEnumTooLarge() {
         // Given
         Model model = new Model();
@@ -448,4 +449,28 @@ public class ComponentLayoutTest {
                 app1, app2, app3, app4, app5, app6, app7, app8, app9
         );
     }
+
+    @Test
+    void testLargeBoxAndManyApps() {
+        var model = new Model();
+        var c1 = new L1Component("C1", 1, 1, 6, 38, 0);
+        var apps = new LinkedList<Application>();
+        for (int i = 0; i < 100; i++) {
+            apps.add(new Application("a" + i, "A" + i, "C1"));
+        }
+        var flows = new LinkedList<InformationFlow>();
+        for (int i = 0; i < 98; i = i+2) {
+            flows.add(new InformationFlow("if" + i, "a" + i, "a" + i + 1, "", Direction.ONE_WAY));
+        }
+        model.setL1Components(List.of(c1));
+        model.setApplications(apps);
+        model.setInformationFlows(flows);
+
+        // when
+        c1.layout();
+
+        // then
+        assertThat(c1.getApplications()).isNotNull();
+    }
+
 }
