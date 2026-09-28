@@ -18,13 +18,13 @@ import java.util.stream.IntStream;
  * to project it relative to its own coordinates.
  */
 @Slf4j
-public abstract class AbstractLayout {
+public abstract class AbstractComponentLayout {
 
     protected final Component component;
 
     protected Map<Application, Coordinate> layout;
 
-    protected AbstractLayout(Component comp) {
+    protected AbstractComponentLayout(Component comp) {
         component = comp;
     }
 

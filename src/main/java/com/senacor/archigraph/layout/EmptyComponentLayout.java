@@ -4,9 +4,9 @@ import com.senacor.archigraph.model.Component;
 
 import java.util.HashMap;
 
-public class EmptyLayout extends AbstractLayout {
+public class EmptyComponentLayout extends AbstractComponentLayout {
 
-    public EmptyLayout(Component component) {
+    public EmptyComponentLayout(Component component) {
         super(component);
     }
 

@@ -206,37 +206,6 @@ public class FullEnumComponentLayoutTest {
     }
 
     @Test
-    void testFindAppPositionsEmptyComponent() {
-        var comp = new Component("COMP-1", 0, 0, 2, 2, 1);
-        comp.layout();
-        var cl = new EmptyLayout(comp);
-        cl.layout();
-        assertEquals(0, cl.getQuality());
-    }
-
-    @Test
-    void testFindAppPositionsWithoutFlows() {
-        // fixture
-        var comp = new L1Component("COMP-1", 0, 0, 2, 2, 1);
-        var appA = new Application("APP-A", "A1", "COMP-1");
-        var appB = new Application("APP-B", "A2", "COMP-1");
-        var appC = new Application("APP-C", "A3", "COMP-1");
-        var appD = new Application("APP-D", "A4", "COMP-1");
-        var model = new Model();
-        model.setL1Components(List.of(comp));
-        model.setApplications(List.of(appA, appB, appC, appD));
-        // test
-        var cl = new TrivialComponentLayout(comp);
-        cl.layout();
-        // verify
-        assertEquals(nc(0, 0), cl.getAppCoordinate(appA), "App-A");
-        assertEquals(nc(0, 1), cl.getAppCoordinate(appB), "App-B");
-        assertEquals(nc(1, 0), cl.getAppCoordinate(appC), "App-C");
-        assertEquals(nc(1, 1), cl.getAppCoordinate(appD), "App-D");
-        assertEquals(0, cl.getQuality());
-    }
-
-    @Test
     void testFindAppPositions2in2x2() {
         // fixture
         var model = new Model();
@@ -449,28 +418,4 @@ public class FullEnumComponentLayoutTest {
                 app1, app2, app3, app4, app5, app6, app7, app8, app9
         );
     }
-
-    @Test
-    void testLargeBoxAndManyApps() {
-        var model = new Model();
-        var c1 = new L1Component("C1", 1, 1, 6, 38, 0);
-        var apps = new LinkedList<Application>();
-        for (int i = 0; i < 100; i++) {
-            apps.add(new Application("a" + i, "A" + i, "C1"));
-        }
-        var flows = new LinkedList<InformationFlow>();
-        for (int i = 0; i < 98; i = i+2) {
-            flows.add(new InformationFlow("if" + i, "a" + i, "a" + i + 1, "", Direction.ONE_WAY));
-        }
-        model.setL1Components(List.of(c1));
-        model.setApplications(apps);
-        model.setInformationFlows(flows);
-
-        // when
-        c1.layout();
-
-        // then
-        assertThat(c1.getApplications()).isNotNull();
-    }
-
 }

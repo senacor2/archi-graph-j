@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-public class ProxyBoxLayout extends AbstractLayout {
+public class ProxyBoxLayout extends AbstractComponentLayout {
 
     /**
      * The positions available for app proxies.

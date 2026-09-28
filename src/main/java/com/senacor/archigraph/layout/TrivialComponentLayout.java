@@ -11,7 +11,7 @@ import java.util.stream.IntStream;
 /**
  * This layout can be used if the applications do not have information flows.
  */
-public class TrivialComponentLayout extends AbstractLayout {
+public class TrivialComponentLayout extends AbstractComponentLayout {
 
     public TrivialComponentLayout(Component comp) {
         super(comp);

@@ -1,9 +1,6 @@
 package com.senacor.archigraph.model;
 
-import com.senacor.archigraph.layout.AbstractLayout;
-import com.senacor.archigraph.layout.EmptyLayout;
-import com.senacor.archigraph.layout.FullEnumComponentLayout;
-import com.senacor.archigraph.layout.TrivialComponentLayout;
+import com.senacor.archigraph.layout.*;
 import lombok.Getter;
 import lombok.NonNull;
 import lombok.Setter;
@@ -259,13 +256,15 @@ public class Component {
 
     public void layout() {
         log.debug("Doing layout for {}", this);
-        AbstractLayout layout;
+        AbstractComponentLayout layout;
         if (getApplications().isEmpty()) {
-            layout = new EmptyLayout(this);
+            layout = new EmptyComponentLayout(this);
         } else if (getLocalInformationFlows().isEmpty()) {
             layout = new TrivialComponentLayout(this);
-        } else {
+        } else if (getWidth() * getHeight() < 50 && getApplications().size() < 30) {
             layout = new FullEnumComponentLayout(this);
+        } else {
+            layout = new HeuristicComponentLayout(this);
         }
         layout.layout();
         layout.fillInto(appMatrix);
