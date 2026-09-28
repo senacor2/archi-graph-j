@@ -1,5 +1,6 @@
 package com.senacor.archigraph.render;
 
+import com.senacor.archigraph.layout.ProxyBoxLayout;
 import com.senacor.archigraph.model.*;
 import com.senacor.archigraph.model.Component;
 import com.senacor.archigraph.rules.RuleBase;

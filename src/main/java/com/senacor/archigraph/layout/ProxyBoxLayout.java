@@ -1,5 +1,9 @@
-package com.senacor.archigraph.model;
+package com.senacor.archigraph.layout;
 
+import com.senacor.archigraph.model.AppMatrix;
+import com.senacor.archigraph.model.Application;
+import com.senacor.archigraph.model.Coordinate;
+import com.senacor.archigraph.model.L1Component;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
@@ -9,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 @Slf4j
-public class ProxyBoxLayout extends AbstractLayout {
+public class ProxyBoxLayout extends AbstractComponentLayout {
 
     /**
      * The positions available for app proxies.
@@ -111,7 +115,7 @@ public class ProxyBoxLayout extends AbstractLayout {
         layout.forEach((app, coords) -> coords.forEach(c -> appMatrix.put(c, app)));
     }
 
-    public Coordinate findUsableProxy(Component comp, Application proxyApp, Coordinate innerAppCoordinate) {
+    public Coordinate findUsableProxy(L1Component comp, Application proxyApp, Coordinate innerAppCoordinate) {
         if (layout.containsKey(proxyApp)) {
             var candidate = findClosestProxyPosition(proxyApp, innerAppCoordinate);
             if (Math.abs(candidate.row() - innerAppCoordinate.row()) < comp.getHeight() * 0.6 &&
@@ -127,5 +131,14 @@ public class ProxyBoxLayout extends AbstractLayout {
         public int compareTo(RatedCoord o) {
             return distance.compareTo(o.distance);
         }
+    }
+
+    @Override
+    public void layout() {
+    }
+
+    @Override
+    public int getQuality() {
+        return 0;
     }
 }
