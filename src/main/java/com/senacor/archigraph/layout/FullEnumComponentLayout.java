@@ -99,19 +99,6 @@ public class FullEnumComponentLayout extends AbstractLayout {
     }
 
     /**
-     * Create a default layout for the apps inside the component.
-     *
-     * @param apps List of apps.
-     * @return the default layout where the component is filled with apps from the top left, line by line.
-     */
-    Map<Application, Coordinate> defaultLayout(List<Application> apps) {
-        var coords = IntStream.range(0, apps.size())
-                .mapToObj(i -> Coordinate.fromIndex(component.getAppWidth(), i))
-                .toList();
-        return zipmapAppsAndCoordinates(apps, coords);
-    }
-
-    /**
      * Create the application layout inside the component grid, taking information flows into account.
      * After this operation, the layout quality and the application positions are initialized and can be retrieved.
      */
