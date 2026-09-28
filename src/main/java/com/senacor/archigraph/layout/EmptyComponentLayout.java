@@ -14,6 +14,7 @@ public class EmptyComponentLayout extends AbstractComponentLayout {
         layout = new HashMap<>();
     }
 
+    @Override
     public int getQuality() {
         return 0;
     }
