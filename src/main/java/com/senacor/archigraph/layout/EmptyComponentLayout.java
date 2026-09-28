@@ -10,6 +10,7 @@ public class EmptyComponentLayout extends AbstractComponentLayout {
         super(component);
     }
 
+    @Override
     public void layout() {
         layout = new HashMap<>();
     }
