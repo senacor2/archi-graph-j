@@ -6,7 +6,7 @@
 
     <groupId>com.senacor</groupId>
     <artifactId>archi-graph-j</artifactId>
-    <version>1.0.1</version>
+    <version>1.0.3</version>
 
     <properties>
         <java.version>27</java.version>
