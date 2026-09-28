@@ -261,7 +261,7 @@ public class Component {
             layout = new EmptyComponentLayout(this);
         } else if (getLocalInformationFlows().isEmpty()) {
             layout = new TrivialComponentLayout(this);
-        } else if (getWidth() * getHeight() < 50 && getApplications().size() < 30) {
+        } else if (getWidth() * getHeight() < 30 && getApplications().size() < 25) {
             layout = new FullEnumComponentLayout(this);
         } else {
             layout = new HeuristicComponentLayout(this);
