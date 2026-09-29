@@ -3,12 +3,10 @@ package com.senacor.archigraph.layout;
 import com.senacor.archigraph.model.Application;
 import com.senacor.archigraph.model.Component;
 import com.senacor.archigraph.model.Coordinate;
+import com.senacor.archigraph.model.InformationFlow;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.stream.IntStream;
+import java.util.*;
 
 /**
  * Layout class that uses a heuristic approach to lay out applications inside
@@ -19,48 +17,45 @@ import java.util.stream.IntStream;
 @Slf4j
 public class HeuristicComponentLayout extends OptimizingComponentLayout {
 
-    private final float initialTemperature;
-
-    private static final int MAX_ITERATIONS = 1000;
-
     private final Random random = new Random();
 
-    public HeuristicComponentLayout(Component comp, float initialTemperature) {
-        super(comp);
-        this.initialTemperature = initialTemperature;
-    }
-
     public HeuristicComponentLayout(Component comp) {
-        this(comp, 10.0f);
+        super(comp);
     }
 
     @Override
     public void layout() {
-        OptimizingComponentLayout.RatedLayout bestSoFar;
-        createInitialLayout();
-        bestSoFar = layoutQuality(layout, component.getLocalInformationFlows());
-        for (int i = 0; i < MAX_ITERATIONS; i++) {
-            var candidate = permutateLayout(layout);
-            var candidateRating = layoutQuality(candidate, component.getLocalInformationFlows());
-            var diff = candidateRating.getQuality() - bestSoFar.getQuality();
-            var currTemp = initialTemperature / (float)(i+1);
-            var metropolis = Math.exp(-diff / currTemp);
-            log.trace("Current iteration: temp = {}, quality = {}, metropolis = {}",
-                    currTemp, candidateRating.getQuality(), metropolis);
-            if (diff < 0 || random.nextFloat() < metropolis) {
-                bestSoFar = candidateRating;
+        log.debug("Starting heuristic layout for grid = {}/{} and {} apps",
+                component.getAppHeight(), component.getAppWidth(), component.getApplications().size());
+        var currentState = createInitialLayout(component.getAppHeight() * component.getAppWidth());
+        int bestSoFar = layoutQuality(currentState, component.getLocalInformationFlows());
+        double temp = 100.0f;
+        while (temp > 0.01) {
+            var candidate = permutateLayout(currentState);
+            int candidateQuality = layoutQuality(candidate, component.getLocalInformationFlows());
+            int diff = candidateQuality - bestSoFar;
+            temp *= 0.99;
+            double metropolis = Math.exp(-diff / temp);
+            log.trace("Current Iteration: temp = {}, quality = {}, metropolis = {}",
+                    temp, candidateQuality, metropolis);
+            if (diff < 0 || random.nextDouble() < metropolis) {
+                currentState = candidate;
+                bestSoFar = candidateQuality;
             }
         }
-        quality = bestSoFar.getQuality();
-        layout = bestSoFar.getLayout();
+        quality = bestSoFar;
+        layout = createAppToPosMap(currentState);
         log.debug("Optimized quality = {}", quality);
     }
 
-    private void createInitialLayout() {
-        var coords = IntStream.range(0, component.getApplications().size())
-                .mapToObj(i -> Coordinate.fromIndex(component.getAppWidth(), i))
-                .toList();
-        layout = zipmapAppsAndCoordinates(component.getApplications(), coords);
+    private Application[] createInitialLayout(final int nbrPositions) {
+        var result = new Application[nbrPositions];
+        int i = 0;
+        for (Application app : component.getApplications()) {
+            result[i] = app;
+            i++;
+        }
+        return result;
     }
 
     /**
@@ -68,26 +63,32 @@ public class HeuristicComponentLayout extends OptimizingComponentLayout {
      * @param prevLayout The layout computed so far
      * @return a new layout with two applications swapped against each other.
      */
-    private Map<Application, Coordinate> permutateLayout(Map<Application, Coordinate> prevLayout) {
-        var result = new HashMap<>(prevLayout);
-        int swap1 = random.nextInt(prevLayout.size());
-        int swap2;
+    private Application[] permutateLayout(Application[] prevLayout) {
+        var result = Arrays.copyOf(prevLayout, prevLayout.length);
+        int sourceIndex = random.nextInt(prevLayout.length);
+        int targetIndex;
         do {
-            swap2 = random.nextInt(prevLayout.size());
-        } while (swap1 == swap2);
-        var app1 = result.keySet().stream()
-                .skip(swap1)
-                .findFirst()
-                .orElseThrow();
-        var app2 = result.keySet().stream()
-                .skip(swap2)
-                .findFirst()
-                .orElseThrow();
-        var coord1 = result.get(app1);
-        var coord2 = result.get(app2);
-        result.put(app1, coord2);
-        result.put(app2, coord1);
+            targetIndex = random.nextInt(prevLayout.length);
+        } while (sourceIndex == targetIndex);
+        Application temp = result[targetIndex];
+        result[targetIndex] = result[sourceIndex];
+        result[sourceIndex] = temp;
         return result;
+    }
+
+    private int layoutQuality(Application[] appPositions, List<InformationFlow> flows) {
+        Map<Application, Coordinate> appsToPos = createAppToPosMap(appPositions);
+        return layoutQuality(appsToPos, flows).getQuality();
+    }
+
+    private Map<Application, Coordinate> createAppToPosMap(Application[] appPositions) {
+        Map<Application, Coordinate> appsToPos = new HashMap<>();
+        for (int i = 0; i < appPositions.length; i++) {
+            if (appPositions[i] != null) {
+                appsToPos.put(appPositions[i], Coordinate.fromIndex(component.getAppWidth(), i));
+            }
+        }
+        return appsToPos;
     }
 
 }
