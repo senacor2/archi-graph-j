@@ -46,6 +46,8 @@ public class FullEnumComponentLayout extends OptimizingComponentLayout {
      */
     @Override
     public void layout() {
+        log.debug("Starting full enumeration layout for grid {}/{} and {} apps",
+                component.getAppHeight(), component.getAppWidth(), component.getApplications().size());
         var flows = component.getLocalInformationFlows();
         // First run - terminate early if there is an intersection-free solution
         Optional<RatedLayout> firstBest = appPositionsInComponent(component.getApplications().size())

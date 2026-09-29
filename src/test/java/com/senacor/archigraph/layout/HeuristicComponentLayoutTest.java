@@ -22,7 +22,7 @@ public class HeuristicComponentLayoutTest {
         }
         var flows = new LinkedList<InformationFlow>();
         for (int i = 0; i < NUM_APPS; i = i+2) {
-            flows.add(new InformationFlow("if" + i, "a" + i, "a" + i + 1, "", Direction.ONE_WAY));
+            flows.add(new InformationFlow("if" + i, "a" + i, "a" + (i + 1), "", Direction.ONE_WAY));
         }
         model.setL1Components(List.of(c1));
         model.setApplications(apps);

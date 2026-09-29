@@ -156,8 +156,11 @@ public class Reader {
         log.debug("Reading information flows from {}", flowsFile);
         var result = new LinkedList<InformationFlow>();
         try (java.io.Reader in = new FileReader(flowsFile)) {
-            var csvFormat = CSVFormat.DEFAULT;
-            Iterable<CSVRecord> records = csvFormat.parse(in);
+            var records = CSVFormat.DEFAULT.builder()
+                    .setHeader()
+                    .setSkipHeaderRecord(true)
+                    .get()
+                    .parse(in);
             for (CSVRecord record : records) {
                 var sourceName = record.get(0);
                 var destName = record.get(1);
