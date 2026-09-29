@@ -1,3 +1,4 @@
+source,target,ifId,businessObject,direction
 app-1,app-2,if-12,Business object 1,oneway
 app-3,app-4,if-34,Business object 2,oneway
 app-3,app-5,if-35,Business object 3,oneway
